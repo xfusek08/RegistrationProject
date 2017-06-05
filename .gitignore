@@ -1,0 +1,12 @@
+# cokoliv co si vyradim pomoci prefixu __*
+__*
+
+#nastaveni ide
+Project/nbproject/
+
+#logy
+Project/logs/
+
+#exporty
+Project/export/*.*
+/Projekt/nbproject/private/
