@@ -1,0 +1,1 @@
+- pridat MD5 na hesla

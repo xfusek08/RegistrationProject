@@ -1,0 +1,7 @@
+<?xml version="1.0" standalone="yes" ?>
+<noeinst>
+  <ident>InstSupport</ident>
+  <version>1.01.00.00</version>
+  <prev></prev>
+  <exec>inst.sql</exec>
+</noeinst>

@@ -1,0 +1,12 @@
+cd C:\Project\DB\Components\Sys
+
+CREATE DATABASE 'c:\test.fdb' page_size 8192 user 'SYSDBA' password 'masterkey';
+
+connect 'c:\test.fdb' user 'SYSDBA' password 'masterkey';
+
+input C:\Project\DB\Components\Sys\inst.sql;
+
+
+/* grants */
+--INPUT grants/_grants.sql;
+

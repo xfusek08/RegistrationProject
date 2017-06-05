@@ -1,0 +1,7 @@
+<?xml version="1.0" standalone="yes" ?>
+<noeinst>
+  <ident>Sys</ident>
+  <version>1.00.00.07</version>
+  <prev>1.00.00.06</prev>
+  <exec>run.sql</exec>
+</noeinst>

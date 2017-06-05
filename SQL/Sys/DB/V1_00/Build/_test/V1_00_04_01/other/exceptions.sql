@@ -1,0 +1,3 @@
+CREATE EXCEPTION EX_NO_DATA_FOUND 'No data found';
+
+CREATE EXCEPTION EX_VAL_IS_NULL 'Value is null';

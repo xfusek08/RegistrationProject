@@ -1,0 +1,7 @@
+<?xml version="1.0" standalone="yes" ?>
+<noeinst>
+  <ident>Registrations</ident>
+  <version>1.00.00.00</version>
+  <prev></prev>
+  <exec>run.sql</exec>
+</noeinst>

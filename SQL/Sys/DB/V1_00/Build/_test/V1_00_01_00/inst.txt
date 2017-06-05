@@ -1,0 +1,5 @@
+cd C:\Project\DB\Components\Sys\V1_00\Build\V1_00_00_00
+
+CREATE DATABASE 'c:\test.fdb' page_size 8192 user 'SYSDBA' password 'masterkey';
+
+input C:\Project\DB\Components\Sys\V1_00\Build\V1_00_00_00\inst.sql;

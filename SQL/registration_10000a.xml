@@ -1,0 +1,46 @@
+<?xml version="1.0" standalone="yes" ?>
+<dbstr>
+  <current>
+    <insttype>registrations</insttype>
+    <version modif="a">1.00.00</version>
+    <components>
+      <component id="InstSupport">
+        <version>1.02.00.00</version>
+      </component>
+      <component id="Sys">
+        <version>1.02.00.00</version>
+      </component>
+      <component id="Registrations">
+        <version>1.00.00.00</version>
+      </component>
+    </components>
+  </current>
+
+  <supported>
+  </supported>
+
+  <upgrades>
+
+    <upg prevtype=""   prevversion=""
+       targettype="registrations" targetversion="1.00.00" >
+
+      <doinst>instsupport/db/v1_02/Full</doinst>
+
+      <doinst>sys/db/v1_00/Build/V1_00_00_00</doinst>
+      <doinst>sys/db/v1_00/Build/V1_00_00_01</doinst>
+      <doinst>sys/db/v1_00/Build/V1_00_00_02</doinst>
+      <doinst>sys/db/v1_00/Build/V1_00_00_03</doinst>
+      <doinst>sys/db/v1_00/Build/V1_00_00_04</doinst>
+      <doinst>sys/db/v1_00/Build/V1_00_00_05</doinst>
+      <doinst>sys/db/v1_00/Build/V1_00_00_06</doinst>
+      <doinst>sys/db/v1_00/Build/V1_00_00_07</doinst>
+      <doinst>sys/db/v1_00/Build/V1_00_01_00</doinst>
+      <doinst>sys/db/v1_00/Build/V1_00_02_00</doinst>
+      <doinst>sys/db/v1_01/Build/V1_01_00_00</doinst>
+      <doinst>sys/db/v1_02/Build/V1_02_00_00</doinst>
+
+      <doinst>Registrations/db/v1_00/Build/V1_00_00_00</doinst>
+    </upg>
+  </upgrades>
+
+</dbstr>
