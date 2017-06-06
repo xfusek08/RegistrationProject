@@ -16,3 +16,6 @@ define("SQL_LOGIN_SELECT", 'select 1 from sy_tuser where sytusr_vident = ? and s
 
 //Logs
 define("LOG_FOLDER", "D:\Work\Registration_project\Repository\Projekt\logs");
+
+// nazev tridy potomka
+define("EVENT_TYPE", "Course");

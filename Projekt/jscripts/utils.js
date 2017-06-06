@@ -25,12 +25,14 @@ function DateToStr(date)
   }
   return d + '.' + m + '.' + date.getFullYear();
 }
+
 function StrToDate(str)
 {
   var arr = str.split(".");
   var date = new Date(arr[2], arr[1] - 1, arr[0]);
   return date;
 }
+
 function SendAjaxRequest(data, asynch, callback)
 {
   StartLoading();
@@ -46,6 +48,7 @@ function SendAjaxRequest(data, asynch, callback)
     }
   });
 }
+
 function SubmitForm(type, form, ProcFnc)
 {
   SendAjaxRequest(
@@ -55,6 +58,7 @@ function SubmitForm(type, form, ProcFnc)
     ProcFnc
     );
 }
+
 function OnClickAjaxSubmit(event, type, button, ProcFnc)
 {
   event.preventDefault();
@@ -71,10 +75,16 @@ function OnClickAjaxSubmit(event, type, button, ProcFnc)
 
   SubmitForm(type, form, ProcFnc);
 }
+
 function isOdd(num)
 {
   return num % 2;
 } // je liche ? 
+
+
+
+
+
 AnnouncementCount = 0;
 function RaiseAnnouncement(text, announcementcolor)
 {

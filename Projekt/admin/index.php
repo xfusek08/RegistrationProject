@@ -1,19 +1,22 @@
 <?php
 session_start();
-require_once '../PHP/Enums.php';
-require_once '../PHP/Utils.php';
-require_once '../PHP/Settings.php';
-require_once '../PHP/Logs.php';
-require_once '../PHP/Database.php';
-require_once '../PHP/DatabaseEntity.php';
-require_once '../PHP/CalendarEvent.php';
+require_once '../PHP/System/Enums.php';
+require_once '../PHP/System/Utils.php';
+require_once '../PHP/System/Settings.php';
+require_once '../PHP/System/Logs.php';
+require_once '../PHP/System/Database.php';
+require_once '../PHP/System/DatabaseEntity.php';
+
+require_once '../PHP/Event.php';
+require_once '../PHP/Course.php';
 require_once '../PHP/Registration.php';
+require_once '../PHP/AjaxXMLFunctions.php';
 
 $IsSigned = isset($_SESSION['logged']);
 
 if (isset($_POST['ajax']) && $IsSigned)
 {
-  echo 'ajax resp.';
+  ProcessGlobalAjaxRequest();
   die;
 }
 ?>

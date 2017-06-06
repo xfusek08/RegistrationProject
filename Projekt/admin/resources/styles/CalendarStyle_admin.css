@@ -37,22 +37,14 @@
   display: inline-block;
   */
 }
-.ui-datepicker td .termdata
+.ui-datepicker td .ondaydata
 {
   margin: 0;
-  display: block;
   display: table;
   width: 100%;
-  /*
-  border-collapse: collapse;
-  margin-left: 5%;
-  margin-top: 4px;
-  width: 90%;
-  border: 1px red solid;
-  height: 11px;
-  */
+  table-layout: fixed;
 }
-.ui-datepicker td .termdata > div
+.ui-datepicker td .ondaydata > div
 {
   width: 9px;
   font-size: 14px;
@@ -61,28 +53,6 @@
   padding-left: 2px;
   padding-right: 2px;
   margin: 0;
-  /*
-  width: 8px;
-  padding-top: 1px;
-  padding-bottom: 1px;
-  margin: 2px;
-  font-family: monospace;
-  font-weight: bold;
-  border: 1px solid rgba(190,190,190,1);
-  border-radius: 7px;
-  */
-}
-.ui-datepicker td .termdata > .reservationnum
-{
-  background: rgb(140,200,255);  
-}
-.ui-datepicker td .termdata > .freetermnum
-{
-  background: rgb(50,255,50);  
-}
-.ui-datepicker td .termdata > .invisiblenum
-{
-  background: rgb(245,200,50);  
 }
 .ui-datepicker td.ui-datepicker-current-day
 {

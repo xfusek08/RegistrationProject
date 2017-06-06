@@ -31,31 +31,35 @@ if (isset($_POST['logout']))
             <div class="adm-calendarframe"><div id="datepicker"></div></div>
           </div>
           <div class="adm-calend">
-            <div class="adm-calend-free">
-              <div class="adm-calend-free-icon"></div>
-              <div class="adm-calend-free-caption">- otevřené událostí</div>              
+            <div class="legend">
+              <div class="icon open-event-color"></div>
+              <div class="caption"> - otevřené událostí</div>              
             </div>
-            <div class="adm-calend-invisible">
-              <div class="adm-calend-invisible-icon"></div>
-              <div class="adm-calend-invisible-caption">- skryté události</div>
+            <div class="legend">
+              <div class="icon full-event-color"></div>
+              <div class="caption"> - plné události</div>              
+            </div>
+            <div class="legend">
+              <div class="icon hidden-event-color"></div>
+              <div class="caption"> - skryté události</div>              
             </div>
           </div>
           <div style="display: table-row;">
-            <div class="adm-dayterms-frame">
-              <div class="adm-dayterms-caption">Termíny
+            <div class="adm-dayevents-frame">
+              <div class="adm-dayevents-caption">Události pro den:
               </div>
-              <div class="adm-dayterms-tools">
-                <div class="adm-dayterms-tools-newbt">Přidat</div>
+              <div class="adm-dayevents-tools">
+                <div class="adm-dayevents-tools-newbt">Vytvořit událost</div>
               </div>
               
-              <div class="adm-dayterms-view"></div>
+              <div class="adm-dayevents-view"></div>
             </div>
           </div>
         </div>
       </div>
       <div class="adm-content">
         <!--
-                <div class="adm-dayterms-newbt"><img src="../img/newbt.png"></div>
+                <div class="adm-dayevents-newbt"><img src="../img/newbt.png"></div>
         <div class="adm-day-tools"></div>
         -->
         <div class="adm-upconn">

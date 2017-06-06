@@ -9,6 +9,11 @@ body
   min-width: 600px;
   overflow: hidden;
 }
+input[type=submit],
+button
+{
+  cursor: pointer;
+}
 .announcement
 {
   position: fixed;
@@ -103,7 +108,7 @@ body
   height: 100%;
 }
 .adm-leftpanel .adm-calendarframe,
-.adm-leftpanel .adm-dayterms-frame
+.adm-leftpanel .adm-dayevents-frame
 {
   display: table-cell;
 }
@@ -116,13 +121,13 @@ body
 {  
   width: 100%;
 }
-.adm-leftpanel .adm-dayterms-frame
+.adm-leftpanel .adm-dayevents-frame
 {
   padding-top: 10px;
   /*border: 1px red solid;*/
   height: 100%;
 }
-.adm-leftpanel .adm-dayterms-frame .adm-dayterms-caption
+.adm-leftpanel .adm-dayevents-frame .adm-dayevents-caption
 {
   text-align: center;
   padding-left: 5px;  
@@ -130,17 +135,17 @@ body
   font-weight: bold; 
   /*line-height: 25px;*/
 }
-.adm-dayterms-caption .adm-dayterms-newbt
+.adm-dayevents-caption .adm-dayevents-newbt
 {
   float: right;
   margin-right: 5px; 
   cursor: pointer;
 }
-.adm-dayterms-caption .adm-dayterms-newbt > img
+.adm-dayevents-caption .adm-dayevents-newbt > img
 {
   height: 25px;
 }
-.adm-leftpanel .adm-dayterms-frame .adm-dayterms-tools
+.adm-leftpanel .adm-dayevents-frame .adm-dayevents-tools
 {
   margin-top: 5px;
   padding-left: 5px;  
@@ -148,7 +153,7 @@ body
 }
 .removetimebt,
 .addtimebt,
-.adm-leftpanel .adm-dayterms-frame .adm-dayterms-tools > div
+.adm-leftpanel .adm-dayevents-frame .adm-dayevents-tools > div
 {
   padding-left: 5px;  
   padding-right: 5px;  
@@ -167,10 +172,10 @@ body
 .conndetail-actions .conndetail-actions-action:hover,
 .removetimebt:hover,
 .addtimebt:hover,
-.adm-leftpanel .adm-dayterms-frame .adm-dayterms-tools > div:hover,
-.adm-dayterms-view-term:hover,
+.adm-leftpanel .adm-dayevents-frame .adm-dayevents-tools > div:hover,
+.adm-dayevents-view > .event:hover,
 .ui-datepicker table td:not(.ui-datepicker-unselectable):hover,
-.adm-dayterms-view-term.selhover,
+.adm-dayevents-view > .event.selhover,
 .conndetail-inhtml .reservations .reservation:hover,
 .search-textbox img:hover
 {
@@ -187,10 +192,6 @@ body
   color: white;
   padding-left: 10px;
 }
-.adm-content .adm-day-tools
-{
-    
-}
 .adm-calend div
 {
   display: inline-block;
@@ -200,29 +201,14 @@ body
   vertical-align: top;;
   margin-top: 2px;
 }
-.adm-calend .adm-calend-invisible-icon,
-.adm-calend .adm-calend-res-icon,
-.adm-calend .adm-calend-free-icon
+.adm-calend > .legend > .icon
 {
   margin-top: 3px;
   margin-left: 5px;
   height: 12px;
   width: 17px;
 }
-.adm-calend .adm-calend-invisible-icon
-{
-  background: rgb(245,200,50);
-}
-.adm-calend .adm-calend-free-icon
-{
-  background: rgb(50,255,50);    
-}
-.termdetail-reservation,
-.adm-calend .adm-calend-res-icon
-{
-  background: rgb(140,200,255);   
-}
-.adm-dayterms-view
+.adm-dayevents-view
 { 
   height: calc(100% - 42px);
   width: 100%;
@@ -236,7 +222,7 @@ body
           box-shadow: 0 4px 7px -3px rgb(100,100,100) inset;
   */
 }
-.adm-dayterms-view-term
+.adm-dayevents-view > .event
 {  
   border-bottom: 1px solid rgb(130,130,130);
   background: white;
@@ -260,27 +246,27 @@ body
   border: 1px solid rgb(180,180,180);
 }
 .adm-newresconn-conn .reservation,
-.adm-dayterms-view-term:last-child
+.adm-dayevents-view > .event:last-child
 {
   -webkit-box-shadow: 0 1px 2px 0px rgb(100,100,100);
      -moz-box-shadow: 0 1px 2px 0px rgb(100,100,100);
           box-shadow: 0 1px 2px 0px rgb(100,100,100);
 }
-.adm-dayterms-view-term > div
+.adm-dayevents-view > .event > div
 {
   display: table-cell;  
   text-align: center;
   vertical-align: top;
   text-align: center;
 }
-.adm-dayterms-view-term .adm-dayterms-view-term-time
+.adm-dayevents-view > .event > .time
 {
   min-width: 58px;
   padding-right: 5px;
   font-size: 20px;  
 }
-.adm-dayterms-view .adm-dayterms-view-nodata,
-.adm-dayterms-view-term .adm-dayterms-view-term-content
+.adm-dayevents-view .adm-dayevents-view-nodata,
+.adm-dayevents-view > .event .content
 {
   width: 100%;
   font-size: 18px;      
@@ -288,45 +274,24 @@ body
   color: rgb(150,150,150);  
   padding-top: 2px;
 }
-.adm-dayterms-view-term .adm-dayterms-view-term-content .free
-{
-  border-left: 2px solid rgb(50,245,50);   
-}
-.adm-dayterms-view-term .adm-dayterms-view-term-content .invisible
-{
-  border-left: 2px solid rgb(245,200,50);   
-}
-.adm-dayterms-view-term .adm-dayterms-view-term-content .ontermreservation
-{
-  border-left: 2px solid rgb(140,200,255);  
-  padding-left: 5px;
-  font-size: 13px;
-  color: black;
-  text-align: left;
-}
-.adm-dayterms-view-term .menu img
+.adm-dayevents-view-term .menu img
 {
   margin-top: 3px;
   height: 16px;
 }
-.adm-dayterms-view .adm-dayterms-view-nodata
+.adm-dayevents-view .adm-dayevents-view-nodata
 {
   color: rgb(200,200,200);
   display: block;
   text-align: center;
   margin-top: 10px;
 }
-input[type=submit],
-button
-{
-  cursor: pointer;
-}
-.newtermsform .newtermsform-body
+.neweventsform .neweventsform-body
 {
   padding: 5px;
   font-size: 14px;
 }
-.newtermsform .newtermsform-footer
+.neweventsform .neweventsform-footer
 {
   border-top: 2px solid black;
   margin-top: 5px;
@@ -367,18 +332,18 @@ button
   margin: 0;
   padding: 0;
 }
-.newtermsform td
+.neweventsform td
 {
   text-align: center;
   padding-right: 5px;
 }
-.newtermsform-options
+.neweventsform-options
 {
   margin-top: 5px;
   margin-bottom: 0;
   text-align: center;
 }
-.newtermsform-options > div
+.neweventsform-options > div
 {
   border: 1px rgb(150,150,150) solid;
   display: inline-block;
@@ -386,7 +351,7 @@ button
   margin: 0;
   margin-right: 5px;
 }
-.newtermsform,
+.neweventsform,
 .conndetail
 {
   background: white;  
@@ -400,7 +365,7 @@ button
   border-radius: 5px;
   */
 }
-.newtermsform .newtermsform-caption,
+.neweventsform .neweventsform-caption,
 .conndetail .conndetail-caption,
 .adm-newresconn .adm-newresconn-caption
 {
@@ -907,3 +872,28 @@ input[type=text].nval.fadeoutcolor
   text-align: right;
 }
 */
+.open-event-color
+{
+  background-color: rgb(50,255,50);
+}
+.full-event-color
+{
+  background-color: #8cc8ff;
+}
+.hidden-event-color
+{
+  background-color: rgb(245,200,50);  
+}
+
+.adm-dayevents-view > .event > .time.open-event-color
+{
+  border-right: 2px solid rgb(50,255,50);
+}
+.adm-dayevents-view > .event > .time.full-event-color
+{
+  border-right: 2px solid #8cc8ff;
+}
+.adm-dayevents-view > .event > .time.hidden-event-color
+{
+  border-right: 2px solid rgb(245,200,50);  
+}
