@@ -3,8 +3,8 @@ echo rg_registration
 
 create table rg_registration (
   rgreg_pk             ND_CODE not null,
-  rgreg_fterm          ND_CODE,
-  rgreg_forder         ND_INT,
+  rgreg_fevent         ND_CODE,
+  rgreg_iorder         ND_INT,
   rgreg_vclfirstname   ND_TEXT not null,
   rgreg_vcllastname    ND_TEXT not null,
   rgreg_vclemail       ND_WWW not null,
@@ -19,9 +19,9 @@ alter table rg_registration
     primary key (rgreg_pk);
     
 alter table rg_registration
-  add constraint fk_rgreg_fterm
-    foreign key (rgreg_fterm)
-    references rg_term (rgtrm_pk);
+  add constraint fk_rgreg_fevent
+    foreign key (rgreg_fevent)
+    references rg_event (rgev_pk);
 
 /* Generator */
 create generator gn_rgreg;
@@ -30,8 +30,8 @@ create generator gn_rgreg;
 comment on table rg_registration IS 'Registration';
 
 comment on column rg_registration.rgreg_pk            is 'pk';
-comment on column rg_registration.rgreg_fterm         is 'term';
-comment on column rg_registration.rgreg_forder        is 'order in term';
+comment on column rg_registration.rgreg_fevent        is 'event';
+comment on column rg_registration.rgreg_iorder        is 'order in term';
 comment on column rg_registration.rgreg_vclfirstname  is 'client firstname';
 comment on column rg_registration.rgreg_vcllastname   is 'client lastname';
 comment on column rg_registration.rgreg_vclemail      is 'client email';
