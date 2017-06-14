@@ -17,12 +17,13 @@ button
 .announcement
 {
   position: fixed;
-  border: 2px black solid;
-  padding: 10px;
-  font-size: 16px; 
-  /*font-weight: bold;*/
-  /*letter-spacing: 1px;*/
-  border-radius: 5px;
+  padding: 2px;  
+  font-size: 15px;
+  z-index: 1000;
+}
+alert
+{
+  display: none;
 }
 .loading
 {
@@ -286,20 +287,10 @@ button
   text-align: center;
   margin-top: 10px;
 }
-.neweventsform .neweventsform-body
-{
-  padding: 5px;
-  font-size: 14px;
-}
-.neweventsform .neweventsform-footer
-{
-  border-top: 2px solid black;
-  margin-top: 5px;
-  padding: 5px;
-}
 .timeinput
 {
-  border: 1px solid rgb(180,180,180);
+  border: 1px solid #b4b4b4;
+  padding: 2px;
   padding-left: 3px;  
   display: inline-block;
   background: white;
@@ -365,8 +356,8 @@ button
   border-radius: 5px;
   */
 }
+.conndetail caption,
 .neweventsform .neweventsform-caption,
-.conndetail .conndetail-caption,
 .adm-newresconn .adm-newresconn-caption
 {
   white-space: nowrap;
@@ -428,13 +419,19 @@ button
   padding: 5px;
   cursor: pointer;
 }
-.conndetail .conndetail-inhtml
+.conndetail .content
 {
   padding: 5px; 
   /*
   border-bottom-right-radius: 5px;
   border-bottom-left-radius: 5px;
   */
+}
+.conndetail .footer
+{
+  border-top: 2px solid #000;
+  margin-top: 5px;
+  padding: 5px;
 }
 .termdetail-reservation
 {

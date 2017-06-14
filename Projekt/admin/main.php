@@ -4,7 +4,7 @@ if (!isset($_SESSION['logged']))
   header("Refresh:0; url=index.php");
   exit;
 }
-// zpracovani post
+
 if (isset($_POST['logout']))
 { 
   unset($_SESSION['logged']);
@@ -13,6 +13,7 @@ if (isset($_POST['logout']))
   exit;
 }
 ?>
+<script type="text/javascript" charset="UTF-8" src="resources/javascripts/jquery.timepicker.min.js"></script>
 <script type="text/javascript" charset="UTF-8" src="resources/javascripts/EventCalendar.js"></script>
 <script type="text/javascript" charset="UTF-8" src="resources/javascripts/AdminMainPage.js"></script>
     
@@ -33,23 +34,23 @@ if (isset($_POST['logout']))
           <div class="adm-calend">
             <div class="legend">
               <div class="icon open-event-color"></div>
-              <div class="caption"> - otevřené událostí</div>              
+              <div class="caption"> - otevřené <?php echo UDALOSTI; ?></div>              
             </div>
             <div class="legend">
               <div class="icon full-event-color"></div>
-              <div class="caption"> - plné události</div>              
+              <div class="caption"> - plné <?php echo UDALOSTI; ?></div>              
             </div>
             <div class="legend">
               <div class="icon hidden-event-color"></div>
-              <div class="caption"> - skryté události</div>              
+              <div class="caption"> - skryté <?php echo UDALOSTI; ?></div>              
             </div>
           </div>
           <div style="display: table-row;">
             <div class="adm-dayevents-frame">
-              <div class="adm-dayevents-caption">Události pro den:
+              <div class="adm-dayevents-caption"><?php echo ucfirst(UDALOSTI); ?> pro den:
               </div>
               <div class="adm-dayevents-tools">
-                <div class="adm-dayevents-tools-newbt">Vytvořit událost</div>
+                <div class="adm-dayevents-tools-newbt">Vytvořit <?php echo UDALOST; ?></div>
               </div>
               
               <div class="adm-dayevents-view"></div>
@@ -73,7 +74,15 @@ if (isset($_POST['logout']))
                 </div>
               </div>
             </div>
-            <div class="adm-day-conn"></div>             
+            <div class="adm-day-conn">
+              <?php 
+                if (isset($_SESSION['openeevent'])) 
+                {
+                  $event = unserialize($_SESSION['openeevent']);
+                  echo $event->GetEventHTML();
+                } 
+              ?>
+            </div>             
           </div>
           <div class="adm-newresconn">
              <div class="adm-newresconn-caption"> Nové registrace: <span class="newrescount">0</span></div>

@@ -6,6 +6,9 @@ function ProcessGlobalAjaxRequest()
   {
     case 'GetCalendarData' : echo GetCalendarDataXML($_POST['fromdate'], $_POST['todate']); break;
     case 'GetDetailEventsOnDay' : echo GetDetailEventsOnDayXML($_POST['date']); break;
+    case 'CreateEvent' : echo CreateEvent($_POST['date']); break;
+    case 'CloseEvent' : echo CloseEvent(); break;
+    case 'EventAjax' : echo EventAjax(); break;
   }
 }
 
@@ -28,8 +31,7 @@ function GetCalendarDataXML($fromString, $toString)
   $SQL = 
     'select'.
     '    ' . $eventPrototype->i_sPKColName . ','.
-    '    ' . $eventPrototype->i_sFromColName . ','.
-    '    ' . $eventPrototype->i_sStateColName .
+    '    ' . $eventPrototype->i_sFromColName .
     '  from'.
     '    ' . $eventPrototype->i_sTableName .
     '  where'.
@@ -51,6 +53,9 @@ function GetCalendarDataXML($fromString, $toString)
   $newMonth = true;
   for($i = 0; $i < count($fields); $i++)
   {
+    $actEvent = EVENT_TYPE; 
+    $actEvent = new $actEvent($fields[$i][$eventPrototype->i_sPKColName]);
+    
     $actEvTime = strtotime($fields[$i][$eventPrototype->i_sFromColName]);
     $actMonthNum = intval(date('m', $actEvTime));
     $actDay = date('d.m.Y', $actEvTime);                
@@ -66,7 +71,7 @@ function GetCalendarDataXML($fromString, $toString)
       '<event'.
       ' pk="' . $fields[$i][$eventPrototype->i_sPKColName] . '"'.
       ' time="' . date('H:i', $actEvTime) . '"'.
-      ' state="' . $fields[$i][$eventPrototype->i_sStateColName] . '"/>';
+      ' state="' . $actEvent->GetState() . '"/>';
 
     if (($i + 1) < count($fields))
     {          
@@ -141,4 +146,48 @@ function GetDetailEventsOnDayXML($dateString)
   
   $response .= '</respxml>';
   return $response;
+}
+
+// obsluha aktivní události
+
+/**
+ * Vytvori udalost ve vychozim stavu pro datum na konkretnim predanem dni
+ * udalost zadefinuje do ssession pod nazvem 'openevent'
+ * 
+ * @param string $dateString - datum ve formatu d.m.Y pro kter7 se m8 udalost vytvorit
+ * @return string xml ktere obsahuje popis stavu udalosti pro obsluhu v javascriptu
+ */
+function CreateEvent($dateString)
+{
+  $event = EVENT_TYPE;
+  $event = new $event();
+  $event->GetColumnByName($event->i_sFromColName)->SetValueFromString($dateString);  
+  $_SESSION['openevent'] = serialize($event);
+  return $event->GetEventResponse(true);
+}
+
+/**
+ * Oddefinuje udalost a nic nevraci
+ * pouzivat az jako posledni krok
+ */
+function CloseEvent()
+{
+  if (isset($_SESSION['openevent']))
+    unset($_SESSION['openevent']);
+}
+
+/**
+ * Necha otevrenou udalost spracovat ajax dotaz
+ */
+function EventAjax()
+{
+  if (isset($_SESSION['openevent']))
+  {
+    $event = unserialize($_SESSION['openevent']);
+    $event->ProcessAjax();
+    $_SESSION['openevent'] = serialize($event);
+    return $event->GetEventResponse(true);
+  }
+  else
+    WriteAlert('red', 'Událost není vytvořena.');
 }

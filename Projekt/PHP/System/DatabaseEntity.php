@@ -207,6 +207,36 @@ abstract class DatabaseEntity
     $res .= '</invaliddata>';
     return $res;
   }
+  public function BuildHTMLForm($edit)
+  {
+    $html = '<div class="DBEntForm"';
+    for ($i = 0; $i < count($this->i_aColumns); $i++)
+    {
+      if ($this->i_aColumns[$i]->i_bShow && $this->i_aColumns[$i]->i_bIsHiddenAttr)
+        $html .= ' ' . $this->i_aColumns[$i]->i_sShowName . '="' . $this->i_aColumns[$i]->GetValueAsString() . '" ';
+    }
+    $html .= '>'; 
+    
+    if ($edit)
+      $html .= '<form class="" method="post">';
+    $html .= '<table>';
+    for ($i = 0; $i < count($this->i_aColumns); $i++)
+    {
+      if ($this->i_aColumns[$i]->i_bShow && !$this->i_aColumns[$i]->i_bIsHiddenAttr)
+      {
+        if ($edit)
+          $html .= '<tr><td>' . $this->i_aColumns[$i]->i_sShowName . ': </td><td>' . $this->i_aColumns[$i]->BuildHTMLInput() . '</td></tr>';
+        else
+          $html .= '<tr><td>' . $this->i_aColumns[$i]->i_sShowName . ': </td><td>' . $this->i_aColumns[$i]->GetValueAsString() . '</td></tr>';
+      }
+    }
+    $html .= '</table>';
+    $html .= '<div class="footer"><input type="submit" value="Potrvdit" name="c_submit"><input type="submit" value="Zrušit" name="c_storno"></div>';
+    if ($edit)
+      $html .= '</form>';
+    $html .= '</div>';
+    return $html;
+  }
   protected function AddColumn($a_tDataType, $a_sName, $a_bNotNull = false, $a_sDefValueString = '')
   {
     if ($this->GetColumnByName($a_sName) !== null)
@@ -228,14 +258,19 @@ abstract class DatabaseEntity
 class DBEntColumn
 {
   private $i_xValue;
-  public $i_bNotNull;
-  
+  public $i_bNotNull;  
   public $i_sName;
   public $i_bValid;
   public $i_sInvalidDataMsg;
-  public $i_bUnformated;
+  public $i_bUnformated;  
+  public $i_tDataType;
+
+  public $i_bShow;
+  public $i_sShowName;
+  public $i_sDescription;
+  public $i_bIsHiddenAttr;
+  public $i_iMaxLenght;
   
-  public $i_tDataType;  
   public function __construct($a_tDataType, $a_sName, $a_bNotNull = false, $a_sDefValueString = '')
   {
     $this->i_sInvalidDataMsg = '';
@@ -245,6 +280,12 @@ class DBEntColumn
     $this->i_bNotNull = $a_bNotNull;
     $this->i_sName = strtoupper($a_sName);
     $this->SetValueFromString($a_sDefValueString);
+    
+    $this->i_bShow = false;
+    $this->i_sShowName = '';
+    $this->i_sDescription = '';
+    $this->i_bIsHiddenAttr = false;
+    $this->i_iMaxLenght = -1;
   }
   public function GetValue()
   {
@@ -390,6 +431,32 @@ class DBEntColumn
         return date(DATE_TIME_FORMAT, $this->GetValue());
       case DataType::Bool:
         return BoolTo01Str($this->GetValue());
+    }    
+  }
+  public function BuildHTMLInput()
+  {
+    switch ($this->i_tDataType)
+    {
+      case DataType::Date:
+        return 
+          '<input class="datepicker" type="text"'.
+          ' name="' . $this->i_sName . '"'.
+          ' value="' . $this->GetValueAsString() . '"'.
+          ' maxlenght="10"'. 
+          '/>';
+      case DataType::Bool:
+        return 
+          '<input type="checkbox"'.
+          ' name="' . $this->i_sName . '"'.
+          (($this->$this->GetValue()) ? ' checked="checked" ' : '') . 
+          '/>';
+      default:
+        return 
+          '<input type="text"'.
+          ' name="' . $this->i_sName . '"'.
+          ' value="' . $this->GetValueAsString() . '"'.
+          (($this->i_iMaxLenght > 0) ? ' maxlenght="' . $this->i_iMaxLenght . '" ' : '') . 
+          '/>';
     }    
   }
 }

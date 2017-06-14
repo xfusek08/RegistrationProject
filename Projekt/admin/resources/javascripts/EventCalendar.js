@@ -85,9 +85,9 @@ function AfterLoadDays(calendar, calendarData)
 
     if (dayelem.length > 0)
     {
-      var openEventCount = parseInt(dayelem.find('event[state="0"]').size());
-      var hiddentEventCount = parseInt(dayelem.find('event[state="1"]').size());
-      var FullEventCount = parseInt(dayelem.find('event[state="2"]').size());
+      var openEventCount = parseInt(dayelem.find('event[state="open"]').size());
+      var hiddentEventCount = parseInt(dayelem.find('event[state="hidden"]').size());
+      var FullEventCount = parseInt(dayelem.find('event[state="full"]').size());
       
       if (openEventCount > 0)
         html = html + '<div class="open-event-color">' + openEventCount + '</div>';
@@ -109,7 +109,6 @@ function AfterLoadDays(calendar, calendarData)
 function DateSelect(datepic, date, CallBack)
 { 
   console.log('DateSelect()');
-  
 }
 
 /**

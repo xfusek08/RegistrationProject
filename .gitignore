@@ -2,11 +2,11 @@
 __*
 
 #nastaveni ide
-Project/nbproject/
+Projekt/nbproject/
 
 #logy
-Project/logs/
+Projekt/logs/
 
 #exporty
-Project/export/*.*
+Projekt/export/*.*
 /Projekt/nbproject/private/

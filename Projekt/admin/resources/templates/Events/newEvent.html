@@ -1,0 +1,29 @@
+
+<div class="conndetail eventdetail">
+  <form method="post">
+    <div class="caption">Nová událost: {FROM_DATE} ({FROM_DAY})</div>
+    <div class="content">
+      <table>
+        <tr>
+          <td>Čas zahájení:</td>
+          <td>
+            <div class="timeinput">
+              <input size="1" class="timeinput" name="eventspec-timefrom" type="text" value="" />
+              <button class="seltimebt" title="vybrat čas"><img src="../img/clock.png"></button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>Kapacita:</td>
+          <td>
+            <input size="1" class="numberinput" name="eventspec-capacity" type="text" value="0">
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="footer">
+      <button class="ajaxsubmit" ajaxtype="submitdata">Potvrdit</button>
+      <button class="ajaxsubmit" ajaxtype="close">Zrušit</button>
+    </div>
+  </form>  
+</div>

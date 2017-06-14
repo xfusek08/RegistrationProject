@@ -48,4 +48,3 @@ function validateDateTime($date, $format = DATE_TIME_FORMAT)
     $d = DateTime::createFromFormat($format, $date);
     return $d && $d->format($format) == $date;
 }
-

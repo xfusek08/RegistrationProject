@@ -6,6 +6,7 @@ require_once '../PHP/System/Settings.php';
 require_once '../PHP/System/Logs.php';
 require_once '../PHP/System/Database.php';
 require_once '../PHP/System/DatabaseEntity.php';
+require_once '../PHP/System/Alerts.php';
 
 require_once '../PHP/Event.php';
 require_once '../PHP/Course.php';
