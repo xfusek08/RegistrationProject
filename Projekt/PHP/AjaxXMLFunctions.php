@@ -6,6 +6,7 @@ function ProcessGlobalAjaxRequest()
   {
     case 'GetCalendarData' : echo GetCalendarDataXML($_POST['fromdate'], $_POST['todate']); break;
     case 'GetDetailEventsOnDay' : echo GetDetailEventsOnDayXML($_POST['date']); break;
+    case 'GetNavigation' : echo GetNavigation(); break;
     case 'CreateEvent' : echo CreateEvent($_POST['date']); break;
     case 'CloseEvent' : echo CloseEvent(); break;
     case 'EventAjax' : echo EventAjax(); break;
@@ -163,7 +164,7 @@ function CreateEvent($dateString)
   $event = new $event();
   $event->GetColumnByName($event->i_sFromColName)->SetValueFromString($dateString);  
   $_SESSION['openevent'] = serialize($event);
-  return $event->GetEventResponse(true);
+  return $event->GetResponse();
 }
 
 /**
@@ -184,9 +185,9 @@ function EventAjax()
   if (isset($_SESSION['openevent']))
   {
     $event = unserialize($_SESSION['openevent']);
-    $event->ProcessAjax();
+    $event->ProcessAjax($_POST['EventType']);
     $_SESSION['openevent'] = serialize($event);
-    return $event->GetEventResponse(true);
+    return $event->GetResponse();
   }
   else
     WriteAlert('red', 'Událost není vytvořena.');

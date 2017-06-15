@@ -1,21 +1,10 @@
 <?php
 /**
- * Vycet stavu, ktere event muze nabyvat
- */
-class EventStates
-{
-  const esNew = 0;
-  const esOverview = 1;
-  const esEditing = 2;
-  const esClose = 3;
-}
-
-/**
  * Třída představující jednu událost a obsluhující práci s ní
  * Chová se jako stavový automat. komunikkuje se svou stranou v javascriptu pomocí ajax todazů
  * S každým dotazem vrátí xml obsahující akci, která se má provést
  */
-class Event extends DatabaseEntity
+class Event extends ResponsiveObject
 {
   // Nazev databazoveho sloupce, ktery obsahuje udaj o case zahajeni udalosti
   public $i_sFromColName = '';
@@ -23,14 +12,6 @@ class Event extends DatabaseEntity
   public $i_sStateColName = '';
   // Nazev databazoveho sloupce, ktery obsahuje ciselny udaj o maxipalnim poctu registraci na udalost
   public $i_sCapacityColName = '';
-  
-  // Aktualni stav objektu udalosti
-  // typ: EventType
-  public $State;
-  
-  // Zasobnik upozorneni, ktere se budou vypisovat na obrazovku s kazdou odpovedi klientovi
-  // typ: AlertStack
-  public $i_oAlertStack;
   
   // ---------------------------- PUBLIC -------------------------------
 
@@ -57,118 +38,61 @@ class Event extends DatabaseEntity
 
     // rozhodnuti o stavu    
     if ($this->i_oAlertStack->Count() > 0)
-      $this->State = EventStates::esClose;
+      $this->i_tState = ObjectState::osClose;
     else if ($a_iPK > 0)
-      $this->State = EventStates::esOverview;
+      $this->i_tState = ObjectState::osOverview;
     else
-      $this->State = EventStates::esNew;
+      $this->i_tState = ObjectState::osNew;
 
     
     parent::__construct($a_iPK, $ExternTransaction);
   }  
 
   /**
-   * Zpracuje ajax dotaz podle aktualniho stavu a prejde do stavu nasledujiciho
+   * Zkonkretneni zpracovani ajaxu, pokud se ajax tyka prace s registracemi, tak rizeni nechavame registracim
    */
-  public function ProcessAjax()
+  public function ProcessAjax($a_sType)
   {
-    if (!isset($_POST['EventAjaxType'])) return;
-    $reqtype = $_POST['EventAjaxType'];
-    $invalidRequestType = false;
-    
-    if ($reqtype == 'close')
+    if ($this->i_tState !== ObjectState::osClose)
     {
-      $this->State = EventStates::esClose;
-      return;
+      switch ($a_sType)
+      {
+        case 'newregistration':
+          
+          break;
+        case 'deletegistration':
+          
+          break;
+        case 'RegistrationAjax':
+          // todo vyhledat registraci a zavolat na ni prislusny ajax
+          
+          break;
+        default:
+          parent::ProcessAjax();    
+      }
     }
-    
-    switch ($this->State)
-    {
-      case EventStates::esNew:
-        if ($reqtype == 'submitdata')
-        {
-          if ($this->SaveNewEvent())
-            $this->State = EventStates::esOverview;
-        }
-        else  
-          $invalidRequestType = true;
-        break;
-      case EventStates::esOverview:
-        if ($reqtype == 'edit')
-          $this->State = EventStates::esEditing;
-        else  
-          $invalidRequestType = true;
-        break;
-      case EventStates::esEditing:
-        if ($reqtype == 'edit')
-        {
-          if ($this->SaveEditEvent())
-            $this->State = EventStates::esOverview;
-        }
-        else  
-          $invalidRequestType = true;
-        break;
-    }
-    if ($invalidRequestType)
-      $this->i_oAlertStack->Push('red', 'Invalid event request type.');    
+    else
+      parent::ProcessAjax();    
   }
-  
-  /**
-   * Vraci ridici xml pro javascript
-   * 
-   * esNew - Vraci formular pro vytvoreni nove udalosti
-   * esOverview - Vraci html s prehledem udalosti vcetne prehledu registraci
-   * esEditing - Vrati formular existujici udalosti s editaci
-   * esClose - Vrati prikaz pro zavreni a zniceni udalosti
-   * 
-   * Popis vystupniho XML
-   * 
-   *  <respxml>
-   *    <event_response>
-   *      <alerts> ... </alerts>            - automaticky zpracovana upozorneni
-   *      <actions>                         - seznam akci, ktere ma ridici jednotka provedst
-   *        <action>CloseEvent</action>       - zavre formular a posle dotas ke zniceni objektu
-   *        <action>ShowHtml</action>         - zobrazi predane html do '.adm-day-conn' a vrati 
-   *                                            jQuery objekt onoho html
-   *        <action>InitNewForm</action>      - vytvori vychozi obsluzne metody pro formular nove udalosti
-   *                                            nad objektem vracenym z ShowHtml
-   *      </actions>
-   *      <html> ... </html>                - obsah toho co se ma zobrazit pomoci ShowHtml
-   *                                          obycejne nacteno z nejake sablony
-   *    </event_response>
-   *  </respxml>
-   */
-  public function GetEventResponse()
-  {
-    $v_sResponse = '<respxml><event_response>';
-    
-    $v_sResponse .= $this->i_oAlertStack->GetXML();
-    
-    switch ($this->State)
-    {
-      case EventStates::esClose:
-        $v_sResponse .= '<actions><action>CloseEvent</action><actions>';
-        break;
-      case EventStates::esNew:
-        $v_sResponse .= 
-          '<actions>'.
-            '<action>ShowHtml</action>'.
-            '<action>InitNewForm</action>'.
-          '<actions>';
-        $v_sResponse .= '<html>' . $this->LoadHTMLTemplate(NEW_EVENT_HTML) . '</html>';
-        
-        break;
-    }
-    $v_sResponse .= '</event_response></respxml>';    
-    
-    return $v_sResponse;
-  }
-  
-  
-  public function SaveNewEvent(){}
-  public function SaveEditEvent(){}
   
   // ---------------------------- PROTECTED -------------------------------
+  
+  protected function BuildNewHTML()
+  {
+    return $this->LoadHTMLTemplate(NEW_EVENT_HTML);
+  }
+  
+  protected function BuildEditHTML()
+  {
+    return $this->LoadHTMLTemplate(EDIT_EVENT_HTML);
+  }
+  
+  protected function BuildOverviewHTML()
+  {
+    return $this->LoadHTMLTemplate(OVERVIEW_EVENT_HTML);
+  }
+  
+  protected function GetResponseAddition() {}
   
   protected function DefColumns() {}
   
@@ -200,85 +124,4 @@ class Event extends DatabaseEntity
     $html = str_replace('{FROM_DAY}', GetCzechDayName(date('w', $this->GetColumnByName($this->i_sFromColName)->GetValue())), $html);
     return $html;
   }
- 
-  
-  //-------------------------------- stare funkce ------------------------------
-  
-  /*
-  
-  
-  public function GetDayOwerwiewHTML()
-  {
-   $html = '<div class="event" state="' . $this->GetState() . '">';
-    $html .= '<div class="time">' . date('H:i', $this->GetColumnByName($this->i_sFromColName)->GetValue()) . '</div>';
-    $html .= '<div class="content">' . $this->GetDayOwerwiewHTML_content() . '</div>';
-    $html .= '</div>';
-    return $html;
-  }
-  protected function GetDayOwerwiewHTML_content()
-  {
-    return 'Událost';
-  }
- 
-  public function GetEventHTML()
-  {
-    $html = '<div class="conndetail eventform">';
-    
-    
-    $v_bNew = false;
-
-    if ($this->i_iPK == 0)
-    {
-      $v_bNew = true;
-      $this->i_bEditing = true;
-    }
-    
-    if ($this->i_bEditing)
-      $html .= '<form method="post">';
-    
-    // nadpis
-    $html .= '<div class="conndetail-caption">';
-    
-    $v_dtActDateTime = $this->GetColumnByName($this->i_sFromColName)->GetValue();
-    if ($v_bNew)
-      $html .= ucfirst(NOVA_UDALOST) . ': ' . date('d.m.Y', $v_dtActDateTime) . ' (' . GetCzechDayName(date('w', $v_dtActDateTime)) . ')';
-    else if ($this->i_bEditing)
-      $html .= ucfirst(UDALOST) . ': ' . date('d.m.Y', $v_dtActDateTime) . ' (' . GetCzechDayName(date('w', $v_dtActDateTime)) . ')';
-    else
-      $html .= ucfirst(UDALOST) . ': ' . date('H:i, d.m.Y', $v_dtActDateTime) . ' (' . GetCzechDayName(date('w', $v_dtActDateTime)) . ')';
-    
-    $html .= '</div>';
-    
-    // formular
-    $html .= '<div class="conndetail-inhtml">';
-    if ($this->i_bEditing)
-    {
-      $html .= $this->GetInHTML();           
-    }
-    $html .= '</div>';
-    $html .= '<div class="footer">'.
-        '<input type="submit" isajax="true" value="Potrvdit" name="c_submit">'.
-        '<input type="submit" isajax="true"value="Zrušit" name="c_storno"></div>';
-    
-    if ($this->i_bEditing)
-      $html .= '</form>';
-    $html .= '</div>';
-    return $html;
-  }
-  protected function GetInHTML()
-  {
-    return 
-    '<table>'.
-          '<tr><td>Čas zahájení</td>'.
-          '<td>'.
-            '<div class="timeinput">'.
-              '<input size=1 class="timeinput" name="time_from" type="text" value="' . date("H:i", $this->GetColumnByName($this->i_sFromColName)->GetValue()) . '"/>'.
-              '<button class="seltimebt"><img src="../img/clock.png"></button>'.
-            '</div>'.
-          '</td></tr>'.
-          '<tr><td>Kapacita:</td>'.
-          '<td><input size=1 class="numberinput" name="capacity" type="text" value="' . $this->GetColumnByName($this->i_sCapacityColName)->GetValueAsString() . '"/></td></tr>'.
-        '</table>';   
-  }
-  */
-}  
+} 

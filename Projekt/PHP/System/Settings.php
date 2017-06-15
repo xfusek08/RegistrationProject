@@ -37,6 +37,8 @@ define("NOVA_UDALOST", "nový kurz");
 
 // soubory se sablonami
 define("NEW_EVENT_HTML", ".\\resources\\templates\\Events\\newEvent.html");
+define("EDIT_EVENT_HTML", ".\\resources\\templates\\Events\\editEvent.html");
+define("OVERVIEW_EVENT_HTML", ".\\resources\\templates\\Events\\overviewEvent.html");
 
  
 /*

@@ -1,6 +1,7 @@
 $(document).ready(function(){
   // inicializace kalendare
   CalendarInit($('#datepicker'), LoadDayEvents);
+  
   $("body").on("click", ".adm-dayevents-tools-newbt", function(e){
     if (ClearContent(e))
       CreateEvent($("#datepicker").datepicker('getDate'));      
@@ -94,7 +95,6 @@ function CreateOnClickTimepicker(e, timeinput, bt)
   }
 }
 
-
 // -------------------------- UDALOSTI ---------------------------------
 function CreateEvent(date)
 {
@@ -146,21 +146,31 @@ function ProcessEventState(a_sEventSatate)
 {
   console.log("ProcessEventState()");
   var v_oHtmlObj = null;
-
+  
   $(a_sEventSatate).find('actions action').each(function(){
     var v_sAction = $(this).text();
-    if (v_sAction === 'CloseEvent')
+    if (v_sAction === 'Close')
     {
       CloseEvent();
     }
     else if (v_sAction === 'ShowHtml')
     {
-      v_oHtmlObj = ShowHTML($(a_sEventSatate).find('html').html());
+      v_oHtmlObj = ShowHTML($(a_sEventSatate).find('showhtml'));
     }
     else if (v_sAction === 'InitNewForm')
     {
       if (v_oHtmlObj !== null)
-        InitNewEventForm(v_oHtmlObj);
+        InitNewForm(v_oHtmlObj);
+    }
+    else if (v_sAction === 'InitEditForm')
+    {
+      if (v_oHtmlObj !== null)
+        InitEditForm(v_oHtmlObj);
+    }
+    else if (v_sAction === 'InitOverViewActions')
+    {
+      if (v_oHtmlObj !== null)
+        InitOverViewActions(v_oHtmlObj);
     }
   });
 }
@@ -183,7 +193,7 @@ function ShowHTML(a_sHTML)
  * 
  * @param {jQuery} a_oHtmlObj
  */
-function InitNewEventForm(a_oHtmlObj)
+function InitNewForm(a_oHtmlObj)
 {
   console.log("InitNewEventForm()");
   

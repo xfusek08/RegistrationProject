@@ -356,7 +356,7 @@ alert
   border-radius: 5px;
   */
 }
-.conndetail caption,
+.conndetail .caption,
 .neweventsform .neweventsform-caption,
 .adm-newresconn .adm-newresconn-caption
 {

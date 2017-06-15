@@ -74,15 +74,7 @@ if (isset($_POST['logout']))
                 </div>
               </div>
             </div>
-            <div class="adm-day-conn">
-              <?php 
-                if (isset($_SESSION['openeevent'])) 
-                {
-                  $event = unserialize($_SESSION['openeevent']);
-                  echo $event->GetEventHTML();
-                } 
-              ?>
-            </div>             
+            <div class="adm-day-conn"></div>             
           </div>
           <div class="adm-newresconn">
              <div class="adm-newresconn-caption"> Nové registrace: <span class="newrescount">0</span></div>
