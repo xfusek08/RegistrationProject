@@ -22,6 +22,14 @@ abstract class ResponsiveObject extends DatabaseEntity
   // Zasobnik upozorneni, ktere se budou vypisovat na obrazovku s kazdou odpovedi klientovi
   // typ: AlertStack
   public $i_oAlertStack;
+
+  // Zasobnik akci, ktere se budou provadet s kazdou odpovedi klientovi
+  // typ: array
+  public $i_aActionStack;
+  
+  // Zasobnik upozorneni, ktere se budou vypisovat na obrazovku s kazdou odpovedi klientovi
+  // typ: boolean
+  private $i_bSubmited;
   
   // ---------------------------- PUBLIC -------------------------------
 
@@ -56,9 +64,18 @@ abstract class ResponsiveObject extends DatabaseEntity
       case ObjectState::osNew:
         if ($a_sType == 'submitdata')
         {
+          $this->i_bSubmited = true;
           $this->LoadFromPostData();
-          if ($this->SaveNew())
-            $this->i_tState = ObjectState::osOverview;
+          if ($this->IsDataValid())
+          {
+            if ($this->SaveNew())
+            {
+              $this->i_tState = ObjectState::osOverview;
+              $this->AddAction('ReloadData');
+            }
+          }
+          else
+            $this->i_oAlertStack->Push('red', 'Formulář obsahuje nevalidní data.');
         }
         else  
           $invalidRequestType = true;
@@ -72,9 +89,18 @@ abstract class ResponsiveObject extends DatabaseEntity
       case ObjectState::osEditing:
         if ($a_sType == 'submitdata')
         {
+          $this->i_bSubmited = true;
           $this->LoadFromPostData();
-          if ($this->SaveEdit())
-            $this->i_tState = ObjectState::osOverview;
+          if ($this->IsDataValid())
+          {
+            if ($this->SaveEdit())
+            {
+              $this->i_tState = ObjectState::osOverview;
+              $this->AddAction('ReloadData');
+            }
+          }
+          else
+            $this->i_oAlertStack->Push('red', 'Formulář obsahuje nevalidní data.');
         }
         else if ($a_sType == 'cancel')
           $this->i_tState = ObjectState::osOverview;
@@ -84,72 +110,57 @@ abstract class ResponsiveObject extends DatabaseEntity
     }
     if ($invalidRequestType)
       $this->i_oAlertStack->Push('red', 'Invalid request type.');    
+    
   }
   
   /**
    * Vraci ridici xml pro javascript podle aktualniho stavu
    * 
-   * Popis vystupniho XML
+   * @returns struktura:
    * 
-   *  <respxml>
-   *    <object_response>
-   *      <alerts> ... </alerts>            - automaticky zpracovana upozorneni
-   *      <actions>                         - seznam akci, ktere ma ridici jednotka provedst
-   *        <action>Close</action>          - zavre formular a posle dotas ke zniceni objektu
-   *        <action>ShowHtml</action>         
-   *          - zobrazi predane html do '.adm-day-conn' a vrati 
-   *            jQuery objekt onoho html
-   *        <action>InitNewForm</action>      
-   *          - vytvori vychozi obsluzne metody pro formular vytvareni noveho objektu
-   *            nad objektem vracenym z ShowHtml
-   *        <action>InitEditForm</action>      
-   *          - vytvori vychozi obsluzne metody pro formular editace existujiciho objektu
-   *            nad objektem vracenym z ShowHtml
-   *        <action>InitOverViewActions</action> 
-   *          - vytvori vychozi obsluzne metody pro zobrazeny objekt
-   *            nad objektem vracenym z ShowHtml
-   *      </actions>
-   *      <showhtml> ... </showhtml>                - obsah toho co se ma zobrazit pomoci ShowHtml
-   *                                          obycejne nacteno z nejake sablony
-   *    </object_response>
-   *  </respxml>
+   *  <object_response>
+   *    <alerts> ... </alerts>            - automaticky zpracovana upozorneni
+   *    <actions>                         - seznam akci, ktere ma ridici jednotka provedst
+   *      <action>Close</action>          - zavre formular a posle dotas ke zniceni objektu
+   *      <action>ShowHtml</action>         
+   *        - zobrazi predane html do '.adm-day-conn' a vrati 
+   *          jQuery objekt onoho html
+   *      <action>InitNewForm</action>      
+   *        - vytvori vychozi obsluzne metody pro formular vytvareni noveho objektu
+   *          nad objektem vracenym z ShowHtml
+   *      <action>InitEditForm</action>      
+   *        - vytvori vychozi obsluzne metody pro formular editace existujiciho objektu
+   *          nad objektem vracenym z ShowHtml
+   *      <action>InitOverViewActions</action> 
+   *        - vytvori vychozi obsluzne metody pro zobrazeny objekt
+   *          nad objektem vracenym z ShowHtml
+   *    </actions>
+   *    <showhtml> ... </showhtml>        - obsah toho co se ma zobrazit pomoci ShowHtml
+   *                                        obycejne nacteno z nejake sablony
+   *  </object_response>
    */
   public function GetResponse()
   {
+    $this->LoadStateActions();
     $v_sResponse = '<object_response>';
     
     $v_sResponse .= $this->i_oAlertStack->GetXML();
     
+    if ($this->i_bSubmited)
+      if (!$this->IsDataValid())
+        $v_sResponse .= $this->GetInvalidDataXML(); 
+      
+    $v_sResponse .= $this->GetAxtionsXML();
+    
+    $v_sResponse .= '<showhtml>';
     switch ($this->i_tState)
     {
-      case ObjectState::osClose:
-        $v_sResponse .= '<actions><action>Close</action><actions>';
-        break;
-      case ObjectState::osNew:
-        $v_sResponse .= 
-          '<actions>'.
-            '<action>ShowHtml</action>'.
-            '<action>InitNewForm</action>'.
-          '<actions>';
-        $v_sResponse .= '<showhtml>' . $this->BuildNewHTML() . '</showhtml>';
-        break;
-      case ObjectState::osEditing:
-        $v_sResponse .= 
-          '<actions>'.
-            '<action>ShowHtml</action>'.
-            '<action>InitEditForm</action>'.
-          '<actions>';
-        $v_sResponse .= '<showhtml>' . $this->BuildEditHTML() . '</showhtml>';
-        break;
-      case ObjectState::osOverview:
-        $v_sResponse .= 
-          '<actions>'.
-            '<action>ShowHtml</action>'.
-            '<action>InitOverViewActions</action>'.
-          '<actions>';
-        $v_sResponse .= '<showhtml>' . $this->BuildOverviewHTML() . '</showhtml>';
-        break;
+      case ObjectState::osNew: $v_sResponse .= $this->BuildNewHTML(); break;
+      case ObjectState::osEditing: $v_sResponse .= $this->BuildEditHTML(); break;
+      case ObjectState::osOverview: $v_sResponse .= $this->BuildOverviewHTML(); break;
     }
+    $v_sResponse .= '</showhtml>';
+
     $v_sResponse .= $this->GetResponseAddition();
     $v_sResponse .= '</object_response>';    
     
@@ -165,7 +176,7 @@ abstract class ResponsiveObject extends DatabaseEntity
     }
     else
     {
-      $this->i_oAlertStack->Push('green', 'Běhěm ukládání nastala chyba.');
+      $this->i_oAlertStack->Push('red', 'Běhěm ukládání nastala chyba.');
       return false;
     }
   }
@@ -175,8 +186,44 @@ abstract class ResponsiveObject extends DatabaseEntity
     return SaveNew();
   }
   
+  public function AddAction($a_sActionStr)
+  {
+    array_push($this->i_aActionStack, $a_sActionStr);
+  }
+  public function GetAxtionsXML()
+  {
+    
+    $res = '<actions>';    
+    while (count($this->i_aActionStack) > 0)
+       $res .= '<action>' . array_shift($this->i_aActionStack) . '</action>';
+    $res .= '</actions>';
+    return $res;
+  }
   // ---------------------------- PROTECTED -------------------------------
-  
+  protected function LoadStateActions()
+  {
+    // pridame akce v zavislosti na zmenenem stavu
+    if ($this->i_tState == ObjectState::osClose)
+    {
+      $this->AddAction('Close');      
+      return;
+    }
+    $this->AddAction('ShowHtml');
+    switch ($this->i_tState)
+    {
+      case ObjectState::osNew: 
+        $this->AddAction('InitNewForm');
+        break;
+      case ObjectState::osEditing:
+        $this->AddAction('InitEditForm');
+        break;
+      case ObjectState::osOverview:
+        $this->AddAction('InitOverViewActions');
+        break;
+      // close se obsluhuje ze zacatku
+    }
+
+  }
   protected abstract function BuildNewHTML();  
   protected abstract function BuildEditHTML();  
   protected abstract function BuildOverviewHTML();  

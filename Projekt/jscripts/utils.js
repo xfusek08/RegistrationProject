@@ -61,7 +61,6 @@ function SubmitForm(type, form, ProcFnc)
     ProcFnc
     );
 }
-
 function OnClickAjaxSubmit(event, type, button, ProcFnc)
 {
   event.preventDefault();
@@ -230,4 +229,28 @@ function StopLoading()
     $('.loading').remove();
   }
   loadingcounter--;
+}
+
+function HighlightInvalInput(name, mgs, searchin)
+{
+  if (searchin == null) searchin = $('body');
+  var input = searchin.find('*[name="' + name + '"]');
+  input.attr('title', mgs);
+  var precolor = input.css('backgroundColor');
+  
+  input.animate({ 'backgroundColor': "rgb(255,150,150)", color: "white"}, 600, function(){
+    input.focusin(function(){
+      UnHighlightInput(input, precolor);
+    });
+    input.change(function(){
+      UnHighlightInput(input, precolor);
+    });
+  });
+  // TODO: otaznicek, co je spatne...
+}
+function UnHighlightInput(input, precolor)
+{
+  input.animate({ 'backgroundColor': precolor, color: "black"}, 600, function(){
+    input.removeAttr('title');
+  });
 }

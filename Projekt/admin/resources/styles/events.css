@@ -1,0 +1,15 @@
+
+.event_owerwiew > div
+{
+  display: table-cell;
+}
+.event_owerwiew .time
+{
+  min-width: 58px;
+  padding-right: 5px;
+  font-size: 20px;  
+}
+.event_owerwiew .content
+{
+  
+}

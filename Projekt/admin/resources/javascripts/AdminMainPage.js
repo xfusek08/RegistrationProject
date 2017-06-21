@@ -1,6 +1,6 @@
 $(document).ready(function(){
   // inicializace kalendare
-  CalendarInit($('#datepicker'), LoadDayEvents);
+  CalendarInit($('#datepicker'), DaySelect);
   
   $("body").on("click", ".adm-dayevents-tools-newbt", function(e){
     if (ClearContent(e))
@@ -10,19 +10,29 @@ $(document).ready(function(){
     var timeinput = $(this).parent(".timeinput");
     CreateOnClickTimepicker(e, timeinput, $(this));
   });
+  $("body").on("click", ".adm-dayevents-view .event", function(e){
+    if (ClearContent(e))
+      OpenEvent($(this).attr('pk'));
+  });
+  GetNavigation();
 });
-
-function LoadDayEvents(datepicker, date, CallBack)
+function DaySelect(datepicker, v_sDateString, v_fnCallBack)
 {
+  console.log('DaySelect()');
   ClearContent();
-  console.log('LoadDayEvents()');
+  datepicker.datepicker('setDate', v_sDateString);
+  LoadEventsOnDay(v_sDateString, v_fnCallBack);  
+}
+
+function LoadEventsOnDay(datestring, CallBack)
+{
+  console.log('LoadEventsOnDay()');
   SendAjaxRequest(
-    "type=GetDetailEventsOnDay"+ 
-    "&date=" + date,
+    "type=SelectDay"+ 
+    "&date=" + datestring,
     true, 
     function(xml)
-    {
-      console.log(xml);      
+    { 
       $('.adm-dayevents-view').empty();     
       var html = '';
 
@@ -34,7 +44,10 @@ function LoadDayEvents(datepicker, date, CallBack)
       else
       {    
         $(xml).find("event_html").each(function(){
-          html = $(this).html();
+          html = 
+            '<div class="event" pk="' + $(this).attr('pk') + '" state"' + $(this).attr('state') + '">' + 
+              $(this).html() +
+            '</div>';
           $(html).appendTo('.adm-dayevents-view');
         });  
       } 
@@ -45,7 +58,7 @@ function LoadDayEvents(datepicker, date, CallBack)
         CallBack();
       }
     }
-  );        
+  );          
 }
 
 function ClearContent(event)
@@ -94,7 +107,21 @@ function CreateOnClickTimepicker(e, timeinput, bt)
     }).timepicker('show');
   }
 }
-
+function GetNavigation()
+{
+  console.log("GetNavigation()");
+  SendAjaxRequest(
+    "type=GetNavigation",  
+    true,
+    function(response){
+      var v_sOpenEventXML = $(response).find('openevent').html();
+      var v_sActDate = $(response).find('actday').text();
+      DaySelect($('#datepicker'), v_sActDate, function(){        
+        ProcessEventState(v_sOpenEventXML);
+      });      
+    }
+  );   
+}
 // -------------------------- UDALOSTI ---------------------------------
 function CreateEvent(date)
 {
@@ -104,20 +131,29 @@ function CreateEvent(date)
     "&date=" + DateToStr(date),  
     true,
     function(response){
-      console.log(response); 
       ProcessEventState(response);
     }
   );    
 }
-function CloseEvent()
+function OpenEvent(a_sPK)
 {
-  console.log("CloseEvent(}");
+  console.log('OpenEvent(' + a_sPK + ')');
   SendAjaxRequest(
-    "type=CloseEvent"+ 
-    "&date=" + DateToStr(date),  
+    "type=OpenEvent"+ 
+    "&pk=" + a_sPK,  
     true,
     function(response){
-      console.log(response); 
+      ProcessEventState(response);
+    }
+  );
+}
+function CloseEvent()
+{
+  console.log("CloseEvent()");
+  SendAjaxRequest(
+    "type=CloseEvent",  
+    true,
+    function(response){ 
       ClearContent();
     }
   );    
@@ -131,7 +167,6 @@ function EventAjax(a_sType, a_sData)
     "&" + a_sData,  
     true,
     function(response){
-      console.log(response); 
       ProcessEventState(response)
     }
   );    
@@ -155,7 +190,10 @@ function ProcessEventState(a_sEventSatate)
     }
     else if (v_sAction === 'ShowHtml')
     {
-      v_oHtmlObj = ShowHTML($(a_sEventSatate).find('showhtml'));
+      v_oHtmlObj = ShowHTML($(a_sEventSatate).find('showhtml').html());
+      $(a_sEventSatate).find('invaliddata > input').each(function(){
+        HighlightInvalInput($(this).attr('name'), $(this).attr('message'), v_oHtmlObj);
+      });
     }
     else if (v_sAction === 'InitNewForm')
     {
@@ -172,6 +210,10 @@ function ProcessEventState(a_sEventSatate)
       if (v_oHtmlObj !== null)
         InitOverViewActions(v_oHtmlObj);
     }
+    else if (v_sAction === 'ReloadData')
+    {
+      LoadEventsOnDay(DateToStr($('#datepicker').datepicker('getDate')));
+    }
   });
 }
 /**
@@ -181,9 +223,12 @@ function ProcessEventState(a_sEventSatate)
  */
 function ShowHTML(a_sHTML)
 {
-  console.log('ShowHTML(' + a_sHTML + ')');
+  console.log('ShowHTML()');
+  ClearContent();
   if (a_sHTML)
+  {
     return $(a_sHTML).appendTo('.adm-day-conn');  
+  }
   else 
     return null;
 }
@@ -196,7 +241,22 @@ function ShowHTML(a_sHTML)
 function InitNewForm(a_oHtmlObj)
 {
   console.log("InitNewEventForm()");
-  
+  a_oHtmlObj.on('click', '.ajaxsubmit', function(e){
+    e.preventDefault();
+    EventAjax(
+      $(this).attr('ajaxtype'),
+      $(this).closest('form').serialize(),
+      function(resp){
+        ProcessEventState(resp);
+      }
+    );
+  });
 }
-
-
+function InitEditForm(a_oHtmlObj)
+{
+  console.log("InitEditForm()");
+}
+function InitOverViewActions(a_oHtmlObj)
+{
+  console.log("InitOverViewActions()");
+}

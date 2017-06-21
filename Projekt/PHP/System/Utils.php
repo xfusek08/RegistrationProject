@@ -48,3 +48,10 @@ function validateDateTime($date, $format = DATE_TIME_FORMAT)
     $d = DateTime::createFromFormat($format, $date);
     return $d && $d->format($format) == $date;
 }
+function AddTimeToDate($date, $timeStr)
+{
+  $time = strtotime($timeStr); 
+  if ($time === false)
+    return false;
+  return strtotime('+' . date('H', $time) . ' hour +' . date('i', $time) . ' minutes', $date);
+}

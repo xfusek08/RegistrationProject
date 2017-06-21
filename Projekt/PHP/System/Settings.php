@@ -24,16 +24,19 @@ define("EVENT_TYPE", "Course");
 // original
 /*
 
-define("U_UDALOST", "Událost");
-define("U_UDALOSTI", "Události");
-define("U_NOVA_UDALOST", "Nová Událost");
+define("S_EVENT_1P", "událost");
+define("P_EVENT_1P", "události");
+define("S_EVENT_2P", "události");
+define("P_EVENT_2P", "událostí");
+define("NEW_EVENT", "Nová Událost");
 
 */
 // novy
-define("UDALOST", "kurz");
-define("UDALOSTI", "kurzy");
-define("UDALOSTI_2PD", "kurzu");
-define("NOVA_UDALOST", "nový kurz");
+define("S_EVENT_1P", "kurz");
+define("P_EVENT_1P", "kurzy");
+define("S_EVENT_2P", "kurzu");
+define("P_EVENT_2P", "kurzů");
+define("NEW_EVENT", "nový kurz");
 
 // soubory se sablonami
 define("NEW_EVENT_HTML", ".\\resources\\templates\\Events\\newEvent.html");

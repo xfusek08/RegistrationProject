@@ -173,7 +173,7 @@ abstract class DatabaseEntity
         $counter++;
       }
       else if ($this->i_aColumns[$i]->i_tDataType == DataType::Bool)
-       $this->i_aColumns[$i]->SetValue(false);        
+        $this->i_aColumns[$i]->SetValue(false);        
     }
     return $counter;
   }

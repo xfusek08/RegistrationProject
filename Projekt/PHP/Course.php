@@ -8,6 +8,8 @@ class Course extends Event
     $this->i_sFromColName = 'RGCOUR_DTFROM';
     $this->i_sStateColName = 'RGCOUR_ISTATE';
     $this->i_sCapacityColName = 'RGCOUR_ICAPACITY';
+    $this->i_sEventNameColName = 'RGCOUR_VNAME';
+    $this->i_sEventdescColName  = 'RGCOUR_VDESC';
     parent::__construct($a_iPK, $ExternTransaction);
   }
   protected function DefColumns()

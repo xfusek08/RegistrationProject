@@ -1,23 +1,12 @@
 
 <div class="conndetail eventdetail">
   <form method="post">
-    <div class="caption">Nová událost: {FROM_DATE} ({FROM_DAY})</div>
+    <div class="caption">Událost: {FROM_DATE} : {FROM_TIME} ({FROM_DAY})</div>
     <div class="content">
-      <table>
-        <tr>
-          <td>Čas zahájení:</td>
-          <td>
-            <div class="timeinput">
-              <input size="1" class="timeinput" name="eventspec-timefrom" type="text" value="" />
-              <button class="seltimebt" title="vybrat čas"><img src="../img/clock.png"></button>
-            </div>
-          </td>
-        </tr>
+      <table>        
         <tr>
           <td>Kapacita:</td>
-          <td>
-            <input size="1" class="numberinput" name="eventspec-capacity" type="text" value="0">
-          </td>
+          <td>{{CAPACITY_COL}_val}</td>
         </tr>
       </table>
     </div>

@@ -253,35 +253,13 @@ alert
      -moz-box-shadow: 0 1px 2px 0px rgb(100,100,100);
           box-shadow: 0 1px 2px 0px rgb(100,100,100);
 }
-.adm-dayevents-view > .event > div
-{
-  display: table-cell;  
-  text-align: center;
-  vertical-align: top;
-  text-align: center;
-}
-.adm-dayevents-view > .event > .time
-{
-  min-width: 58px;
-  padding-right: 5px;
-  font-size: 20px;  
-}
-.adm-dayevents-view .adm-dayevents-view-nodata,
-.adm-dayevents-view > .event .content
+.adm-dayevents-view .adm-dayevents-view-nodata
 {
   width: 100%;
   font-size: 18px;      
   /*border: 1px red solid;*/
   color: rgb(150,150,150);  
   padding-top: 2px;
-}
-.adm-dayevents-view-term .menu img
-{
-  margin-top: 3px;
-  height: 16px;
-}
-.adm-dayevents-view .adm-dayevents-view-nodata
-{
   color: rgb(200,200,200);
   display: block;
   text-align: center;
@@ -296,10 +274,10 @@ alert
   background: white;
   height: 24px;
 }
-.timeinput input[type=text]
+.conndetail .timeinput > input[type=text]
 {
-  vertical-align: top;
   height: 100%;
+  vertical-align: top;
   padding: 0;
   margin: 0;  
   border: none;
@@ -307,7 +285,7 @@ alert
 }
 .timeinput input[type=text]:focus
 {
-  outline: 0;  
+  outline: 0;
 }
 .seltimebt
 {
@@ -323,41 +301,44 @@ alert
   margin: 0;
   padding: 0;
 }
-.neweventsform td
-{
-  text-align: center;
-  padding-right: 5px;
-}
-.neweventsform-options
-{
-  margin-top: 5px;
-  margin-bottom: 0;
-  text-align: center;
-}
-.neweventsform-options > div
-{
-  border: 1px rgb(150,150,150) solid;
-  display: inline-block;
-  float: none;
-  margin: 0;
-  margin-right: 5px;
-}
-.neweventsform,
 .conndetail
 {
   background: white;  
   border-bottom: 1px black solid;
-  /*
-  -webkit-box-shadow: 0 1px 2px 0px rgb(100,100,100);
-     -moz-box-shadow: 0 1px 2px 0px rgb(100,100,100);
-          box-shadow: 0 1px 2px 0px rgb(100,100,100);
-  background: white;  
-  margin: 5px;
-  border-radius: 5px;
-  */
+}
+.conndetail table
+{
+  border-collapse: collapse;
+  white-space: nowrap;
+  width: 100%;
+}
+.conndetail table td:last-child
+{
+  width: 100%;
+  padding-right: 5px;
+}
+.conndetail table input[type="text"]
+{
+  width: 100%;
+}
+.conndetail table .eventname td
+{
+  font-weight: bold;
+  font-size: 13px;
+  padding-bottom: 8px;
+}
+.conndetail .desctiption
+{
+  padding-top: 8px;
+  width: 100%;
+}
+.conndetail .desctiption textarea
+{
+  width: calc(100% - 8px);
+  height: 60px;
+  resize: vertical;
 }
 .conndetail .caption,
-.neweventsform .neweventsform-caption,
 .adm-newresconn .adm-newresconn-caption
 {
   white-space: nowrap;
@@ -882,15 +863,7 @@ input[type=text].nval.fadeoutcolor
   background-color: rgb(245,200,50);  
 }
 
-.adm-dayevents-view > .event > .time.open-event-color
+.adm-dayevents-view .event.selected
 {
-  border-right: 2px solid rgb(50,255,50);
-}
-.adm-dayevents-view > .event > .time.full-event-color
-{
-  border-right: 2px solid #8cc8ff;
-}
-.adm-dayevents-view > .event > .time.hidden-event-color
-{
-  border-right: 2px solid rgb(245,200,50);  
+  box-shadow: red 0px 0px 0px 2px inset;    
 }

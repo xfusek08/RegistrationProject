@@ -2,7 +2,7 @@
 // xml, ktere doruci server o rozmisteni jednotlivych udalosti, strukturovanych do mezicu a dni
 var CalendarDataXML = ''; 
 
-function CalendarInit(calendar, DateSelectFunc)
+function CalendarInit(calendar, DateSelectFunc, MonthSelectFunc)
 {
   // nastaveni date picker
   $.datepicker.regional['cs'] = {
@@ -29,13 +29,19 @@ function CalendarInit(calendar, DateSelectFunc)
     showButtonPanel: false
   };
   $.datepicker.setDefaults($.datepicker.regional['cs']);
+  // nacteni dat ze serveru
+  var date = new Date();
+  var month = date.getMonth(); // pocitame 0 - 11
+  var DateFrom = new Date(date.getFullYear(), month - 1, 1);
+  var DateTo = new Date(date.getFullYear(), month + 2, 0);
+  RequestCalendarhData(false, DateFrom, DateTo);
   
   // nejprve bez dat vykreslime kalendar
   calendar.datepicker({
     afterShow: function(input, inst, td){
-      AfterLoadDays($(this), CalendarDataXML);      
       // tlacitko pro vraceni se na dnesni datum
       $(this).find('.ui-datepicker-title').append('<button class="today">Dnes</button>');
+      AfterLoadDays($(this), CalendarDataXML);      
     },
     onSelect: function(date){ 
       if (typeof(DateSelectFunc) === 'function')
@@ -44,23 +50,13 @@ function CalendarInit(calendar, DateSelectFunc)
     onChangeMonthYear: function(year, month){ 
       // zmenil se mesic ... aktualizace dat
       RequestCalendarhData(true, new Date(year, month - 2, 1), new Date(year, month, 1), function(){
-        
+        if (typeof(MonthSelectFunc) === 'function')
+          MonthSelectFunc(year, month);
       });
     }
   }).on('click', 'button.today', function(){
     DateSelect(calendar, DateToStr(new Date()));
-  });
-  
-  // nacteni dat ze serveru
-  var date = new Date();
-  var month = date.getMonth(); // pocitame 0 - 11
-  var DateFrom = new Date(date.getFullYear(), month - 1, 1);
-  var DateTo = new Date(date.getFullYear(), month + 2, 0);
-  RequestCalendarhData(false, DateFrom, DateTo, function(){
-    calendar.datepicker('setDate', date);
-  });
-  if (typeof(DateSelectFunc) === 'function')
-    DateSelectFunc(calendar, DateToStr(calendar.datepicker('getDate')));
+  });  
 }
 
 /**
@@ -106,11 +102,6 @@ function AfterLoadDays(calendar, calendarData)
   });
 }
 
-function DateSelect(datepic, date, CallBack)
-{ 
-  console.log('DateSelect()');
-}
-
 /**
  * Posle dotaz na server o rozmisteni udalosti v casovem rozsahu
  * @param bool asynch - bude dotaz asynchronni
@@ -129,7 +120,6 @@ function RequestCalendarhData(asynch, fromdate, todate, CallBack)
     asynch, 
     function(xml)
     {
-      console.log(xml);
       CalendarDataXML = $(xml).html();
       if (typeof(CallBack) == 'function')
         CallBack(xml);
