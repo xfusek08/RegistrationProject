@@ -10,8 +10,9 @@ require_once '../PHP/System/Alerts.php';
 
 require_once '../PHP/ResponsiveObject.php';
 require_once '../PHP/Event.php';
-require_once '../PHP/Course.php';
 require_once '../PHP/Registration.php';
+require_once '../PHP/Course.php';
+require_once '../PHP/CourseRegistration.php';
 require_once '../PHP/AjaxXMLFunctions.php';
 
 $IsSigned = isset($_SESSION['logged']);

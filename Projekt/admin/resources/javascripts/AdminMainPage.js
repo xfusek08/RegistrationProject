@@ -1,3 +1,12 @@
+
+/*
+ * inicializace pri nacteni dokumentu
+ *  • inicializace hlavniho kalendare
+ *  • vytvoreni obsluznych udalosti pro klikani do prave nabidky
+ *    - Nova udalost
+ *    - obecna obsluha vsech timepickeru
+ *    - vybrani existujici udalosti
+ */
 $(document).ready(function(){
   // inicializace kalendare
   CalendarInit($('#datepicker'), DaySelect);
@@ -8,7 +17,25 @@ $(document).ready(function(){
   });
   $("body").on("click", ".seltimebt", function(e){
     var timeinput = $(this).parent(".timeinput");
-    CreateOnClickTimepicker(e, timeinput, $(this));
+    var bt = $(this);
+    e.preventDefault();        
+    if (!bt.is(".wait"))
+    {
+      timeinput.find("input[type=text]").timepicker({
+        timeFormat: 'H:i',
+        scrollDefault: 'now'
+      }).on('hideTimepicker', function(){
+        $(this).timepicker('remove');
+        bt.addClass("wait");
+        setTimeout(function(){
+          bt.removeClass("wait");  
+        },400);
+      }).on('showTimepicker', function(){
+        $(".ui-timepicker-wrapper").css({
+          left: $(this).position().left - 4,
+        });            
+      }).timepicker('show');
+    }
   });
   $("body").on("click", ".adm-dayevents-view .event", function(e){
     if (ClearContent(e))
@@ -16,6 +43,20 @@ $(document).ready(function(){
   });
   GetNavigation();
 });
+
+/**
+ * @brief Funkce pro vyprani konkretniho datumu
+ * 
+ * Vola se, kdyz uzivatel klikne na datum v kalendari nevo skript si vyzada zmenu
+ * Pri zavolani se:
+ *  - vymaze obsah
+ *  - zmeni datum na strance
+ *  - nactou udalosti pro nove vybrany den
+ *  
+ * @param jQobj datepicker      - instance datepickeru
+ * @param string v_sDateString  - datum na ktere se ma presunout v textove podobe
+ * @param function v_fnCallBack - funkce, ktera se zavola po dokonceni vsech kroku
+ */
 function DaySelect(datepicker, v_sDateString, v_fnCallBack)
 {
   console.log('DaySelect()');
@@ -24,6 +65,11 @@ function DaySelect(datepicker, v_sDateString, v_fnCallBack)
   LoadEventsOnDay(v_sDateString, v_fnCallBack);  
 }
 
+/**
+ * @brief Zazada server o udalosti na konkretim datu a vykresli je do konteineru udalosti
+ * @param string datestring   - datum na ktere potrebujeme dostat udalosti
+ * @param {type} CallBack     - funkce, ktera se zavola po dokonceni vsech kroku
+ */
 function LoadEventsOnDay(datestring, CallBack)
 {
   console.log('LoadEventsOnDay()');
@@ -61,6 +107,13 @@ function LoadEventsOnDay(datestring, CallBack)
   );          
 }
 
+/*
+ * @brief Vymaze obsah v ".adm-day-conn" konteineru
+ * 
+ * Pokud ".adm-day-conn" ma tridu ".checkbeforeclose" tak se pred zavrenim objevi dialogove okno
+ * @param {type} event
+ * @returns {Boolean}
+ */
 function ClearContent(event)
 {
   console.log("ClearContent()");
@@ -74,6 +127,7 @@ function ClearContent(event)
   if (success)
   {
     $(".adm-day-conn").empty();   
+    SelectFromOverview('0');
   }
   else
   {
@@ -86,27 +140,12 @@ function ClearContent(event)
   return success;
 }
 
-function CreateOnClickTimepicker(e, timeinput, bt)
-{
-  e.preventDefault();        
-  if (!bt.is(".wait"))
-  {
-    timeinput.find("input[type=text]").timepicker({
-      timeFormat: 'H:i',
-      scrollDefault: 'now'
-    }).on('hideTimepicker', function(){
-      $(this).timepicker('remove');
-      bt.addClass("wait");
-      setTimeout(function(){
-        bt.removeClass("wait");  
-      },400);
-    }).on('showTimepicker', function(){
-      $(".ui-timepicker-wrapper").css({
-        left: $(this).position().left - 4,
-      });            
-    }).timepicker('show');
-  }
-}
+/**
+ * @brief Zazada server o aktualni data k navigaci a nasledne podle odpovedi zmeni navigaci na strance
+ * 
+ *  - presune se na predany den
+ *  - vykresli otevrenou udalost
+ */
 function GetNavigation()
 {
   console.log("GetNavigation()");
@@ -122,141 +161,19 @@ function GetNavigation()
     }
   );   
 }
-// -------------------------- UDALOSTI ---------------------------------
-function CreateEvent(date)
-{
-  console.log("CreateEvent(" + DateToStr(date) + ")");
-  SendAjaxRequest(
-    "type=CreateEvent"+ 
-    "&date=" + DateToStr(date),  
-    true,
-    function(response){
-      ProcessEventState(response);
-    }
-  );    
-}
-function OpenEvent(a_sPK)
-{
-  console.log('OpenEvent(' + a_sPK + ')');
-  SendAjaxRequest(
-    "type=OpenEvent"+ 
-    "&pk=" + a_sPK,  
-    true,
-    function(response){
-      ProcessEventState(response);
-    }
-  );
-}
-function CloseEvent()
-{
-  console.log("CloseEvent()");
-  SendAjaxRequest(
-    "type=CloseEvent",  
-    true,
-    function(response){ 
-      ClearContent();
-    }
-  );    
-}
-function EventAjax(a_sType, a_sData)
-{
-  console.log("EventAjax("  + a_sType + ", "  + a_sData + "}");
-  SendAjaxRequest(
-    "type=EventAjax"+ 
-    "&EventAjaxType=" + a_sType + 
-    "&" + a_sData,  
-    true,
-    function(response){
-      ProcessEventState(response)
-    }
-  );    
-}
-/**
- * Spracuje xml odpoved objektu event ze serveru
- * 
- * @param xml response - odpoved udalosti ze serveru
- * @returns {undefined}
- */
-function ProcessEventState(a_sEventSatate)
-{
-  console.log("ProcessEventState()");
-  var v_oHtmlObj = null;
-  
-  $(a_sEventSatate).find('actions action').each(function(){
-    var v_sAction = $(this).text();
-    if (v_sAction === 'Close')
-    {
-      CloseEvent();
-    }
-    else if (v_sAction === 'ShowHtml')
-    {
-      v_oHtmlObj = ShowHTML($(a_sEventSatate).find('showhtml').html());
-      $(a_sEventSatate).find('invaliddata > input').each(function(){
-        HighlightInvalInput($(this).attr('name'), $(this).attr('message'), v_oHtmlObj);
-      });
-    }
-    else if (v_sAction === 'InitNewForm')
-    {
-      if (v_oHtmlObj !== null)
-        InitNewForm(v_oHtmlObj);
-    }
-    else if (v_sAction === 'InitEditForm')
-    {
-      if (v_oHtmlObj !== null)
-        InitEditForm(v_oHtmlObj);
-    }
-    else if (v_sAction === 'InitOverViewActions')
-    {
-      if (v_oHtmlObj !== null)
-        InitOverViewActions(v_oHtmlObj);
-    }
-    else if (v_sAction === 'ReloadData')
-    {
-      LoadEventsOnDay(DateToStr($('#datepicker').datepicker('getDate')));
-    }
-  });
-}
-/**
- * Prida na stranku html do '.adm-day-conn'
- * @param string} a_sHTML - html, ktere bude pridano na stranku
- * @returns {jQuery} - objekt, ktery byl pridan, null pokud a_sHTML neni definovano
- */
-function ShowHTML(a_sHTML)
-{
-  console.log('ShowHTML()');
-  ClearContent();
-  if (a_sHTML)
-  {
-    return $(a_sHTML).appendTo('.adm-day-conn');  
-  }
-  else 
-    return null;
-}
 
 /**
- * specifikuje obsluzne metody specialni pro potreby formulare nove udalosti
- * 
- * @param {jQuery} a_oHtmlObj
+ * @brief zepta se serveru na nova data k aktualnimu dni a obnovy data ukazovana v kalendari
+ * @param function CallBack - funkce ktera se provede az bude hotovo
  */
-function InitNewForm(a_oHtmlObj)
+function ReloadData(CallBack)
 {
-  console.log("InitNewEventForm()");
-  a_oHtmlObj.on('click', '.ajaxsubmit', function(e){
-    e.preventDefault();
-    EventAjax(
-      $(this).attr('ajaxtype'),
-      $(this).closest('form').serialize(),
-      function(resp){
-        ProcessEventState(resp);
-      }
-    );
+  console.log('RealoadData()');
+  var nowdate = $('#datepicker').datepicker('getDate');
+  var year = nowdate.getFullYear();
+  var month = nowdate.getMonth();
+  RequestCalendarhData(true, new Date(year, month - 1, 1), new Date(year, month+1, 1), function(){
+    DaySelect($('#datepicker'), DateToStr(nowdate), CallBack);
   });
 }
-function InitEditForm(a_oHtmlObj)
-{
-  console.log("InitEditForm()");
-}
-function InitOverViewActions(a_oHtmlObj)
-{
-  console.log("InitOverViewActions()");
-}
+

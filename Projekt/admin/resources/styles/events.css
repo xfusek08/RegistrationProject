@@ -1,4 +1,7 @@
 
+/*
+    event overview --------------------------------------------------
+*/
 .event_owerwiew > div
 {
   display: table-cell;
@@ -13,3 +16,58 @@
 {
   
 }
+
+/*
+    event detail --------------------------------------------------
+*/
+.eventdetail > div
+{
+  display: table-cell;
+}
+.eventdetail .time
+{
+  min-width: 58px;
+  padding-right: 5px;
+  font-size: 20px;  
+}
+.eventdetail .caption .name
+{
+  font-size: 15px;  
+}
+
+.overview .desctiption textarea
+{
+  border: none;
+  
+}
+.overview .desctiption textarea:focus
+{
+  outline: 0;
+}
+
+.eventdetail .registarationcaption
+{
+  border-bottom: 2px solid black;
+  
+  /*color: white;*/
+  padding: 5px;
+}
+.eventdetail .registarationcaption > *
+{
+  display: inline-block;  
+}
+.eventdetail .registarationcaption .cap
+{
+  font-size: 17px;
+  font-weight: bold;
+}
+.registrationconn
+{
+  padding: 5px;
+}
+.registrationconn .registration
+{
+  margin-top: 5px;
+  background: rgba(97, 197, 255, 1);
+}
+

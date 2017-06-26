@@ -55,7 +55,7 @@ function CalendarInit(calendar, DateSelectFunc, MonthSelectFunc)
       });
     }
   }).on('click', 'button.today', function(){
-    DateSelect(calendar, DateToStr(new Date()));
+    DateSelectFunc(calendar, DateToStr(new Date()));
   });  
 }
 

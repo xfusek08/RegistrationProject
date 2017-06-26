@@ -19,12 +19,16 @@ class Event extends ResponsiveObject
   // Nazev databazoveho sloupce, ktery obsahuje popis udalosti
   public $i_sEventdescColName = '';
   
+  // Pole registraci na otevrene udalosti
+  public $i_aRegistrations;
+  
   // ---------------------------- PUBLIC -------------------------------
 
   public function __construct($a_iPK = 0, $ExternTransaction = false)
   {
     $this->i_bSubmited = false;
     $this->i_aActionStack = array();
+    $this->i_aRegistrations = array();
     // inicializace objektu
     $this->i_oAlertStack = new AlertStack();
     
@@ -78,6 +82,16 @@ class Event extends ResponsiveObject
       $this->i_tState = ObjectState::osNew;
 
     parent::__construct($a_iPK, $ExternTransaction);
+    $this->i_bLoad_Success = $this->i_bLoad_Success && $this->i_oAlertStack->Count() === 0;
+    
+    if (!$this->i_bLoad_Success)
+    {
+      Logging::WriteLog(LogType::Error, 'Event.__construct(' . $a_iPK . ') - failed to load event.');
+      return;
+    }
+    $this->i_bLoad_Success = $this->LoadRegistrations($ExternTransaction);
+    if (!$this->i_bLoad_Success)
+      Logging::WriteLog(LogType::Error, 'Event.__construct(' . $a_iPK . ') - failed to load registrations.');    
   }  
 
   /**
@@ -90,10 +104,11 @@ class Event extends ResponsiveObject
       switch ($a_sType)
       {
         case 'newregistration':
-          
+          $v_oRegPrototype = REGISTRATION_TYPE;
+          $this->i_aRegistrations[] = new $v_oRegPrototype();
           break;
         case 'deletegistration':
-          
+                    
           break;
         case 'RegistrationAjax':
           // todo vyhledat registraci a zavolat na ni prislusny ajax
@@ -119,6 +134,7 @@ class Event extends ResponsiveObject
       default: return 'open';
     }
   }
+  
   public function GetDayOwerwiewHTML()
   {
     $html = '<div class="event_owerwiew">';
@@ -182,7 +198,18 @@ class Event extends ResponsiveObject
     return $this->LoadHTMLTemplate(OVERVIEW_EVENT_HTML);
   }
   
-  protected function GetResponseAddition() {}
+  /** 
+   * Pridame akce na ktere lze vybrat a odeslat zpet
+   */
+  protected function GetResponseAddition() 
+  {
+    $res = '<primary_key>' . $this->i_iPK . '</primary_key>';
+    $res .= '<registrations>';
+    for ($i = 0; $i < count($this->i_aRegistrations); $i++)
+      $res .= '<registration>' . $this->i_aRegistrations[$i]->GetResponse() . '</registration>';
+    $res .= '</registrations>';
+    return $res;
+  }
   
   protected function DefColumns() {}
   
@@ -244,5 +271,45 @@ class Event extends ResponsiveObject
     }
     
     return $html;
+  }
+  
+  
+  // --------------------------- REGISTRATION MANAGEMENT ----------------------------------
+  protected function LoadRegistrations($ExternTransaction)
+  {
+    // 1. najdeme vsechny pk registraci na konkreti udalost
+    $v_oRegPrototype = REGISTRATION_TYPE;
+    $v_oRegPrototype = new $v_oRegPrototype();
+
+    $SQL = 
+      'select'.
+      '    ' . $v_oRegPrototype->i_sPKColName . ',' .
+      '    ' . $v_oRegPrototype->i_aDBAliases['created'] .
+      '  from'.
+      '    ' . $v_oRegPrototype->i_sTableName .
+      '  where'.
+      '    ' . $v_oRegPrototype->i_aDBAliases['eventPK'] . ' = ?'.
+      '  order by ' . $v_oRegPrototype->i_aDBAliases['created'] . ' desc';
+    $fields = null;
+    if (!MyDatabase::RunQuery($fields, $SQL, $ExternTransaction, $this->i_iPK))
+    {
+      Logging::WriteLog(LogType::Error, 'Event->LoadRegistrations() - failed to load Registrations PKs');
+      return false;
+    }
+    
+    // 2. naplnime registracemi pole
+    for ($i = 0; $i < count($fields); $i++)
+    {
+      $v_oRegPrototype = REGISTRATION_TYPE;
+      $v_oRegPrototype = new $v_oRegPrototype(intval($fields[$i][0]));
+      if ($v_oRegPrototype->i_bLoad_Success)
+        $this->i_aRegistrations[] = $v_oRegPrototype;
+      else
+      {
+        Logging::WriteLog(LogType::Error, 'Event->LoadRegistrations() - failed to load Registration: pk: "' . $fields[$i][0] . '"');
+        return false;                
+      }
+    }
+    return true;
   }
 } 

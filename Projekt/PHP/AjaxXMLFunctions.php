@@ -11,6 +11,7 @@ function ProcessGlobalAjaxRequest()
     case 'CreateEvent' : echo CreateEvent($_POST['date']); break;
     case 'OpenEvent' : echo OpenEvent($_POST['pk']); break;
     case 'CloseEvent' : echo CloseEvent(); break;
+    case 'DeleteEvent' : echo DeleteEvent(); break;
     case 'EventAjax' : echo EventAjax(); break;
   }
   echo '</respxml>';
@@ -248,7 +249,7 @@ function OpenEvent($a_sPK)
   if ($v_iPK === false)
   {
     Logging::WriteLog(LogType::Error, 'OpenEvent(' . $a_sPK . ') - pk ins not valid integer');
-    return (new Alert('red', 'Cyba při otevírání ' . S_EVENT_2P))->GetXML();    
+    return (new Alert('red', 'Chyba při otevírání ' . S_EVENT_2P . '.'))->GetXML();    
   }
   
   $event = EVENT_TYPE;
@@ -256,7 +257,7 @@ function OpenEvent($a_sPK)
   if (!$event->i_bLoad_Success)
   {
     Logging::WriteLog(LogType::Error, 'OpenEvent(' . $a_sPK . ') - failed to load event');
-    return (new Alert('red', 'Cyba při otevírání ' . S_EVENT_2P))->GetXML();    
+    return (new Alert('red', 'Chyba při otevírání ' . S_EVENT_2P . '.'))->GetXML();    
   }
   $resp = $event->GetResponse();
   $_SESSION['openevent'] = serialize($event);
@@ -270,6 +271,25 @@ function CloseEvent()
 {
   if (isset($_SESSION['openevent']))
     unset($_SESSION['openevent']);
+}
+
+function DeleteEvent()
+{
+  if (isset($_SESSION['openevent']))
+  {
+    $event = unserialize($_SESSION['openevent']);
+    if (!$event->DeleteFromDB())
+    {
+      Logging::WriteLog(LogType::Error, 'DeleteEvent() - failed to delete event.');
+      $resp = (new Alert('red', 'Chyba při mazání ' . S_EVENT_2P . '.'))->GetXML() + '<error type="deleteerror"/>';
+      $resp .= $event->GetResponse();
+      return $resp; 
+    }
+    unset($_SESSION['openevent']);
+    return (new Alert('green', 'Smazáno.'))->GetXML();  
+  }
+  else
+    WriteAlert('red', 'Událost není vytvořena.');
 }
 
 /**

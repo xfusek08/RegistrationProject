@@ -17,8 +17,11 @@ define("SQL_LOGIN_SELECT", 'select 1 from sy_tuser where sytusr_vident = ? and s
 //Logs
 define("LOG_FOLDER", "D:\Work\Registration_project\Repository\Projekt\logs");
 
-// nazev tridy potomka
+// nazev tridy potomka udalosti
 define("EVENT_TYPE", "Course");
+
+// nazev tridy potomka registrace
+define("REGISTRATION_TYPE", "CourseRegistration");
 
 // nastaveni oznaceni udalosti
 // original
@@ -42,6 +45,11 @@ define("NEW_EVENT", "nový kurz");
 define("NEW_EVENT_HTML", ".\\resources\\templates\\Events\\newEvent.html");
 define("EDIT_EVENT_HTML", ".\\resources\\templates\\Events\\editEvent.html");
 define("OVERVIEW_EVENT_HTML", ".\\resources\\templates\\Events\\overviewEvent.html");
+
+// soubory se sablonami
+define("NEW_REGISTRATION_HTML", ".\\resources\\templates\\Registrations\\newReg.html");
+define("EDIT_REGISTRATION_HTML", ".\\resources\\templates\\Registrations\\editReg.html");
+define("OVERVIEW_REGISTRATION_HTML", ".\\resources\\templates\\Registrations\\overviewReg.html");
 
  
 /*

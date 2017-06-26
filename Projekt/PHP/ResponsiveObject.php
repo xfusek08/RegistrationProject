@@ -27,9 +27,14 @@ abstract class ResponsiveObject extends DatabaseEntity
   // typ: array
   public $i_aActionStack;
   
-  // Zasobnik upozorneni, ktere se budou vypisovat na obrazovku s kazdou odpovedi klientovi
+  // Priznak, zda se ma proveds obnoveni dat na strance
+  // typ: boolean
+  public $i_bReload;
+  
+  // Priznak, zda doslo k submitu nebo ne, pro zvyraznovani chybnych poli
   // typ: boolean
   private $i_bSubmited;
+  
   
   // ---------------------------- PUBLIC -------------------------------
 
@@ -71,7 +76,7 @@ abstract class ResponsiveObject extends DatabaseEntity
             if ($this->SaveNew())
             {
               $this->i_tState = ObjectState::osOverview;
-              $this->AddAction('ReloadData');
+              $this->i_bReload = true;
             }
           }
           else
@@ -96,7 +101,7 @@ abstract class ResponsiveObject extends DatabaseEntity
             if ($this->SaveEdit())
             {
               $this->i_tState = ObjectState::osOverview;
-              $this->AddAction('ReloadData');
+              $this->i_bReload = true;
             }
           }
           else
@@ -118,7 +123,7 @@ abstract class ResponsiveObject extends DatabaseEntity
    * 
    * @returns struktura:
    * 
-   *  <object_response>
+   *  <object_response reload="0/1">      - reload: index zda se ma stranka nejdrive obnovit
    *    <alerts> ... </alerts>            - automaticky zpracovana upozorneni
    *    <actions>                         - seznam akci, ktere ma ridici jednotka provedst
    *      <action>Close</action>          - zavre formular a posle dotas ke zniceni objektu
@@ -142,7 +147,7 @@ abstract class ResponsiveObject extends DatabaseEntity
   public function GetResponse()
   {
     $this->LoadStateActions();
-    $v_sResponse = '<object_response>';
+    $v_sResponse = '<object_response reload="' . BoolTo01Str($this->i_bReload) . '">';
     
     $v_sResponse .= $this->i_oAlertStack->GetXML();
     
@@ -167,9 +172,9 @@ abstract class ResponsiveObject extends DatabaseEntity
     return $v_sResponse;
   }
   
-  public function SaveNew()
+  public function SaveToDB($ExternalTrans)
   {
-    if ($this->SaveToDB(false))
+    if (parent::SaveToDB($ExternalTrans))
     {
       $this->i_oAlertStack->Push('green', 'Uloženo.');
       return true;
@@ -181,9 +186,14 @@ abstract class ResponsiveObject extends DatabaseEntity
     }
   }
   
+  public function SaveNew()
+  {
+    return $this->SaveToDB(false);
+  }
+  
   public function SaveEdit()
   {
-    return SaveNew();
+    return $this->SaveToDB(false);
   }
   
   public function AddAction($a_sActionStr)
@@ -221,9 +231,9 @@ abstract class ResponsiveObject extends DatabaseEntity
         $this->AddAction('InitOverViewActions');
         break;
       // close se obsluhuje ze zacatku
-    }
-
+    }    
   }
+  
   protected abstract function BuildNewHTML();  
   protected abstract function BuildEditHTML();  
   protected abstract function BuildOverviewHTML();  
