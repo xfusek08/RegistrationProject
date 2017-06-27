@@ -150,7 +150,7 @@ function ProcessEventState(a_sEventSatate)
   });
   
   $(a_sEventSatate).find('registration').each(function(){
-    ProcessRegistrationState(v_oHtmlObj, $(this).html());
+    var registration = new Registration(v_oHtmlObj.find('.registrationconn'), $(this).html());
   });
   
 }

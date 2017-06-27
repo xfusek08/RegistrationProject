@@ -104,15 +104,50 @@ class Event extends ResponsiveObject
       switch ($a_sType)
       {
         case 'newregistration':
+          $break = false;
+          foreach ($this->i_aRegistrations as $reg)
+            if ($reg->i_tState === ObjectState::osNew) 
+            {
+              $break = true;
+              break;
+            }
+          if ($break) break;
           $v_oRegPrototype = REGISTRATION_TYPE;
-          $this->i_aRegistrations[] = new $v_oRegPrototype();
+          $v_oRegPrototype = new $v_oRegPrototype();
+          $v_oRegPrototype->GetColumnByName($v_oRegPrototype->i_aDBAliases['eventPK'])->SetValue($this->i_iPK);
+          array_unshift($this->i_aRegistrations, $v_oRegPrototype);
           break;
         case 'deletegistration':
                     
           break;
         case 'RegistrationAjax':
-          // todo vyhledat registraci a zavolat na ni prislusny ajax
-          
+          $v_iRegPK = false;
+          if (isset($_POST['RegistrationPK']))
+            $v_iRegPK = intval($_POST['RegistrationPK']);
+          if ($v_iRegPK === false)
+          {
+            $this->i_oAlertStack.Push('red', 'Chyba: neplatné číslo rezervace.');
+            Logging::WriteLog(LogType::Error, 
+              'Event->ProcessAjax: on "RegistrationAjax" is nod valid registration PK: "' . $_POST['RegistrationPK'] . '"');
+          }
+          foreach ($this->i_aRegistrations as $reg)
+          {
+            if ($reg->i_iPK == $v_iRegPK) 
+            {
+              if (isset($_POST['RegistrationAxajType']))
+                $reg->ProcessAjax($_POST['RegistrationAxajType']);
+              else
+              {
+                $this->i_oAlertStack.Push('red', 'Chyba: neplatný typ dotazu.');
+                Logging::WriteLog(LogType::Error, 
+                  'Event->ProcessAjax: on "RegistrationAjax" invalid AjaxType not defined');
+              }
+              return;
+            }
+          }
+          $this->i_oAlertStack.Push('red', 'Chyba: neplatné číslo rezervace.');
+          Logging::WriteLog(LogType::Error, 
+            'Event->ProcessAjax: on "RegistrationAjax" registration not found PK: "' . $_POST['RegistrationPK'] . '"');
           break;
         default:
           parent::ProcessAjax($a_sType);    

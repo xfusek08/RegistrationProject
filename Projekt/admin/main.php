@@ -19,6 +19,7 @@ if (isset($_POST['logout']))
 <script type="text/javascript" charset="UTF-8" src="resources/javascripts/EventCalendar.js"></script>
 <script type="text/javascript" charset="UTF-8" src="resources/javascripts/Registrations.js"></script>
 <script type="text/javascript" charset="UTF-8" src="resources/javascripts/Events.js"></script>
+<script type="text/javascript" charset="UTF-8" src="resources/javascripts/RegistrationMover.js"></script>
 <script type="text/javascript" charset="UTF-8" src="resources/javascripts/AdminMainPage.js"></script>
     
 <div class="adm-body">  

@@ -11,7 +11,6 @@ class Registration extends ResponsiveObject
    * Vsechny musi byt vyplnene
    * 
    * Potřebné aliasy:
-   *    - orderInTerm   - number      urcuje poradi v udalosti
    *    - eventPK       - number      urcuje vazbu na udalost
    *    - isNew         - bool        priznakuje novou registraci
    *    - created       - timestamp   Datum a cas vytvoreni
@@ -27,7 +26,7 @@ class Registration extends ResponsiveObject
     $this->i_oAlertStack = new AlertStack();
     
     // kontrola aliasu potomka
-    if (gettype($this->i_aDBAliases) !== "array" || count($this->i_aDBAliases) !== 4)
+    if (gettype($this->i_aDBAliases) !== "array" || count($this->i_aDBAliases) !== 3)
     {
        $this->i_oAlertStack->Push('red', 
           'Error: Registration wrong aliasses definition "$this->i_aDBAliases" is invalidly defined.');
@@ -56,7 +55,7 @@ class Registration extends ResponsiveObject
             $this->AddColumn(DataType::Bool, $value, true);
             break;
           case 'created':
-            $this->AddColumn(DataType::Timestamp, $value, true);
+            $this->AddColumn(DataType::Timestamp, $value, true)->SetValue(time());
             break;
         }
         $this->i_aDBAliases[$key] = strtoupper($value);
@@ -92,9 +91,35 @@ class Registration extends ResponsiveObject
     return $this->LoadHTMLTemplate(OVERVIEW_REGISTRATION_HTML);
   }
   
-  protected function GetResponseAddition() {}
+  protected function GetResponseAddition()
+  {
+    return '<primary_key>' . $this->i_iPK . '</primary_key>';
+  }
   protected function DefColumns() {}
   
+  /**
+   * Nacte obsah souboru sablony a podle definovanych pravidel nahradi klicove retezce za aktualne platne hodnoty
+   *
+   * Mozne konstanty, ktere budou substituovany:
+   * -- generovane casove konstanty
+   * {NOW_DATE} - aktualni datum d.m.Y
+   * {NOW_TIME} - aktualni cas H:i
+   * 
+   * -- Formaty Casu vytvoreni
+   * {CREATED_DATE} - datum vytvoreni, d.m.Y
+   * {CREATED_TIME} - cas vytvoreni, H:i
+   * 
+   * -- obecne nazvy tabulek - pro post data ... 
+   * {PK_COL} - $this->i_sPKColName
+   * {CREATED_COL}  - $this->i_sFromColName
+   * {EVENTPK_COL}  - $this->i_sStateColName
+   * {ISNEW_COL}    - $this->i_sCapacityColName
+   * 
+   * -- automaticke doplneni hodnot
+   * {`colname`_VAL} - nahradi za string hodnotu z kolekce sloupcu pro prislusny nazev sloupce `colname`
+   * 
+   * @param string $a_sTemplatePath - cesta k sablone
+   */
   protected function LoadHTMLTemplate($a_sTemplatePath)
   {
     $html = file_get_contents($a_sTemplatePath);    
@@ -105,7 +130,12 @@ class Registration extends ResponsiveObject
           'Event::LoadHTMLTemplate(): cannot read template file: "' . $a_sTemplatePath . '"');
       return;
     }    
+    
+    $html = str_replace('{NOW_DATE}', date('d.m.Y'), $html);
+    $html = str_replace('{NOW_TIME}', date('H:i'), $html);
 
+    $html = str_replace('{CREATED_DATE}', date('d.m.Y', $this->GetColumnByName($this->i_aDBAliases['created'])->GetValue()), $html);
+    $html = str_replace('{CREATED_TIME}', date('H:i', $this->GetColumnByName($this->i_aDBAliases['created'])->GetValue()), $html);
     
     foreach ($this->i_aColumns as $column)
     {

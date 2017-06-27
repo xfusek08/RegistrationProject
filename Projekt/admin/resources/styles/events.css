@@ -65,9 +65,66 @@
 {
   padding: 5px;
 }
-.registrationconn .registration
-{
-  margin-top: 5px;
-  background: rgba(97, 197, 255, 1);
-}
 
+/* ------------------REGISTRATIONS ------------------------------------------ */
+.registration
+{
+  margin: 5px;
+  border: none;
+}
+.registration .header
+{
+  background: rgb(90, 190, 250);
+  color: white;
+  padding: 8px;
+  border-radius: 7px;
+  -webkit-box-shadow: 0 1px 2px 0px rgb(150,150,150);
+     -moz-box-shadow: 0 1px 2px 0px rgb(150,150,150);
+          box-shadow: 0 1px 2px 0px rgb(150,150,150);
+  position: relative;
+  z-index: 1;
+  border: 1px solid rgb(100,100,100);
+}
+.registration .header .caption
+{
+  color: white;
+  padding: 0;
+  margin: 0;
+}
+.registration .content
+{
+  padding: 0;
+}
+.registration .content > div
+{
+  margin-left: 20px;
+  margin-right: 7px;
+  background: rgb(90, 190, 250);  
+  padding: 8px;
+  border-bottom-left-radius: 7px;
+  border-bottom-right-radius: 7px;
+  border: 1px solid rgb(100,100,100);
+}
+.registration .content .detail
+{
+  border: 1px solid rgb(50,50,50);
+  background: white;
+  padding: 5px;
+}
+.registration table
+{
+  table-layout: fixed;    
+}
+.registration table td
+{
+  padding: 4px;
+  vertical-align: top;
+}
+.registration table td:not(:first-child)
+{
+  width: 100%;
+}
+.registration table td:first-child
+{
+  width: 120px;
+}

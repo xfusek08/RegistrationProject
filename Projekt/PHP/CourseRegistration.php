@@ -6,7 +6,7 @@ class CourseRegistration extends Registration
     $this->i_sTableName = 'RG_REGISTRATION';
     $this->i_sPKColName = 'RGREG_PK';
     
-    $this->i_aDBAliases['orderInTerm'] = 'RGREG_IORDER';
+    //$this->i_aDBAliases['orderInTerm'] = 'RGREG_IORDER';
     $this->i_aDBAliases['eventPK'] = 'RGREG_FCOURSE';
     $this->i_aDBAliases['isNew'] = 'RGREG_ISNEW';
     $this->i_aDBAliases['created'] = 'RGREG_DTCREATED';
