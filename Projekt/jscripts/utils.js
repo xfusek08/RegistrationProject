@@ -254,3 +254,10 @@ function UnHighlightInput(input, precolor)
     input.removeAttr('title');
   });
 }
+function in_array(a_var, a_Array)
+{
+  for (var i = 0; i < a_Array.length; i++)
+    if (a_Array[i] === a_var) return true;
+
+  return false;
+}

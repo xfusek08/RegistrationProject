@@ -14,6 +14,10 @@ button
 {
   cursor: pointer;
 }
+textarea[readonly]:focus
+{
+  outline: 0;  
+}
 .announcement
 {
   position: fixed;
@@ -170,6 +174,7 @@ alert
   margin: 0;
   margin-right: 3px;
 }
+.registration .header:hover,
 .conndetail-actions .conndetail-actions-action:hover,
 .removetimebt:hover,
 .addtimebt:hover,
@@ -312,9 +317,12 @@ alert
   white-space: nowrap;
   width: 100%;
 }
+.conndetail table td:first-child
+{
+  width: 100px;
+}
 .conndetail table td:last-child
 {
-  width: 100%;
   padding-right: 5px;
 }
 .conndetail table input[type="text"]

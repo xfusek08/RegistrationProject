@@ -2,14 +2,19 @@
 <div class="conndetail registration">
   <form method="post">
     <div class="header">
-      <div class="caption">Registrace. {CREATED_DATE}, {CREATED_TIME}</div>
-      <div class="overview"></div>
+      <div class="caption">{rgreg_vclfirstname_val} {rgreg_vcllastname_val}</div>
+      <div class="overview">
+      </div>
       <div class="actions"></div>
     </div>
     <div class="content">
       <div>
         <div class="detail">
           <table>
+            <tr>
+              <td>Vytvořeno:</td>
+              <td>{CREATED_DATE}, {CREATED_TIME}</td>
+            </tr>
             <tr>
               <td>Jméno a příjmení:</td>
               <td>{rgreg_vclfirstname_val} {rgreg_vcllastname_val}</td>
@@ -24,13 +29,12 @@
             </tr>        
             <tr>
               <td>Poznámka:</td>
-              <td><textarea readonly maxlength="4000">{rgreg_vtext_val}</textarea></td>
-            </tr>        
+              <td></td>
+            </tr> 
+            <tr>
+              <td colspan="2"><textarea readonly maxlength="4000">{rgreg_vtext_val}</textarea></td>
+            </tr>
           </table>
-          <div class="footer">
-            <button class="ajaxsubmit" ajaxtype="submitdata">Potvrdit</button>
-            <button class="ajaxsubmit" ajaxtype="close">Zrušit</button>
-          </div>
         </div>
       </div>            
     </div>

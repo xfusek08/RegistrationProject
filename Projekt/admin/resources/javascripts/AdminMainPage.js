@@ -37,7 +37,7 @@ $(document).ready(function(){
       }).timepicker('show');
     }
   });
-  $("body").on("click", ".adm-dayevents-view .event", function(e){
+  $("body").on("click", ".adm-dayevents-view .event:not(.selected)", function(e){
     if (ClearContent(e))
       OpenEvent($(this).attr('pk'));
   });
@@ -153,10 +153,10 @@ function GetNavigation()
     "type=GetNavigation",  
     true,
     function(response){
-      var v_sOpenEventXML = $(response).find('openevent').html();
       var v_sActDate = $(response).find('actday').text();
       DaySelect($('#datepicker'), v_sActDate, function(){        
-        ProcessEventState(v_sOpenEventXML);
+        var v_oEvent = new Event($('.adm-day-conn'), $(response).find('openevent > object_response'));
+        v_oEvent.ProcessState();
       });      
     }
   );   

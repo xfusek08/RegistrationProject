@@ -1,71 +1,74 @@
 
-var Registration = function(a_oEventHTMLObj, a_sStateXML)
+var Registration = function(v_oParentEvent, v_oObjectResponse)
 {
-  this.i_oHTMLobj = null;
-  this.i_oParent = null;
+  this.i_oObjResponse = v_oObjectResponse;
+  this.i_oParentEvent = v_oParentEvent;
+  this.i_oHTMLObj = null;
   this.i_sPK = '';
   
-  this.Create = function(a_oEventHTMLObj, a_sStateXML){
-    console.log('Registration.Create()');
-    this.i_oHTMLobj = null;
-    this.i_oParent = a_oEventHTMLObj;
-    this.i_sPK = $(a_sStateXML).find('primary_key').text();
+  this.ProcessState = function(){
+    console.log('Registration.ProcessState()');
+    this.i_oHTMLObj = null;
     var self = this;
+    
+    self.i_sPK = self.i_oObjResponse.find('primary_key').text();
 
-    $(a_sStateXML).find('actions action').each(function(){
+    this.i_oObjResponse.find('> actions action').each(function(){
       switch ($(this).text())
       {
         case 'Close': self.Close(); break;
-        case 'ShowHtml': 
-          self.ShowHTML($(a_sStateXML).find('showhtml').html());
-          $(a_sStateXML).find('invaliddata > input').each(function(){
-            HighlightInvalInput($(this).attr('name'), $(this).attr('message'), self.i_oHTMLobj);
-          });
-          break;
-        case 'InitNewForm':
-        case 'InitEditForm':
-        case 'InitOverViewActions':
-          if (self.i_oHTMLobj !== null)
-            self.InitBaseAjaxSubmit();
-          break;
+        case 'ShowHtml': self.ShowHTML(); break;
+        case 'InitNewForm': 
+        case 'InitEditForm': 
+        case 'InitOverViewActions': self.InitBaseAjaxSubmit(); break;
       }
     });
   };
 
-  this.ShowHTML = function(a_sHTML){
+  this.ShowHTML = function(){
     console.log('Registration.ShowHTML()');
-    this.i_oHTMLobj = null;
-    if (a_sHTML)
-      this.i_oHTMLobj = $(a_sHTML).appendTo(this.i_oParent);  
+    var self = this;
+    if (this.i_oParentEvent.i_oHTMLObj)
+    {
+      this.i_oHTMLObj = $(this.i_oObjResponse.find('> showhtml').html()).appendTo(
+        this.i_oParentEvent.i_oHTMLObj.find('.registrationconn'));    
+      this.i_oObjResponse.find('> invaliddata > input').each(function(){
+        HighlightInvalInput($(this).attr('name'), $(this).attr('message'), self.i_oHTMLObj);
+      });
+      this.i_oHTMLObj.attr('pk', this.i_sPK);      
+    }
   };
   
   this.InitBaseAjaxSubmit = function(){
     var self = this;
-    this.i_oHTMLobj.on('click', '.ajaxsubmit', function(event){
+    this.i_oHTMLObj.on('click', '.ajaxsubmit', function(event){
       event.stopPropagation();
       event.preventDefault();
       if ($(this).attr('ajaxtype') === 'delete')
-        DeleteEvent();
+        self.i_oParentEvent.DeleteRegistration(self.i_sPK);
       else
       {
-        var form = $(this).closest('form');
+        var form = self.i_oHTMLObj.find('form');
         var data = $(this).attr('data');
-        EventAjax(
-          'RegistrationAjax',
-          'RegistrationAxajType=' + $(this).attr('ajaxtype') + 
-          '&RegistrationPK=' + self.i_sPK + 
+        self.SendAjax(
+          $(this).attr('ajaxtype'),
           ((form) ? '&' + form.serialize() : '') + 
-          ((data) ? '&' + data : ''),
-          function(resp){
-            ProcessEventState(resp);
-          }
-        );
+          ((data) ? '&' + data : ''));
       }
     });
   };
 
-  this.Close = function(){};
+  this.Close = function(){
+    if (this.i_oHTMLObj !== null)
+      this.i_oHTMLObj.remove();
+  };
   
-  // zavolame konstruktor
-  this.Create(a_oEventHTMLObj, a_sStateXML);
+  this.SendAjax = function(a_sType, a_sData){
+    console.log("Registration.SendAjax("  + a_sType + ", "  + a_sData + "}");
+    this.i_oParentEvent.SendAjax(
+      "RegistrationAjax", 
+      "&RegistrationAxajType=" + a_sType + 
+      "&RegistrationPK=" + this.i_sPK + 
+      ((a_sData !== "") ? '&' + a_sData : ''));    
+  };
 };

@@ -103,24 +103,12 @@ class Event extends ResponsiveObject
     {
       switch ($a_sType)
       {
-        case 'newregistration':
-          $break = false;
-          foreach ($this->i_aRegistrations as $reg)
-            if ($reg->i_tState === ObjectState::osNew) 
-            {
-              $break = true;
-              break;
-            }
-          if ($break) break;
-          $v_oRegPrototype = REGISTRATION_TYPE;
-          $v_oRegPrototype = new $v_oRegPrototype();
-          $v_oRegPrototype->GetColumnByName($v_oRegPrototype->i_aDBAliases['eventPK'])->SetValue($this->i_iPK);
-          array_unshift($this->i_aRegistrations, $v_oRegPrototype);
-          break;
+        case 'newregistration': $this->AddRegistration(0); break;
         case 'deletegistration':
                     
           break;
         case 'RegistrationAjax':
+          
           $v_iRegPK = false;
           if (isset($_POST['RegistrationPK']))
             $v_iRegPK = intval($_POST['RegistrationPK']);
@@ -129,25 +117,31 @@ class Event extends ResponsiveObject
             $this->i_oAlertStack.Push('red', 'Chyba: neplatné číslo rezervace.');
             Logging::WriteLog(LogType::Error, 
               'Event->ProcessAjax: on "RegistrationAjax" is nod valid registration PK: "' . $_POST['RegistrationPK'] . '"');
+            break;
           }
-          foreach ($this->i_aRegistrations as $reg)
+          
+          $a_iIndex = 0;
+          $v_oReg = $this->FindRegistration($v_iRegPK, $a_iIndex);
+          if ($v_oReg === null)
           {
-            if ($reg->i_iPK == $v_iRegPK) 
-            {
-              if (isset($_POST['RegistrationAxajType']))
-                $reg->ProcessAjax($_POST['RegistrationAxajType']);
-              else
-              {
-                $this->i_oAlertStack.Push('red', 'Chyba: neplatný typ dotazu.');
-                Logging::WriteLog(LogType::Error, 
-                  'Event->ProcessAjax: on "RegistrationAjax" invalid AjaxType not defined');
-              }
-              return;
-            }
+            $this->i_oAlertStack.Push('red', 'Chyba: neplatné číslo rezervace.');
+            Logging::WriteLog(LogType::Error, 
+              'Event->ProcessAjax: on "RegistrationAjax" registration not found PK: "' . $_POST['RegistrationPK'] . '"');
+            break;
           }
-          $this->i_oAlertStack.Push('red', 'Chyba: neplatné číslo rezervace.');
-          Logging::WriteLog(LogType::Error, 
-            'Event->ProcessAjax: on "RegistrationAjax" registration not found PK: "' . $_POST['RegistrationPK'] . '"');
+          
+          if (isset($_POST['RegistrationAxajType']))
+          {
+            $v_oReg->ProcessAjax($_POST['RegistrationAxajType']);
+            if($v_oReg->i_tState == ObjectState::osClose)
+              $this->RemoveRegistration($v_iRegPK);            
+          }   
+          else
+          {
+            $this->i_oAlertStack.Push('red', 'Chyba: neplatný typ dotazu.');
+            Logging::WriteLog(LogType::Error, 
+              'Event->ProcessAjax: on "RegistrationAjax" invalid AjaxType not defined');
+          }
           break;
         default:
           parent::ProcessAjax($a_sType);    
@@ -272,6 +266,9 @@ class Event extends ResponsiveObject
    * -- automaticke doplneni hodnot
    * {`colname`_VAL} - nahradi za string hodnotu z kolekce sloupcu pro prislusny nazev sloupce `colname`
    * 
+   * -- dalsi generovane constanty
+   * {REGISTRATION_COUNT} - počet registrací
+   * 
    * @param string $a_sTemplatePath - cesta k sablone
    */
   protected function LoadHTMLTemplate($a_sTemplatePath)
@@ -299,6 +296,7 @@ class Event extends ResponsiveObject
     $html = str_replace('{NAME_COL}', strtolower($this->i_sEventNameColName), $html);
     $html = str_replace('{DESC_COL}', strtolower($this->i_sEventdescColName), $html);
     
+    $html = str_replace('{REGISTRATION_COUNT}', strval(count($this->i_aRegistrations)), $html);
     
     foreach ($this->i_aColumns as $column)
     {
@@ -346,5 +344,43 @@ class Event extends ResponsiveObject
       }
     }
     return true;
+  }
+  
+  protected function AddRegistration($a_iPK)
+  {
+    if ($a_iPK === 0)
+      foreach ($this->i_aRegistrations as $reg)
+        if ($reg->i_tState === ObjectState::osNew) 
+          return $reg;
+    
+    $v_oRegPrototype = REGISTRATION_TYPE;
+    $v_oRegPrototype = new $v_oRegPrototype($a_iPK);
+    
+    if ($a_iPK === 0)
+      $v_oRegPrototype->GetColumnByName($v_oRegPrototype->i_aDBAliases['eventPK'])->SetValue($this->i_iPK);
+    
+    array_unshift($this->i_aRegistrations, $v_oRegPrototype);
+    return $v_oRegPrototype;
+  }
+  
+  protected function DeleteRegistration($a_iPK)
+  {
+    // TODO: znicit registraci
+    return null;
+  }
+  protected function RemoveRegistration($a_iPK)
+  {
+    $v_Index = 0;
+    $this->FindRegistration($a_iPK, $v_Index);
+    unset($this->i_aRegistrations[$v_Index]);
+    $this->i_aRegistrations = array_values($this->i_aRegistrations);
+  }
+  
+  protected function FindRegistration($a_iPK, &$a_iIndex)
+  {
+    for ($a_iIndex = 0; $a_iIndex < count($this->i_aRegistrations); $a_iIndex++)
+     if ($this->i_aRegistrations[$a_iIndex]->i_iPK === $a_iPK) 
+       return $this->i_aRegistrations[$a_iIndex];
+    return null;
   }
 } 
