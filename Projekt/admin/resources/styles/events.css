@@ -5,16 +5,46 @@
 .event_owerwiew > div
 {
   display: table-cell;
+  vertical-align: middle;
 }
 .event_owerwiew .time
 {
-  min-width: 58px;
-  padding-right: 5px;
+  padding-right: 8px;
+  padding-left: 5px;
   font-size: 20px;  
+}
+.event[state="open"] .event_owerwiew .time
+{
+  border-right: 3px solid rgb(50,255,50);
+}
+.event[state="hidden"] .event_owerwiew .time
+{
+  border-right: 3px solid rgb(245,200,50);
+}
+.event[state="full"] .event_owerwiew .time
+{
+  border-right: 3px solid #8cc8ff;
 }
 .event_owerwiew .content
 {
-  
+  width: 100%;
+  padding-right: 8px;
+  padding-left: 8px;
+}
+.event_owerwiew .content > div:first-child
+{
+  font-weight: bold;
+  font-size:  15px;
+  padding-bottom: 5px;
+}
+.event_owerwiew .content table
+{
+  border-collapse: collapse;
+}
+.event_owerwiew .content table td
+{
+  font-size: 12px;
+  padding-left: 5px;
 }
 
 /*
@@ -73,7 +103,7 @@
 {
   position: relative;
   float: right; 
-  top: -30px;
+  top: +2px;
 }
 
 /* ------------------REGISTRATIONS ------------------------------------------ */

@@ -262,32 +262,38 @@ function in_array(a_var, a_Array)
   return false;
 }
 
-function CreateDeleteConfirm(a_oParent, a_sMessage, CallBack)
+/**
+ * Vytvori listu s definovanymi podtvrzovacimi akcemi
+ * 
+ * @param {type} a_oParent
+ * @param {type} a_sClass
+ * @param {type} a_sMessage
+ * @param {type} v_aButtons
+ * @param {type} CallBack
+ * @returns {undefined}
+ */
+function CreateConfirm(a_oParent, a_sClass, a_sMessage, a_aButtons, CallBack)
 {
-  var end = false;
-  a_oParent.siblings().each(function(){
-    if ($(this).attr('class') == 'deleteconfirm')
-    {
-      end = true;
-      return false;
-    }
-  });
-    
-  if (end)
+  if (a_oParent.next().hasClass('confirm'))
     return;
   
-  $('.deleteconfirm').slideUp(150, function (){
+  $('.confirm').slideUp(150, function (){
     $(this).remove();
   });
   
   var v_shtml = 
-    '<div class="deleteconfirm">' + 
+    '<div class="confirm' + ((a_sClass.length > 0) ? ' ' + a_sClass : '') + '">' + 
       '<div class="message">' + a_sMessage + '</div>'+
-      '<div class="delactions">'+
-        '<button name="ok">Ano</button>' + 
-        '<button name="storno">Zrušit</button>' +
-      '</div>'+
-    '</div>';
+      '<div class="confirmactions">';
+  for (var i = 0; i < a_aButtons.length; i++)
+  {
+    v_shtml += 
+      '<button name="' + ((a_aButtons[i].submit === true) ? 'ok' : 'cancel') + '">' + 
+        a_aButtons[i].message + 
+      '</button>';
+  }
+  v_shtml += '</div></div>';
+  
   var v_ohtml = $(v_shtml);
   v_ohtml.hide();
   v_ohtml.insertAfter(a_oParent);
@@ -303,4 +309,12 @@ function CreateDeleteConfirm(a_oParent, a_sMessage, CallBack)
     });
   });
   v_ohtml.slideDown(150);
+}
+function CreateDeleteConfirm(a_oParent, a_sMessage, CallBack)
+{
+  var v_aButtons = [];
+  v_aButtons.push({submit: true, message: 'Odstranit'});
+  v_aButtons.push({submit: false, message: 'Zrušit'});
+  
+  CreateConfirm(a_oParent, 'delete', a_sMessage, v_aButtons, CallBack);
 }

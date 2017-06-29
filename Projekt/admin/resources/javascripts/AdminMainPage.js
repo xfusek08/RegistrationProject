@@ -91,7 +91,7 @@ function LoadEventsOnDay(datestring, CallBack)
       {    
         $(xml).find("event_html").each(function(){
           html = 
-            '<div class="event" pk="' + $(this).attr('pk') + '" state"' + $(this).attr('state') + '">' + 
+            '<div class="event" pk="' + $(this).attr('pk') + '" state="' + $(this).attr('state') + '">' + 
               $(this).html() +
             '</div>';
           $(html).appendTo('.adm-dayevents-view');

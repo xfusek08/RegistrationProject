@@ -23,9 +23,9 @@ abstract class ResponsiveObject extends DatabaseEntity
   // typ: AlertStack
   public $i_oAlertStack;
 
-  // Zasobnik akci, ktere se budou provadet s kazdou odpovedi klientovi
+  // fronta akci, ktere se budou provadet s kazdou odpovedi klientovi
   // typ: array
-  public $i_aActionStack;
+  public $i_aActions;
   
   // Priznak, zda se ma proveds obnoveni dat na strance
   // typ: boolean
@@ -201,14 +201,15 @@ abstract class ResponsiveObject extends DatabaseEntity
   
   public function AddAction($a_sActionStr)
   {
-    array_push($this->i_aActionStack, $a_sActionStr);
+    array_push($this->i_aActions, $a_sActionStr);
   }
+  
   public function GetAxtionsXML()
   {
     
     $res = '<actions>';    
-    while (count($this->i_aActionStack) > 0)
-       $res .= '<action>' . array_shift($this->i_aActionStack) . '</action>';
+    while (count($this->i_aActions) > 0)
+       $res .= '<action>' . array_shift($this->i_aActions) . '</action>';
     $res .= '</actions>';
     return $res;
   }
@@ -221,7 +222,8 @@ abstract class ResponsiveObject extends DatabaseEntity
       $this->AddAction('Close');      
       return;
     }
-    $this->AddAction('ShowHtml');
+    // ShowHtml jde jako prni
+    array_unshift($this->i_aActions, 'ShowHtml');
     switch ($this->i_tState)
     {
       case ObjectState::osNew: 

@@ -130,6 +130,14 @@ var Event = function(v_oParent, v_oObjectResponse){
       {
         case 'Close': self.Close(); break;
         case 'ShowHtml': self.ShowHTML(); break;
+        case 'CantAddNew':  
+          CreateConfirm(
+            self.i_oHTMLObj.find('.registarationcaption'), 
+            'warning', 
+            'Není možné přidávat další registrace, kapacita byla naplněna.', 
+            [{submit: false, message: 'ok'}]
+          );
+          break;
         case 'InitNewForm':
         case 'InitEditForm':
         case 'InitOverViewActions': self.InitBaseAjaxSubmit(); break;

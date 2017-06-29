@@ -49,7 +49,7 @@ function CalendarInit(calendar, DateSelectFunc, MonthSelectFunc)
     },
     onChangeMonthYear: function(year, month){ 
       // zmenil se mesic ... aktualizace dat
-      RequestCalendarhData(true, new Date(year, month - 2, 1), new Date(year, month, 1), function(){
+      RequestCalendarhData(false, new Date(year, month - 2, 1), new Date(year, month + 1, 1), function(){
         if (typeof(MonthSelectFunc) === 'function')
           MonthSelectFunc(year, month);
       });
@@ -75,7 +75,6 @@ function AfterLoadDays(calendar, calendarData)
     var date = new Date(year, month, day);
     
     var dayelem = $(calendarData).find('day[date="' + DateToStr(date) + '"]');
-    
     var html =
       '<div class="ondaydata">';
 
@@ -89,7 +88,7 @@ function AfterLoadDays(calendar, calendarData)
         html = html + '<div class="open-event-color">' + openEventCount + '</div>';
       
       if (FullEventCount > 0)
-        html = html + '<div class="full-event-color">' + hiddentEventCount + '</div>';
+        html = html + '<div class="full-event-color">' + FullEventCount + '</div>';
 
       if (hiddentEventCount > 0)
         html = html + '<div class="hidden-event-color">' + hiddentEventCount + '</div>';
@@ -112,7 +111,7 @@ function AfterLoadDays(calendar, calendarData)
  */
 function RequestCalendarhData(asynch, fromdate, todate, CallBack)
 {
-  console.log('RequestCalendarhData()');
+  console.log('RequestCalendarhData(' + DateToStr(fromdate) + ', ' + DateToStr(todate) + ')');
   SendAjaxRequest(
     "type=GetCalendarData"+ 
     "&fromdate=" + DateToStr(fromdate) +  

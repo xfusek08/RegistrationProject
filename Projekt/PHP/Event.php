@@ -27,10 +27,11 @@ class Event extends ResponsiveObject
   public function __construct($a_iPK = 0, $ExternTransaction = false)
   {
     $this->i_bSubmited = false;
-    $this->i_aActionStack = array();
+    $this->i_aActions = array();
     $this->i_aRegistrations = array();
     // inicializace objektu
     $this->i_oAlertStack = new AlertStack();
+    $this->i_bReload = false;
     
     // kontrola spravneho definovani
     if ($this->i_sFromColName !== '')
@@ -117,33 +118,25 @@ class Event extends ResponsiveObject
             break;
           }
           
-          $a_iIndex = 0;
-          $v_oReg = $this->FindRegistration($v_iRegPK, $a_iIndex);
-          if ($v_oReg === null)
-          {
-            $this->i_oAlertStack.Push('red', 'Chyba: neplatné číslo rezervace.');
-            Logging::WriteLog(LogType::Error, 
-              'Event->ProcessAjax: registration not found PK: "' . $_POST['RegistrationPK'] . '"');
-            break;
-          }
-          
           if ($a_sType == 'deletegistration')
           {
-            if ($v_oReg->DeleteFromDB(false))
-            {
-              $this->RemoveRegistration($v_oReg->i_iPK);
+            if (!$this->DeleteRegistration($v_iRegPK))
+              $this->i_oAlertStack.Push('red', 'Chyba: Nepodařílo se vymazat registraci.');
+            else 
               $this->i_oAlertStack->Push('green', 'Smazáno.');              
-            }
-            else
-            {
-              $this->i_oAlertStack.Push('red', 'Chyba: Nepodaříilo se vymazat registraci.');
-              Logging::WriteLog(LogType::Error, 
-                'Event->ProcessAjax: failed to delete registration from db PK: "' . $_POST['RegistrationPK'] . '"');
-              break;
-            }
           }
           else if (isset($_POST['RegistrationAxajType']))
           {
+            $a_iIndex = 0;
+            $v_oReg = $this->FindRegistration($v_iRegPK, $a_iIndex);
+            if ($v_oReg === null)
+            {
+              $this->i_oAlertStack.Push('red', 'Chyba: neplatné číslo rezervace.');
+              Logging::WriteLog(LogType::Error, 
+                'Event->ProcessAjax: registration not found Pk: "' . $v_iRegPK . '"');
+              break;
+            }
+
             $v_oReg->ProcessAjax($_POST['RegistrationAxajType']);
             if($v_oReg->i_tState == ObjectState::osClose)
               $this->RemoveRegistration($v_iRegPK);            
@@ -168,10 +161,17 @@ class Event extends ResponsiveObject
     
     // TODO zkontrolovat pořet registraci + kapacitu a pokud je kapacina naplnena vratit full
     
+    $v_iCount = count($this->i_aRegistrations);
+    $v_iCapacity = $this->GetColumnByName($this->i_sCapacityColName)->GetValue();
+
     $v_iState = $this->GetColumnByName($this->i_sStateColName)->GetValue();
+    if ($v_iCount == $v_iCapacity && $v_iCapacity > 0)
+      $v_iState = 2;
+
     switch ($v_iState)
     {
       case 1: return 'hidden';
+      case 2: return 'full';
       default: return 'open';
     }
   }
@@ -217,11 +217,64 @@ class Event extends ResponsiveObject
       
     return parent::LoadFromPostData($a_sPrefix) + (($v_oTimeCol->i_bValid) ? 1 : 0);
   }
+  
+  public function DeleteFromDB($ExternalTrans = false)
+  {
+    $v_bSucces = true;
+    try
+    {
+      if (!$ExternalTrans)
+        MyDatabase::$PDO->beginTransaction();
+      
+      for ($i = 0; $i < count($this->i_aRegistrations) && $v_bSucces; $i++)
+        $v_bSucces = $this->i_aRegistrations[$i]->DeleteFromDB(true);
+      
+      if ($v_bSucces)
+        $v_bSucces = parent::DeleteFromDB(true);
+      
+      if ($v_bSucces)
+      {
+        if (!$ExternalTrans)
+          MyDatabase::$PDO->commit();
+      } 
+      else
+      {
+        Logging::WriteLog(LogType::Error, 'Event->DeleteFromDB() - Failed to delete event.');
+        $succes = false;
+        if (!$ExternalTrans)
+        {
+          Logging::WriteLog(LogType::Anouncement, "RollBack");
+          MyDatabase::$PDO->rollBack();
+        }
+      }
+    }
+    catch (PDOException $e)
+    {
+      $succes = false;
+      if (!$ExternalTrans)
+      {
+        Logging::WriteLog(LogType::Error, $e->getMessage());
+        Logging::WriteLog(LogType::Anouncement, "RollBack");
+        MyDatabase::$PDO->rollBack();
+      }
+    }
+    return $v_bSucces;
+  }
   // ---------------------------- PROTECTED -------------------------------
   
   protected function GetDayOwerwiewHTML_content()
   {
-    return $this->GetColumnByName($this->i_sEventNameColName)->GetValueAsString();
+    $v_iCapacity = $this->GetColumnByName($this->i_sCapacityColName)->GetValue();
+    $v_sHtml = 
+      '<div>' . $this->GetColumnByName($this->i_sEventNameColName)->GetValueAsString() . '</div>'.
+      '<table>' .
+        '<tr>'.
+          '<td>přihlášeno: '. count($this->i_aRegistrations) . '</td>'.
+          '<td>kapacita: ' . (($v_iCapacity > 0) ? $v_iCapacity : 'neomezeno') . '</td>'.
+        '</tr>'.
+      '</table>';
+    
+    return $v_sHtml;
   }
   
   protected function BuildNewHTML()
@@ -280,6 +333,7 @@ class Event extends ResponsiveObject
    * 
    * -- dalsi generovane constanty
    * {REGISTRATION_COUNT} - počet registrací
+   * {CAPACITY_STATUS} - status o kapacitě podle funckce GetCapacityStatus()
    * 
    * @param string $a_sTemplatePath - cesta k sablone
    */
@@ -309,6 +363,7 @@ class Event extends ResponsiveObject
     $html = str_replace('{DESC_COL}', strtolower($this->i_sEventdescColName), $html);
     
     $html = str_replace('{REGISTRATION_COUNT}', strval(count($this->i_aRegistrations)), $html);
+    $html = str_replace('{CAPACITY_STATUS}', $this->GetCapacityStatus(), $html);
     
     foreach ($this->i_aColumns as $column)
     {
@@ -367,6 +422,12 @@ class Event extends ResponsiveObject
       foreach ($this->i_aRegistrations as $reg)
         if ($reg->i_tState === ObjectState::osNew) 
           return $reg;
+        
+    if ($this->GetState() == 'full')
+    {
+      $this->AddAction('CantAddNew');
+      return null;
+    }
     
     $v_oRegPrototype = REGISTRATION_TYPE;
     $v_oRegPrototype = new $v_oRegPrototype($a_iPK);
@@ -380,9 +441,24 @@ class Event extends ResponsiveObject
   
   protected function DeleteRegistration($a_iPK)
   {
-    // TODO: znicit registraci
-    return null;
+    $a_iIndex = 0;
+    $v_sReg = $this->FindRegistration($a_iPK, $a_iIndex);
+    if ($v_sReg == null)
+    {
+      Logging::WriteLog(LogType::Error, 
+        'Event->DeleteRegistration(): failed to find regeistration Pk: "' . $a_iPK . '"');
+      return false;
+    }
+    if (!$v_sReg->DeleteFromDB(false))
+    {
+      Logging::WriteLog(LogType::Error, 
+        'Event->ProcessAjax: failed to delete registration from db Pk: "' . $a_iPK . '"');
+      return false;
+    }
+    $this->RemoveRegistration($a_iPK);    
+    return true;
   }
+  
   protected function RemoveRegistration($a_iPK)
   {
     $v_Index = 0;
@@ -397,5 +473,21 @@ class Event extends ResponsiveObject
      if ($this->i_aRegistrations[$a_iIndex]->i_iPK === $a_iPK) 
        return $this->i_aRegistrations[$a_iIndex];
     return null;
+  }
+  
+  protected function GetCapacityStatus()
+  {
+    $v_iCount = count($this->i_aRegistrations);
+    $v_iCapacity = $this->GetColumnByName($this->i_sCapacityColName)->GetValue();
+    $v_sRes = $v_iCount . '/';
+    if ($v_iCapacity == 0)
+      $v_sRes .= '-';
+    else
+    {
+      $v_sRes .= $v_iCapacity;
+      if ($v_iCapacity <= $v_iCount)
+        $v_sRes .= ' - plno';
+    }
+    return $v_sRes;
   }
 } 

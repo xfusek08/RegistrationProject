@@ -50,6 +50,7 @@ function validateDateTime($date, $format = DATE_TIME_FORMAT)
 }
 function AddTimeToDate($date, $timeStr)
 {
+  $date = strtotime(date('d.m.Y', $date));
   $time = strtotime($timeStr); 
   if ($time === false)
     return false;

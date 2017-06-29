@@ -279,7 +279,6 @@ function DeleteEvent()
     $event = unserialize($_SESSION['openevent']);
     if (!$event->DeleteFromDB())
     {
-      Logging::WriteLog(LogType::Error, 'DeleteEvent() - failed to delete event.');
       $resp = (new Alert('red', 'Chyba při mazání ' . S_EVENT_2P . '.'))->GetXML() + '<error type="deleteerror"/>';
       $resp .= $event->GetResponse();
       return $resp; 

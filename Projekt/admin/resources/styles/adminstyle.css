@@ -917,26 +917,33 @@ input[type=text].nval.fadeoutcolor
   margin: 0;
 }
 
-.deleteconfirm
+.confirm
 {
   display: block;
   width: 100%;
-  font-weight: 600;
-  letter-spacing: 1px;
-  background: #ff8264;
   height: 30px;
   white-space: nowrap;
-  color: #fff;
 }
-.deleteconfirm > div
+.confirm > div
 {
   padding: 4px;
   display: table-cell;
   line-height: 22px;
 }
-.deleteconfirm .message
+.confirm .message
 {
   width: 100%;
 }
-
+.confirm.delete
+{
+  color: #fff;
+  background: #ff8264;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+.confirm.warning
+{
+  font-weight: 700;
+  background: #ffeb96;
+}
 

@@ -24,7 +24,7 @@ class Registration extends ResponsiveObject
   {
     // inicializace poli predka
     $this->i_bSubmited = false;
-    $this->i_aActionStack = array();
+    $this->i_aActions = array();
     $this->i_oAlertStack = new AlertStack();
     
     // kontrola aliasu potomka
