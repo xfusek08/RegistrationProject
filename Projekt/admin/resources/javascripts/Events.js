@@ -8,10 +8,10 @@
  */
 function CreateEvent(v_sDate, v_oObjConn)
 {
-  console.log("CreateEvent(" + DateToStr(date) + ")");
+  console.log("CreateEvent(" + DateToStr(v_sDate) + ")");
   SendAjaxRequest(
     "type=CreateEvent"+ 
-    "&date=" + DateToStr(date),  
+    "&date=" + DateToStr(v_sDate),  
     true,
     function(response){
       if (ClearContent())
@@ -97,8 +97,6 @@ function SelectFromOverview(a_sPk)
   $('.adm-dayevents-view .event[pk=' + a_sPk + ']').addClass('selected');
 }
 
-var RegistrationOpenPKs = [];
-
 /**
  * Objekt, ktery predstavuje udalost
  * 
@@ -166,7 +164,7 @@ var Event = function(v_oParent, v_oObjectResponse){
       true,
       function(response){
         self.i_oObjResponse = $(response).find('> object_response');
-        self.ProcessState();
+        self.ProcessState();        
       }
     );
   };
@@ -181,7 +179,7 @@ var Event = function(v_oParent, v_oObjectResponse){
       event.stopPropagation();
       event.preventDefault();
       if ($(this).attr('ajaxtype') === 'delete')
-        DeleteEvent();
+        CreateDeleteConfirm(self.i_oHTMLObj.find('.caption').eq(0), 'Opravdu si přejete vymazat událost?', DeleteEvent);        
       else
       {
         var form = self.i_oHTMLObj.find('form');
@@ -196,7 +194,18 @@ var Event = function(v_oParent, v_oObjectResponse){
   
   // -------------------------------- REGISTRACE -------------------------------
   this.DeleteRegistration = function(a_sPK){
-    // TODO: vymmazat registraci
+    for (var i = 0; i < this.i_aRegistrations.length; i++)
+    {
+      if (this.i_aRegistrations[i].i_sPK === a_sPK)
+      {
+        var self = this;
+        var v_oRes = this.i_aRegistrations[i];
+        v_oRes.InitDeleteForm(function(){
+          self.SendAjax('deletegistration','RegistrationPK=' + v_oRes.i_sPK);
+        });
+        break;
+      }
+    }
   };
   
   this.AddRegistration = function(v_oObjectResponse){
@@ -209,35 +218,6 @@ var Event = function(v_oParent, v_oObjectResponse){
     {
       var v_oReg = this.i_aRegistrations[i];
       v_oReg.ProcessState();
-      
-      if (v_oReg.i_sPK == '0') 
-        continue;
-      
-      if (!in_array(v_oReg.i_sPK, RegistrationOpenPKs))
-      {
-        v_oReg.i_oHTMLObj.find('.content').addClass('close').slideUp(0);         
-      }
-      v_oReg.i_oHTMLObj.find('.header').click(function(){
-        var v_oHeader = $(this);
-        var v_oContent = v_oHeader.closest('.registration').find('.content');
-        var pk = v_oHeader.closest('.registration').attr('pk');
-        if (v_oContent.hasClass('close'))
-        {
-          v_oContent.removeClass('close');
-          v_oContent.slideDown(250, function(){
-            RegistrationOpenPKs.push(pk);
-          });
-        }
-        else
-        {
-          v_oContent.slideUp(250, function(){
-            v_oContent.addClass('close');
-            RegistrationOpenPKs.splice(RegistrationOpenPKs.indexOf(pk), 1);
-          });          
-        }
-      });
-    }
-    
-    this.i_oHTMLObj.on('.registration .header');
+    }    
   };
 };

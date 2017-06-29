@@ -1,9 +1,53 @@
 
-<div class="conndetail registration">
+<div class="conndetail registration noclose">
   <form method="post">
-    <div class="caption">Registrace 1</div>
+    <div class="header edit">
+      <div class="caption">Úprava registrace</div>
+      <div class="overview"></div>
+      <div class="actions"></div>
+    </div>
     <div class="content">
-      asd
+      <div>
+        <div class="detail">
+          <table>
+            <tr>
+              <td>Vytvořeno:</td>
+              <td>{CREATED_DATE}, {CREATED_TIME}</td>
+            </tr>
+            <tr>
+              <td>Jméno a příjmení:</td>
+              <td>
+                <input name="rgreg_vclfirstname" type="text" maxlength="100" value="{rgreg_vclfirstname_val}" />
+              </td>
+              <td>
+                <input name="rgreg_vcllastname" type="text" maxlength="100" value="{rgreg_vcllastname_val}" />
+              </td>
+            </tr>
+            <tr>
+              <td>E-mai:</td>
+              <td colspan="2">
+                <input name="rgreg_vclemail" type="text" maxlength="300" value="{rgreg_vclemail_val}" />            
+              </td>
+            </tr>
+            <tr>
+              <td>Telefoní číslo:</td>
+              <td colspan="2">
+                <input name="rgreg_vcltelnumber" type="text" maxlength="100" value="{rgreg_vcltelnumber_val}" />
+              </td>
+            </tr>        
+            <tr>
+              <td>Poznámka:</td>
+              <td colspan="2">
+                <textarea name="rgreg_vtext" maxlength="4000">{rgreg_vtext_val}</textarea>
+              </td>
+            </tr>        
+          </table>  
+          <div class="footer">
+            <button class="ajaxsubmit" ajaxtype="submitdata">Potvrdit</button>
+            <button class="ajaxsubmit" ajaxtype="cancel">Zrušit</button>
+          </div>
+        </div>
+      </div>      
     </div>
   </form>  
 </div>

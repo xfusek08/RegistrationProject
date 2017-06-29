@@ -108,7 +108,10 @@ abstract class ResponsiveObject extends DatabaseEntity
             $this->i_oAlertStack->Push('red', 'Formulář obsahuje nevalidní data.');
         }
         else if ($a_sType == 'cancel')
+        {
+          $this->InitFromDB(false);
           $this->i_tState = ObjectState::osOverview;
+        }
         else
           $invalidRequestType = true;
         break;

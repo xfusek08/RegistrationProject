@@ -30,19 +30,31 @@
   padding-right: 5px;
   font-size: 20px;  
 }
-.eventdetail .caption .name
+.eventdetail .caption
 {
-  font-size: 15px;  
+  white-space: nowrap;
 }
-
-.overview .desctiption textarea
+.eventdetail .caption > div
 {
-  border: none;
-  
+  display: inline-block;
 }
-.overview .desctiption textarea:focus
+.eventdetail .caption 
 {
-  outline: 0;
+  font-size: 20px;
+}
+.eventdetail .caption > div:first-child > div:last-child
+{
+  font-size: 18px;  
+}
+.eventdetail > form > .overview
+{
+  border-bottom: 1px solid rgb(150,150,150);
+  padding-bottom: 25px;
+}
+.eventdetail .overview .desctiption .cap
+{
+  font-weight: bold;
+  padding-bottom: 5px;
 }
 
 .eventdetail .registarationcaption
@@ -52,14 +64,16 @@
   /*color: white;*/
   padding: 5px;
 }
-.eventdetail .registarationcaption > *
-{
-  display: inline-block;  
-}
 .eventdetail .registarationcaption .cap
 {
   font-size: 17px;
   font-weight: bold;
+}
+.eventdetail .registarationcaption .action_bt
+{
+  position: relative;
+  float: right; 
+  top: -30px;
 }
 
 /* ------------------REGISTRATIONS ------------------------------------------ */
@@ -70,37 +84,57 @@
 }
 .registration .header
 {
-  background: rgb(160, 220, 255);
+  background: rgba(158, 218, 245, 1);
   border-bottom: 1px solid rgb(130,130,130);  
   padding: 5px;
+}
+.registration:not(.noclose) .header
+{
   cursor: pointer;
 }
+.registration .header > div
+{
+  display: inline-block;
+}
+.registration .actions
+{
+  display: block;  
+  float: right;
+  height: 0px;
+}
+
 .registration .header .caption
 {
   font-size: 15px;
+  font-weight: 600;
+  color: rgb(50,50,50);  
+  /*letter-spacing: 1px;*/
 }
 .registration .content
 {
+  background: rgb(230,240,255);
   overflow: hidden;
   padding: 0;
-  -webkit-box-shadow: inset 0px 11px 8px -10px rgb(150,150,150),
-                      inset 0px -11px 8px -10px rgb(150,150,150); 
-     -moz-box-shadow: inset 0px 11px 8px -10px rgb(150,150,150),
-                      inset 0px -11px 8px -10px rgb(150,150,150); 
-          box-shadow: inset 0px 11px 8px -10px rgb(150,150,150),
-                      inset 0px -11px 8px -10px rgb(150,150,150); 
+  -webkit-box-shadow: inset 0px 11px 10px -10px rgb(100,100,100),
+                      inset 0px -11px 10px -10px rgb(100,100,100); 
+     -moz-box-shadow: inset 0px 11px 10px -10px rgb(100,100,100),
+                      inset 0px -11px 10px -10px rgb(100,100,100); 
+          box-shadow: inset 0px 11px 10px -10px rgb(100,100,100),
+                      inset 0px -11px 10px -10px rgb(100,100,100); 
 }
 .registration:last-child .content
 {
-  -webkit-box-shadow: inset 0px 11px 8px -10px rgb(150,150,150); 
-     -moz-box-shadow: inset 0px 11px 8px -10px rgb(150,150,150); 
-          box-shadow: inset 0px 11px 8px -10px rgb(150,150,150); 
+  -webkit-box-shadow: inset 0px 11px 10px -10px rgb(100,100,100); 
+     -moz-box-shadow: inset 0px 11px 10px -10px rgb(100,100,100); 
+          box-shadow: inset 0px 11px 10px -10px rgb(100,100,100); 
 }
 .registration .content > div
 {
   padding: 5px;
-  margin-left: 20px;
-  margin-right: 7px;
+  margin-left: 10px;
+  margin-right: 10px;
+  font-size: 14px;
+  font-weight: 400;
 }
 .registration .content table
 {

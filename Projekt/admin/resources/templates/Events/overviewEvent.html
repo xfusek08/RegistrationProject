@@ -2,23 +2,25 @@
 <div class="conndetail eventdetail">
   <form method="post">
     <div class="caption">
-      <div>Událost: {FROM_TIME}, {FROM_DATE} ({FROM_DAY})
-        <div class="menu">
-          <div class="action_bt ajaxsubmit" ajaxtype="edit"><div class="imgconn"><img src="../img/edit.png"></div><div class="textconn">Upravit</div></div>
-          <div class="action_bt ajaxsubmit" ajaxtype="delete"><div class="imgconn"><img src="../img/delete.png"></div><div class="textconn">Vymazat</div></div>
-        </div>
+      <div>
+        <div>{{NAME_COL}_val}</div> 
+        <div>{FROM_TIME}, {FROM_DATE} ({FROM_DAY})</div>
       </div>
-      <div class="name">{{NAME_COL}_val}</div> 
+      <div class="menu">
+        <div class="action_bt ajaxsubmit" ajaxtype="edit"><div class="imgconn"><img src="../img/edit.png"></div><div class="textconn">Upravit</div></div>
+        <div class="action_bt ajaxsubmit" ajaxtype="delete"><div class="imgconn"><img src="../img/delete.png"></div><div class="textconn">Vymazat</div></div>
+      </div>
     </div>
     <div class="content overview">
       <div class="desctiption"> 
-        <div class="cap">Popis události:</div>
-        <textarea maxlength="4000" readonly>{{DESC_COL}_val}</textarea> 
+        <div class="cap">Popis:</div>
+        <div>{{DESC_COL}_val}</div> 
       </div>
     </div>
     <div class="registarationcaption">
-      <div class="cap">Registrace: {REGISTRATION_COUNT}</div>     
-      <div class="action_bt ajaxsubmit" ajaxtype="newregistration" style="padding: 3px; float: right">Vytvořit registraci</div>
+      <div class="cap">Registrace</div>     
+      <div>Registrováno: {REGISTRATION_COUNT}/{{CAPACITY_COL}_val}</div>
+      <div class="action_bt ajaxsubmit" ajaxtype="newregistration"><div class="imgconn"><img src="../img/new.png"></div><div class="textconn">Vytvořit registraci</div></div>
     </div>
     <div class="registrationconn"></div>
   </form>  

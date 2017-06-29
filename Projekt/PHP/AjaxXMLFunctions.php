@@ -138,9 +138,7 @@ function SelectDay($a_sDateTimeString)
   }
   
   $_SESSION['actday'] = date('d.m.Y', $v_iTime);
-  $DateFrom = date('d.m.Y H:i' , $v_iTime);
-  $DateTo = date('d.m.Y H:i' , $v_iTime + (60 * 60 * 24));
-  
+
   $eventPrototype = EVENT_TYPE;
   $eventPrototype = new $eventPrototype();
   
@@ -151,12 +149,13 @@ function SelectDay($a_sDateTimeString)
     '  from'.
     '    ' . $eventPrototype->i_sTableName .
     '  where'.
-    '    ' . $eventPrototype->i_sFromColName . ' >= ? and'.
-    '    ' . $eventPrototype->i_sFromColName . ' <= ?'.
+    '    extract(day from ' . $eventPrototype->i_sFromColName . ') = ? and'.
+    '    extract(month from ' . $eventPrototype->i_sFromColName . ') = ? and'.
+    '    extract(year from ' . $eventPrototype->i_sFromColName . ') = ?'.
     '  order by ' . $eventPrototype->i_sFromColName . '';
   
   $fields = null;
-  if (!MyDatabase::RunQuery($fields, $SQL, false, array($DateFrom, $DateTo)))
+  if (!MyDatabase::RunQuery($fields, $SQL, false, array(date('d' , $v_iTime), date('m' , $v_iTime), date('Y' , $v_iTime))))
   {
     Logging::WriteLog(LogType::Error, 'GetDetailEventsOnDayXML(): Error while selecting events');
     return (new Alert('red', 'Chyba vyhledávání ' . P_EVENT_2P))->GetXML();

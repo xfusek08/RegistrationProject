@@ -261,3 +261,46 @@ function in_array(a_var, a_Array)
 
   return false;
 }
+
+function CreateDeleteConfirm(a_oParent, a_sMessage, CallBack)
+{
+  var end = false;
+  a_oParent.siblings().each(function(){
+    if ($(this).attr('class') == 'deleteconfirm')
+    {
+      end = true;
+      return false;
+    }
+  });
+    
+  if (end)
+    return;
+  
+  $('.deleteconfirm').slideUp(150, function (){
+    $(this).remove();
+  });
+  
+  var v_shtml = 
+    '<div class="deleteconfirm">' + 
+      '<div class="message">' + a_sMessage + '</div>'+
+      '<div class="delactions">'+
+        '<button name="ok">Ano</button>' + 
+        '<button name="storno">Zrušit</button>' +
+      '</div>'+
+    '</div>';
+  var v_ohtml = $(v_shtml);
+  v_ohtml.hide();
+  v_ohtml.insertAfter(a_oParent);
+  v_ohtml.on('click', 'button', function(e){
+    e.preventDefault();
+    if ($(this).attr('name') == 'ok')
+    {
+      if (typeof (CallBack) === 'function')
+        CallBack();
+    }
+    v_ohtml.slideUp(150, function (){
+      v_ohtml.remove();
+    });
+  });
+  v_ohtml.slideDown(150);
+}

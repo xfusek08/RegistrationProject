@@ -84,7 +84,7 @@ class Event extends ResponsiveObject
     parent::__construct($a_iPK, $ExternTransaction);
     $this->i_bLoad_Success = $this->i_bLoad_Success && $this->i_oAlertStack->Count() === 0;
     
-    if (!$this->i_bLoad_Success)
+    if (!$this->i_bLoad_Success && $this->i_iPK > 0)
     {
       Logging::WriteLog(LogType::Error, 'Event.__construct(' . $a_iPK . ') - failed to load event.');
       return;
@@ -105,10 +105,7 @@ class Event extends ResponsiveObject
       {
         case 'newregistration': $this->AddRegistration(0); break;
         case 'deletegistration':
-                    
-          break;
         case 'RegistrationAjax':
-          
           $v_iRegPK = false;
           if (isset($_POST['RegistrationPK']))
             $v_iRegPK = intval($_POST['RegistrationPK']);
@@ -116,7 +113,7 @@ class Event extends ResponsiveObject
           {
             $this->i_oAlertStack.Push('red', 'Chyba: neplatné číslo rezervace.');
             Logging::WriteLog(LogType::Error, 
-              'Event->ProcessAjax: on "RegistrationAjax" is nod valid registration PK: "' . $_POST['RegistrationPK'] . '"');
+              'Event->ProcessAjax: not valid registration PK: "' . $_POST['RegistrationPK'] . '"');
             break;
           }
           
@@ -126,11 +123,26 @@ class Event extends ResponsiveObject
           {
             $this->i_oAlertStack.Push('red', 'Chyba: neplatné číslo rezervace.');
             Logging::WriteLog(LogType::Error, 
-              'Event->ProcessAjax: on "RegistrationAjax" registration not found PK: "' . $_POST['RegistrationPK'] . '"');
+              'Event->ProcessAjax: registration not found PK: "' . $_POST['RegistrationPK'] . '"');
             break;
           }
           
-          if (isset($_POST['RegistrationAxajType']))
+          if ($a_sType == 'deletegistration')
+          {
+            if ($v_oReg->DeleteFromDB(false))
+            {
+              $this->RemoveRegistration($v_oReg->i_iPK);
+              $this->i_oAlertStack->Push('green', 'Smazáno.');              
+            }
+            else
+            {
+              $this->i_oAlertStack.Push('red', 'Chyba: Nepodaříilo se vymazat registraci.');
+              Logging::WriteLog(LogType::Error, 
+                'Event->ProcessAjax: failed to delete registration from db PK: "' . $_POST['RegistrationPK'] . '"');
+              break;
+            }
+          }
+          else if (isset($_POST['RegistrationAxajType']))
           {
             $v_oReg->ProcessAjax($_POST['RegistrationAxajType']);
             if($v_oReg->i_tState == ObjectState::osClose)
@@ -140,7 +152,7 @@ class Event extends ResponsiveObject
           {
             $this->i_oAlertStack.Push('red', 'Chyba: neplatný typ dotazu.');
             Logging::WriteLog(LogType::Error, 
-              'Event->ProcessAjax: on "RegistrationAjax" invalid AjaxType not defined');
+              'Event->ProcessAjax: invalid AjaxType not defined');
           }
           break;
         default:
@@ -310,6 +322,9 @@ class Event extends ResponsiveObject
   // --------------------------- REGISTRATION MANAGEMENT ----------------------------------
   protected function LoadRegistrations($ExternTransaction)
   {
+    if ($this->i_iPK === 0) // zadne registrace, tudis nacteni v poradku
+      return true;
+    
     // 1. najdeme vsechny pk registraci na konkreti udalost
     $v_oRegPrototype = REGISTRATION_TYPE;
     $v_oRegPrototype = new $v_oRegPrototype();

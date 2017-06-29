@@ -18,6 +18,8 @@ class Registration extends ResponsiveObject
    */
   public $i_aDBAliases;
   
+  public $i_bIsOpen = false;
+  
   public function __construct($a_iPK = 0, $ExternTransaction = false)
   {
     // inicializace poli predka
@@ -73,7 +75,13 @@ class Registration extends ResponsiveObject
   }
   
   // ---------------------------- PUBLIC ---------------------------------------
-
+  
+  public function SaveNew()
+  {
+    $this->i_bIsOpen = true;
+    return parent::SaveNew();
+  }
+  
   // ---------------------------- PROTECTED ------------------------------------
     
   protected function BuildNewHTML()
@@ -93,7 +101,11 @@ class Registration extends ResponsiveObject
   
   protected function GetResponseAddition()
   {
-    return '<primary_key>' . $this->i_iPK . '</primary_key>';
+    $v_sRes = 
+      '<primary_key>' . $this->i_iPK . '</primary_key>' . 
+      '<isopendetail>' . BoolTo01Str($this->i_bIsOpen) . '</isopendetail>';
+    $this->i_bIsOpen = false;
+    return $v_sRes;        
   }
   protected function DefColumns() {}
   

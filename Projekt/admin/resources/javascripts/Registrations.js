@@ -1,3 +1,4 @@
+var v_aOpenRegStatus = [];
 
 var Registration = function(v_oParentEvent, v_oObjectResponse)
 {
@@ -5,6 +6,7 @@ var Registration = function(v_oParentEvent, v_oObjectResponse)
   this.i_oParentEvent = v_oParentEvent;
   this.i_oHTMLObj = null;
   this.i_sPK = '';
+  this.i_bClosed = true;
   
   this.ProcessState = function(){
     console.log('Registration.ProcessState()');
@@ -12,7 +14,8 @@ var Registration = function(v_oParentEvent, v_oObjectResponse)
     var self = this;
     
     self.i_sPK = self.i_oObjResponse.find('primary_key').text();
-
+    self.i_bClosed = self.i_oObjResponse.find('isopendetail').text() === '0';
+    
     this.i_oObjResponse.find('> actions action').each(function(){
       switch ($(this).text())
       {
@@ -37,6 +40,31 @@ var Registration = function(v_oParentEvent, v_oObjectResponse)
       });
       this.i_oHTMLObj.attr('pk', this.i_sPK);      
     }
+    
+    if (this.i_oHTMLObj.hasClass('noclose'))
+    {
+      v_aOpenRegStatus[this.i_sPK] = 'open';
+      return;
+    }
+    
+    if (!this.i_bClosed)
+      v_aOpenRegStatus[this.i_sPK] = 'open';
+
+    var v_sStatus = v_aOpenRegStatus[this.i_sPK];
+    if (v_sStatus === 'closed' || v_sStatus !== 'open')
+    {
+      this.i_bClosed = true;
+      this.CloseDetail(0);
+    }
+    else
+      this.i_bClosed = false;
+
+    this.i_oHTMLObj.find('.header').click(function(){
+      if (self.i_bClosed)
+        self.OpenDetail();
+      else
+        self.CloseDetail();
+    });
   };
   
   this.InitBaseAjaxSubmit = function(){
@@ -52,7 +80,7 @@ var Registration = function(v_oParentEvent, v_oObjectResponse)
         var data = $(this).attr('data');
         self.SendAjax(
           $(this).attr('ajaxtype'),
-          ((form) ? '&' + form.serialize() : '') + 
+          ((form) ? form.serialize() : '') + 
           ((data) ? '&' + data : ''));
       }
     });
@@ -67,8 +95,28 @@ var Registration = function(v_oParentEvent, v_oObjectResponse)
     console.log("Registration.SendAjax("  + a_sType + ", "  + a_sData + "}");
     this.i_oParentEvent.SendAjax(
       "RegistrationAjax", 
-      "&RegistrationAxajType=" + a_sType + 
+      "RegistrationAxajType=" + a_sType + 
       "&RegistrationPK=" + this.i_sPK + 
       ((a_sData !== "") ? '&' + a_sData : ''));    
+  };
+  
+  this.InitDeleteForm = function(CallBack){
+    CreateDeleteConfirm(this.i_oHTMLObj.find('.header'), 'Opravdu si přejete vymazat registraci?', CallBack);
+  };
+  
+  this.OpenDetail = function(a_iSpeed = 250){
+    var self = this;
+    this.i_oHTMLObj.find('.content').slideDown(a_iSpeed, function(){
+      self.i_bClosed = false;
+      v_aOpenRegStatus[self.i_sPK] = 'open';
+    });   
+  };
+  
+  this.CloseDetail = function(a_iSpeed = 250){
+    var self = this;
+    this.i_oHTMLObj.find('.content').slideUp(a_iSpeed, function(){
+      self.i_bClosed = true;
+      v_aOpenRegStatus[self.i_sPK] = 'closed';
+    });   
   };
 };
