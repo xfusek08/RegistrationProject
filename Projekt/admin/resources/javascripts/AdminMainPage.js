@@ -62,6 +62,7 @@ function DaySelect(datepicker, v_sDateString, v_fnCallBack)
   console.log('DaySelect()');
   ClearContent();
   datepicker.datepicker('setDate', v_sDateString);
+  $('.daydate').text(v_sDateString);
   LoadEventsOnDay(v_sDateString, v_fnCallBack);  
 }
 

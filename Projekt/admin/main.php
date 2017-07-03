@@ -53,7 +53,7 @@ if (isset($_POST['logout']))
           <div style="display: table-row;">
             <div class="adm-dayevents-frame">
               <div class="adm-dayevents-caption">
-                <?php echo ucfirst(P_EVENT_1P); ?> pro den: <?php echo (isset($_SESSION['actday']) ? $_SESSION['actday'] : '--'); ?>
+                <?php echo ucfirst(P_EVENT_1P); ?> pro den: <span class="daydate"><?php echo (isset($_SESSION['actday']) ? $_SESSION['actday'] : '--'); ?></span>
               </div>
               <div class="adm-dayevents-tools">
                 <div class="adm-dayevents-tools-newbt">Vytvořit <?php echo S_EVENT_1P; ?></div>

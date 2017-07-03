@@ -260,6 +260,22 @@ class Event extends ResponsiveObject
     }
     return $v_bSucces;
   }
+
+  public function GetCapacityStatus()
+  {
+    $v_iCount = count($this->i_aRegistrations);
+    $v_iCapacity = $this->GetColumnByName($this->i_sCapacityColName)->GetValue();
+    $v_sRes = $v_iCount . '/';
+    if ($v_iCapacity == 0)
+      $v_sRes .= '-';
+    else
+    {
+      $v_sRes .= $v_iCapacity;
+      if ($v_iCapacity <= $v_iCount)
+        $v_sRes .= ' - plno';
+    }
+    return $v_sRes;
+  }
   // ---------------------------- PROTECTED -------------------------------
   
   protected function GetDayOwerwiewHTML_content()
@@ -473,21 +489,5 @@ class Event extends ResponsiveObject
      if ($this->i_aRegistrations[$a_iIndex]->i_iPK === $a_iPK) 
        return $this->i_aRegistrations[$a_iIndex];
     return null;
-  }
-  
-  protected function GetCapacityStatus()
-  {
-    $v_iCount = count($this->i_aRegistrations);
-    $v_iCapacity = $this->GetColumnByName($this->i_sCapacityColName)->GetValue();
-    $v_sRes = $v_iCount . '/';
-    if ($v_iCapacity == 0)
-      $v_sRes .= '-';
-    else
-    {
-      $v_sRes .= $v_iCapacity;
-      if ($v_iCapacity <= $v_iCount)
-        $v_sRes .= ' - plno';
-    }
-    return $v_sRes;
   }
 } 
