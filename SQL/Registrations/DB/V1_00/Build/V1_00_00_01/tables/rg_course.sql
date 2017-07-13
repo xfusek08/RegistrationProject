@@ -3,10 +3,10 @@ echo rg_course
 
 create table rg_course (
   rgcour_pk          	ND_CODE not null,
+  rgcour_flanguage    ND_CODE not null,
   rgcour_dtfrom       ND_TIMESTAMP not null,
   rgcour_istate       ND_INT default 0 not null,
   rgcour_icapacity    ND_INT default 0 not null,
-  rgcour_flanguage    ND_CODE not null,
   rgcour_vname        ND_TEXT,
   rgcour_vdesc        ND_DESCRIPTION);
 

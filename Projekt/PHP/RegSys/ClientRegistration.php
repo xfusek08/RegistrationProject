@@ -1,17 +1,19 @@
 <?php
-require_once 'System/Enums.php';
-require_once 'System/Utils.php';
-require_once 'System/Settings.php';
-require_once 'System/Logs.php';
-require_once 'System/Database.php';
-require_once 'System/DatabaseEntity.php';
-require_once 'System/Alerts.php';
+require_once 'PHP/System/Enums.php';
+require_once 'PHP/System/Utils.php';
+require_once 'PHP/System/Settings.php';
+require_once 'PHP/System/Logs.php';
+require_once 'PHP/System/Database.php';
+require_once 'PHP/System/DatabaseEntity.php';
+require_once 'PHP/System/Alerts.php';
 
 require_once 'ResponsiveObject.php';
 require_once 'Event.php';
 require_once 'Registration.php';
-require_once 'Course.php';
-require_once 'CourseRegistration.php';
+
+require_once 'PHP/CourseRegSys/Language.php';
+require_once 'PHP/CourseRegSys/Course.php';
+require_once 'PHP/CourseRegSys/CourseRegistration.php';
 
 function ProcessGlobalAjaxRequest()
 {

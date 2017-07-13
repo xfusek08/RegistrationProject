@@ -1,0 +1,49 @@
+
+<div class="conndetail eventdetail">
+  <form method="post">
+    <div class="caption">Nový Kurz: {FROM_DATE} ({FROM_DAY})</div>
+    <div class="content">
+      <table>
+        <tr class="eventname">
+          <td>Název:</td>
+          <td>
+            <input name="{NAME_COL}" type="text" maxlength="100" value="{{NAME_COL}_val}" />
+          </td>
+        </tr>
+        <tr>
+          <td>Jazyk:</td>
+          <td>
+            <select name="rgcour_flanguage">
+              <option value="-">--</option>
+              {COURSE_LANG_SEL_OPTIONS}
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td>Čas zahájení:</td>
+          <td>
+            <div class="timeinput">
+              <input size="1" name="{FROM_COL}" type="text" value="{FROM_TIME}" />
+              <button class="seltimebt" title="vybrat čas"><img src="../img/clock.png"></button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>Kapacita:</td>
+          <td>
+            <input style="width: 68px;" name="{CAPACITY_COL}" type="number" value="{{CAPACITY_COL}_val}" />
+            (0 - neomezeno)
+          </td>
+        </tr>        
+      </table>
+      <div class="desctiption"> 
+        <div class="cap">Popis:</div>
+        <textarea maxlength="4000" name="{DESC_COL}">{{DESC_COL}_val}</textarea>
+      </div>
+    </div>
+    <div class="footer">
+      <button class="ajaxsubmit" ajaxtype="submitdata">Potvrdit</button>
+      <button class="ajaxsubmit" ajaxtype="close">Zrušit</button>
+    </div>
+  </form>  
+</div>

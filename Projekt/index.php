@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'php/ClientRegistration.php';
+require_once 'php/RegSys/ClientRegistration.php';
 
 $v_oChosenCourse = new Course(0);
 $v_oRegistration = new CourseRegistration(0);

@@ -302,6 +302,7 @@ class DBEntColumn
   public function SetValue($a_xValue)
   {
     $this->i_bValid = true;
+    $this->i_sInvalidDataMsg = '';
 
     if ($this->i_tDataType == DataType::Bool)
       $this->i_xValue = BoolTo01($a_xValue);   

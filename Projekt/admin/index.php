@@ -1,5 +1,6 @@
 <?php
 session_start();
+// system
 require_once '../PHP/System/Enums.php';
 require_once '../PHP/System/Utils.php';
 require_once '../PHP/System/Settings.php';
@@ -8,12 +9,17 @@ require_once '../PHP/System/Database.php';
 require_once '../PHP/System/DatabaseEntity.php';
 require_once '../PHP/System/Alerts.php';
 
-require_once '../PHP/ResponsiveObject.php';
-require_once '../PHP/Event.php';
-require_once '../PHP/Registration.php';
-require_once '../PHP/Course.php';
-require_once '../PHP/CourseRegistration.php';
-require_once '../PHP/AjaxXMLFunctions.php';
+// registracni system
+require_once '../PHP/RegSys/ResponsiveObject.php';
+require_once '../PHP/RegSys/Event.php';
+require_once '../PHP/RegSys/Registration.php';
+require_once '../PHP/RegSys/AjaxXMLFunctions.php';
+
+//specializovany registracni system pro kurzy
+require_once '../PHP/CourseRegSys/Language.php';
+require_once '../PHP/CourseRegSys/Course.php';
+require_once '../PHP/CourseRegSys/CourseRegistration.php';
+
 
 $IsSigned = isset($_SESSION['logged']);
 

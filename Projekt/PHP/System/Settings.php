@@ -42,9 +42,9 @@ define("P_EVENT_2P", "kurzů");
 define("NEW_EVENT", "nový kurz");
 
 // soubory se sablonami
-define("NEW_EVENT_HTML", ".\\resources\\templates\\Events\\newEvent.html");
-define("EDIT_EVENT_HTML", ".\\resources\\templates\\Events\\editEvent.html");
-define("OVERVIEW_EVENT_HTML", ".\\resources\\templates\\Events\\overviewEvent.html");
+define("NEW_EVENT_HTML", ".\\resources\\templates\\Courses\\newCourse.html");
+define("EDIT_EVENT_HTML", ".\\resources\\templates\\Courses\\editCourse.html");
+define("OVERVIEW_EVENT_HTML", ".\\resources\\templates\\Courses\\overviewCourse.html");
 
 // soubory se sablonami
 define("NEW_REGISTRATION_HTML", ".\\resources\\templates\\Registrations\\newReg.html");
