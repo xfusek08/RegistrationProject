@@ -41,6 +41,9 @@ $(document).ready(function(){
     if (ClearContent(e))
       OpenEvent($(this).attr('pk'));
   });
+  $("body").on("click", ".ajaxsubmit", function(e){
+    ProcessGeneralAjaxSubmit($(this), e);
+  });
   GetNavigation();
 });
 
@@ -155,9 +158,16 @@ function GetNavigation()
     true,
     function(response){
       var v_sActDate = $(response).find('actday').text();
-      DaySelect($('#datepicker'), v_sActDate, function(){        
-        var v_oEvent = new Event($('.adm-day-conn'), $(response).find('openevent > object_response'));
-        v_oEvent.ProcessState();
+      DaySelect($('#datepicker'), v_sActDate, function(){   
+        var v_oEvent = $(response).find('openevent > object_response');
+        var v_oPage = $(response).find('openpage');
+        if (v_oEvent.length > 0)
+        {
+          v_oEvent = new Event($('.adm-day-conn'), $(response).find('openevent > object_response'));
+          v_oEvent.ProcessState();
+        }
+        else if (v_oPage.length > 0)
+          v_oPage = new ResponsivePage($('.adm-day-conn'), v_oPage.html());        
       });      
     }
   );   
@@ -178,3 +188,37 @@ function ReloadData(CallBack)
   });
 }
 
+function ProcessGeneralAjaxSubmit(actionButton, event, CallBack)
+{
+  console.log('ProcessGeneralAjaxSubmit()');
+  event.stopPropagation();
+  event.preventDefault();
+
+   var form = actionButton.closest('form');
+   var data = actionButton.attr('data');
+   SendAjaxRequest(
+      "type=" + actionButton.attr('ajaxtype') + 
+      ((form) ? '&' + form.serialize() : '') + 
+      ((data) ? '&' + data : ''),
+      true,
+      function(response){
+        $(response).find('general_response').find('actions action').each(function(){
+          var v_sAction = $(this).text();
+          switch (v_sAction)
+          {
+            case 'NewResponsivePage':
+              var v_oResponsivePage = new ResponsivePage(
+                $('.adm-day-conn'), 
+                $(response).find('general_response pagedata').html()
+              );
+              break;
+            case 'NewResponsiveObject':
+              // tady mozna inicializovat kliknuti na udalost
+              // rozhodnout ktery se ma vytvorit
+              break;
+          }
+        });
+        
+      }
+  );  
+}

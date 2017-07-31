@@ -13,6 +13,8 @@ function ProcessGlobalAjaxRequest()
     case 'CloseEvent' : echo CloseEvent(); break;
     case 'DeleteEvent' : echo DeleteEvent(); break;
     case 'EventAjax' : echo EventAjax(); break;
+    case 'openSettings' : echo OpenSettings(); break;
+    case 'RespPageAjax' : echo RespPageAjax(); break;
   }
   echo '</respxml>';
 }
@@ -161,8 +163,12 @@ function SelectDay($a_sDateTimeString)
     return (new Alert('red', 'Chyba vyhledávání ' . P_EVENT_2P))->GetXML();
   }
   $v_iacktOpenPK = 0;
-  if (isset($_SESSION['openevent']))
-    $v_iacktOpenPK = unserialize($_SESSION['openevent'])->i_iPK;
+  if (isset($_SESSION['opencontent']))
+  {
+    $v_oEventTest = unserialize($_SESSION['opencontent']);
+    if ($v_oEventTest instanceof Event) // kontrola jesti je otevrena stranka instanci udalosti, jestli ano zjistime pk
+      $v_iacktOpenPK = $v_oEventTest->i_iPK;
+  }
   
   $response = '<dayevents date="' . $_SESSION['actday'] . '">';
   for ($i = 0; $i < count($fields); $i++)
@@ -211,10 +217,14 @@ function GetNavigation()
   
   $v_sRes = '<navigation>';
   $v_sRes .= '<actday>' . $v_sActDayString . '</actday>';
-  $v_sRes .= 
-    '<openevent>' . 
-      (isset($_SESSION['openevent']) ? unserialize($_SESSION['openevent'])->GetResponse() : '') . 
-    '</openevent>';
+  if (isset($_SESSION['opencontent']))
+  {
+    $openContent = unserialize($_SESSION['opencontent']);
+    if ($openContent instanceof Event)
+      $v_sRes .= '<openevent>' . $openContent->GetResponse() . '</openevent>';
+    else if ($openContent instanceof ResponsivePage)
+      $v_sRes .= '<openpage>' . $openContent->GetResponse() . '</openpage>';
+  }
   $v_sRes .= '</navigation>';
   return $v_sRes;
 }
@@ -233,7 +243,7 @@ function CreateEvent($dateString)
   $event = new $event();
   $resp = $event->GetColumnByName($event->i_sFromColName)->SetValueFromString($dateString);  
   $resp = $event->GetResponse();
-  $_SESSION['openevent'] = serialize($event);
+  $_SESSION['opencontent'] = serialize($event);
   return $resp;
 }
 /**
@@ -259,7 +269,7 @@ function OpenEvent($a_sPK)
     return (new Alert('red', 'Chyba při otevírání ' . S_EVENT_2P . '.'))->GetXML();    
   }
   $resp = $event->GetResponse();
-  $_SESSION['openevent'] = serialize($event);
+  $_SESSION['opencontent'] = serialize($event);
   return $resp;
 }
 /**
@@ -268,22 +278,22 @@ function OpenEvent($a_sPK)
  */
 function CloseEvent()
 {
-  if (isset($_SESSION['openevent']))
-    unset($_SESSION['openevent']);
+  if (isset($_SESSION['opencontent']))
+    unset($_SESSION['opencontent']);
 }
 
 function DeleteEvent()
 {
-  if (isset($_SESSION['openevent']))
+  if (isset($_SESSION['opencontent']))
   {
-    $event = unserialize($_SESSION['openevent']);
+    $event = unserialize($_SESSION['opencontent']);
     if (!$event->DeleteFromDB())
     {
       $resp = (new Alert('red', 'Chyba při mazání ' . S_EVENT_2P . '.'))->GetXML() + '<error type="deleteerror"/>';
       $resp .= $event->GetResponse();
       return $resp; 
     }
-    unset($_SESSION['openevent']);
+    unset($_SESSION['opencontent']);
     return (new Alert('green', 'Smazáno.'))->GetXML();  
   }
   else
@@ -295,14 +305,49 @@ function DeleteEvent()
  */
 function EventAjax()
 {
-  if (isset($_SESSION['openevent']))
+  if (isset($_SESSION['opencontent']))
   {
-    $event = unserialize($_SESSION['openevent']);
+    $event = unserialize($_SESSION['opencontent']);
     $event->ProcessAjax($_POST['EventAjaxType']);
     $resp = $event->GetResponse();
-    $_SESSION['openevent'] = serialize($event);
+    $_SESSION['opencontent'] = serialize($event);
     return $resp;
   }
   else
     WriteAlert('red', 'Událost není vytvořena.');
+}
+
+function OpenSettings()
+{
+  $resp = '<general_response>';
+  $resp .= '<actions>';
+  $resp .= '<action>NewResponsivePage</action>';
+  $resp .= '</actions>';
+  
+  $page = SETTING_PAGEOJB;
+  $page = new $page();
+  $resp .= '<pagedata>' . $page->GetResponse() . '</pagedata>';
+  $_SESSION['opencontent'] = serialize($page);
+  $resp .= '</general_response>';
+  return $resp; 
+}
+
+function RespPageAjax()
+{
+  $resp = '';
+  if (isset($_SESSION['opencontent']))
+  {
+    $page = unserialize($_SESSION['opencontent']);
+    $page->ProcessAjax($_POST['RespPageAjaxType']);
+    $resp = $page->GetResponse();
+    if ($page->i_bClosed)
+    {
+      unset($_SESSION['opencontent']);
+    }
+    else
+      $_SESSION['opencontent'] = serialize($page);
+  }
+  else
+    WriteAlert('red', 'Stránka není vytvořena.');
+  return $resp; 
 }

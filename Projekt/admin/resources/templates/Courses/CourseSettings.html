@@ -1,0 +1,84 @@
+
+<div class="conndetail eventdetail">
+  <script>
+    var v_sTableData = '{LANGUAGE_XML_DATA}';
+    function LoadTable()
+    {
+      var v_oTabDataObj = $(v_sTableData);
+      var v_oTable = $('.langtable');
+      v_oTabDataObj.find('language').each(function(){        
+        var v_sLang =
+          '<tr pk="' + $(this).attr('pk') + '">'+
+            '<td>' + $(this).attr('name') + '</td>'+
+            '<td>' + $(this).attr('shortcut') + '</td>'+
+            '<td style="text-overflow: ellipsis; overflow: hidden; white-space: normal;">' + 
+              $(this).attr('desc') + 
+            '</td>'+
+            '<td>'+
+              '<div class="imgconn edit" title="upravit"><img src="../img/editSmall.png"/></div>';
+            
+        if ($(this).attr('deletable') == '1')
+          v_sLang += '<div class="imgconn delete ajaxsubmit" ajaxtype="delete_language" data="pk=' + $(this).attr('pk') + '" title="odstranit"><img src="../img/cross.png"/></div>';
+        else
+          v_sLang += '<div class="imgconn disabled" title="Jazyk nelze odstranit, již se používá."><img src="../img/crossDeactivated.png"/></div>';
+        
+        v_sLang +=       
+            '</td>'+
+          '</tr>';
+          
+        var v_oLang = $(v_sLang).insertBefore(v_oTable.find('.newlang'));        
+        v_oLang.on('click', '.edit', function(){
+          //$('.newlang').remove();
+          v_oLang.html(
+            '<td><input type="text" name="editrglng_text" maxlength="100" value="' + v_oLang.find('td:eq(0)').text() + '"/></td>'+
+            '<td><input type="text" name="editrglng_ident"  maxlength="10" value="' + v_oLang.find('td:eq(1)').text() + '"/></td>'+
+            '<td><input type="text" name="editrglng_desc"  maxlength="4000" value="' + v_oLang.find('td:eq(2)').text() + '"/></td>'+
+            '<td style="min-width: 80px;max-width: 80px;">'+
+              '<div class="action_bt ajaxsubmit" ajaxtype="edit_language" data="pk=' + v_oLang.attr('pk') + '">uložit</div>'+
+              '<div class="action_bt ajaxsubmit" ajaxtype="storno">zrušit</div>'+
+            '</td>'
+          );
+        });
+      });
+    }
+    $(document).ready(function(){
+      LoadTable();
+      $('.langtable').on('mouseover', '.imgconn.delete', function(){
+        $(this).children('img').attr('src', '../img/crossActive.png');
+      });
+      $('.langtable').on('mouseleave', '.imgconn.delete', function(){
+        $(this).children('img').attr('src', '../img/cross.png');
+      });
+      $('.langtable').on('mouseover', '.imgconn.edit', function(){
+        $(this).children('img').attr('src', '../img/editSmallActive.png');
+      });
+      $('.langtable').on('mouseleave', '.imgconn.edit', function(){
+        $(this).children('img').attr('src', '../img/editSmall.png');
+      });
+    });
+  </script>  
+  <form method="post">
+    <div class="caption">Nastavení</div>
+    <div class="content">
+      <h3>Jazyky</h3>
+      <hr/>
+      <table class="langtable">
+        <thead>
+          <th style="width: 100px;">Název</th>
+          <th style="width: 50px;">Zkratka</th>
+          <th style="width: 100%;">Popis</th>
+          <th style="width: 70px;"></th>
+        </thead>
+        <tbody>
+          <tr class="newlang">
+            <td><input type="text" name="rglng_text" maxlength="100"/></td>
+            <td><input type="text" name="rglng_ident"  maxlength="10"/></td>
+            <td><input type="text" name="rglng_desc"  maxlength="4000"/></td>
+            <td><div class="action_bt ajaxsubmit" ajaxtype="new_language">Přidat</div></td>
+          </tr>
+        </tbody>
+      </table>
+      
+    </div>
+  </form>  
+</div>

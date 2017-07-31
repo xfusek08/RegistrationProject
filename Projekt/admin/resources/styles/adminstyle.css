@@ -190,13 +190,47 @@ alert
 .adm-content .adm-day-header
 {
   background-color: rgba(70,160,255,1);
-  height: 30px;
-  line-height: 30px;
+  height: 26px;
+  line-height: 26px;
   font-size: 16px;
-  width: calc(100% - 10px);
+  width: 100%;
   font-weight: bold;
   color: white;
-  padding-left: 10px;
+  display: table;
+}
+.adm-content .adm-day-header .action_bt
+{
+  height: 100%;
+  background: transparent;
+  margin: 0;
+  border: none;
+  border-right: 2px solid rgba(255,255,255,0.5);
+}
+.adm-content .adm-day-header .action_bt:hover
+{
+  background: rgba(220,250,255,0.5);
+}
+.adm-content .adm-day-header .action_bt:hover > div
+{
+  color: rgb(255,255,100);
+}
+.adm-content .adm-day-header .action_bt > div
+{
+  height: 18px; 
+  line-height: 18px;
+  color: white;
+  font-weight: bold;
+  border: none;  
+}
+.adm-content .adm-day-header .action_bt .imgconn
+{
+  padding-right: 0;
+}
+.adm-content .adm-day-header .action_bt img
+{
+  height: 15px;
+  padding-top: 4px;
+  filter: invert(100%);
 }
 .adm-calend div
 {
@@ -947,3 +981,48 @@ input[type=text].nval.fadeoutcolor
   background: #ffeb96;
 }
 
+.conndetail table.langtable
+{
+  margin: 0;
+  padding: 0; 
+  width: 100%;
+  white-space: nowrap;
+  table-layout: fixed;
+  text-align: left;
+}
+.conndetail table.langtable td,
+.conndetail table.langtable th
+{
+  padding-left: 8px;
+  padding-right: 8px;
+}
+.conndetail table.langtable td:first-child
+{
+}
+.conndetail table.langtable th:last-child,
+.conndetail table.langtable td:last-child
+{
+  max-width: 50px;
+  min-width: 50px;
+  text-align: right;
+}
+.conndetail table.langtable .imgconn
+{
+  display: inline-block;
+  padding: 3px;
+}
+.conndetail table.langtable .imgconn:not(.disabled)
+{
+  cursor: pointer;
+}
+.conndetail table.langtable td:last-child img
+{
+  height: 20px;
+}
+.conndetail table.langtable .newlang td:first-child
+{
+}
+.conndetail table.langtable .action_bt
+{
+  padding: 3px;
+}

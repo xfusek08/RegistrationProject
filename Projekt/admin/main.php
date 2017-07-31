@@ -21,6 +21,7 @@ if (isset($_POST['logout']))
 <script type="text/javascript" charset="UTF-8" src="resources/javascripts/Events.js"></script>
 <script type="text/javascript" charset="UTF-8" src="resources/javascripts/RegistrationMover.js"></script>
 <script type="text/javascript" charset="UTF-8" src="resources/javascripts/AdminMainPage.js"></script>
+<script type="text/javascript" charset="UTF-8" src="resources/javascripts/ResponsivePage.js"></script>
     
 <div class="adm-body">  
   <form method="post">
@@ -72,12 +73,17 @@ if (isset($_POST['logout']))
         <div class="adm-upconn">
           <div>
             <div class="adm-day-header">
-              <div class="adm-search">
-                Vyhledat registrace: 
-                <div class="search-textbox">
-                  <input type="text"/>
-                  <img src="../img/SearchGlass.png"/>
-                </div>
+              <div class="action_bt ajaxsubmit" ajaxtype="searchReg">
+                <div class="imgconn"><img src="../img/searchGlass.png"/></div>
+                <div class="textconn">Hledat registrace</div>
+              </div>
+              <div class="action_bt ajaxsubmit" ajaxtype="searchCourses">
+                <div class="imgconn"><img src="../img/searchGlass.png"/></div>
+                <div class="textconn">Hledat kurzy</div>
+              </div>
+              <div class="action_bt ajaxsubmit" ajaxtype="openSettings" style="float: right; border: none;">
+                <div class="imgconn"><img src="../img/Settings.png"/></div>
+                <div class="textconn">Nastavení</div>
               </div>
             </div>
             <div class="adm-day-conn"></div>             

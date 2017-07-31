@@ -11,6 +11,7 @@ require_once '../PHP/System/Alerts.php';
 
 // registracni system
 require_once '../PHP/RegSys/ResponsiveObject.php';
+require_once '../PHP/RegSys/ResponsivePage.php';
 require_once '../PHP/RegSys/Event.php';
 require_once '../PHP/RegSys/Registration.php';
 require_once '../PHP/RegSys/AjaxXMLFunctions.php';
@@ -19,7 +20,7 @@ require_once '../PHP/RegSys/AjaxXMLFunctions.php';
 require_once '../PHP/CourseRegSys/Language.php';
 require_once '../PHP/CourseRegSys/Course.php';
 require_once '../PHP/CourseRegSys/CourseRegistration.php';
-
+require_once '../PHP/CourseRegSys/CourseSettingPage.php';
 
 $IsSigned = isset($_SESSION['logged']);
 
@@ -32,7 +33,7 @@ if (isset($_POST['ajax']) && $IsSigned)
 <!doctype html>
 <html>
   <head>
-    <title>Správce rezervací</title>
+    <title>Správce registrací kurzů</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta http-equiv="Content-Language" content='cs' />                  
 

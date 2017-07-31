@@ -47,37 +47,16 @@ class Course extends Event
   {
     $v_oLanguage = new Language($this->GetColumnByName('rgcour_flanguage')->GetValue());
     $html = parent::LoadHTMLTemplate($a_sTemplatePath);
-    $html = str_replace('{COURSE_LANG_SEL_OPTIONS}', $this->GetLangSelectOptions(), $html);
+    $html = 
+      str_replace(
+        '{COURSE_LANG_SEL_OPTIONS}', 
+        $v_oLanguage->GetLangSelectOptions($this->GetColumnByName('rgcour_flanguage')->GetValue()), 
+        $html
+      );
     $html = str_replace('{LANGUAGE_TEXT}', $v_oLanguage->GetColumnByName('rglng_text')->GetValue(), $html);
+    while (count($v_oLanguage->i_oAlertStack))
+      $this->i_oAlertStack->Push($v_oLanguage->i_oAlertStack.Pop());
     return $html;
   }
   
-  private function GetLangSelectOptions()
-  {
-    $SQL = 
-      'select'.
-      '    rglng_pk,'.
-      '    rglng_text'.
-      '  from'.
-      '    rg_language';
-    
-    $fields = null;
-    if (!MyDatabase::RunQuery($fields, $SQL, false))
-    {
-      $this->i_oAlertStack->Push('red', 'Chyba při hledání jazyků.');
-      Logging::WriteLog(LogType::Error, 'Course->GetLangSelectOptions(): Error while selecting languages.');
-      return '';
-    }
-    
-    $v_sResult = '';
-    for ($i = 0; $i < count($fields); $i++)
-    {
-      $v_sResult .= 
-        '<option' .
-          (($fields[$i]['RGLNG_PK'] == $this->GetColumnByName('rgcour_flanguage')->GetValue()) ? ' selected' : '') . 
-          ' value=' . $fields[$i]['RGLNG_PK'] . '>' . $fields[$i]['RGLNG_TEXT'] . 
-        '</option>' . PHP_EOL;
-    }
-    return $v_sResult;
-  }
 }
