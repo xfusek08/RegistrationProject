@@ -22,10 +22,7 @@ function DaySelect(datepicker, v_sDateString, v_fnCallBack)
 {
   console.log('DaySelect()');
   datepicker.datepicker('setDate', v_sDateString);
-  LoadCoursesonDay(v_sDateString);  
-  $('.dayview').find('.content').css({
-    maxHeight: ($('.ui-datepicker-group table').outerHeight()) + 'px'
-  });
+  LoadCoursesonDay(v_sDateString);
 }
 
 
@@ -101,7 +98,7 @@ function CalendarInit(calendar, DateSelectFunc, MonthSelectFunc)
 function LoadDayData(result, datepicker, date)
 {
   var courses = null;
-  courses = $(CalendarDataXML).find('course[day="' + DateToStr(date) + '"]');
+  courses = $(CalendarDataXML).find('day[date="' + DateToStr(date) + '"]');
   var nowdate = new Date();
   nowdate.setHours(0, 0, 0, 0);
   if (courses.length > 0 && date >= nowdate) // na dnesek je uz pozde ? 
@@ -113,32 +110,38 @@ function LoadDayData(result, datepicker, date)
 function LoadCoursesonDay(a_sDateString)
 {
   var DayView = $('.dayview');
-  DayView.css('display', 'table-cell');
-
+  //DayView.css('display', 'block');
   if (DayView.attr("date") != a_sDateString)
   {
 
     $("input[name=c_selterm]").remove();
 
     DayView.attr("date", a_sDateString);
-    DayView.find('.conn .header').text($.datepicker.formatDate('DD', StrToDate(a_sDateString)) + ' ' + a_sDateString);
+    DayView.find('.conn .header').text(
+      'Lekce pro den: ' + a_sDateString + '(' + $.datepicker.formatDate('DD', StrToDate(a_sDateString)) + ')');
 
     var DayViewContent = DayView.find('.conn .content');
     DayViewContent.empty();
-    var elem = '';
+    var html = '';
 
-    $(CalendarDataXML).find('course[day="' + a_sDateString + '"]').each(function ()
+    $(CalendarDataXML).find('day[date="' + a_sDateString + '"] language').each(function ()
     {
-      elem = 
-        '<div class="course" pk="' + $(this).attr("pk") + '" title="Vybrat pro podrobnosti">' + 
-          '<table><td>' + $(this).attr('time') + '</td><td>' + $(this).attr('name') + '</td></table>'+
-        '</div>';
-      $(elem).appendTo(DayViewContent);
+      html += '<p class="lang">' + $(this).attr('text') + ':</p>';
+      $(this).find('course').each(function(){
+        html += 
+          '<div class="course" pk="' + $(this).attr("pk") + '" title="Vybrat pro podrobnosti">' + 
+            '<div class="time">' + $(this).attr('time') + '</div>' + 
+            '<div class="name">' + $(this).attr('name') + '</div>' +
+          '</div>';
+      });
     });
-
+    DayViewContent.append(html);
+    DayView.slideDown(200);
     DayViewContent.on('click', '.course', function ()
     {
-      // TODO: vybrat kurz
+      $('.selected').removeClass('selected');
+      $(this).addClass('selected');
+      SelectCourse($(this).attr('pk'));
     });
   }  
 }
@@ -161,3 +164,29 @@ function RequestCalendarhData(asynch, fromdate, todate, CallBack)
 }
 
 /************************** CALENDAR END **************************************/
+
+function SelectCourse(a_sPK, CallBack)
+{
+  console.log('SelectCourse(' + a_sPK + ')');
+  SendAjaxRequest(
+    "type=SelectCourse"+ 
+    "&pk=" + a_sPK,
+    true, 
+    function(response)
+    {
+      var v_bNoslide = $('.selectedcourse').length > 0;
+      $('.selectedcourse').remove();
+      var v_oObj = $(response).find('courhtml > div');
+      if (!v_bNoslide)
+        v_oObj
+          .css({display: "none"})
+          .appendTo('td.selcourse')
+          .slideDown(100);
+      else
+        v_oObj.appendTo('td.selcourse');
+        
+      if (typeof(CallBack) == 'function')
+        CallBack(response);
+    }
+  );
+}

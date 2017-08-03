@@ -56,3 +56,7 @@ function AddTimeToDate($date, $timeStr)
     return false;
   return strtotime('+' . date('H', $time) . ' hour +' . date('i', $time) . ' minutes', $date);
 }
+function WriteAlert($a_sColor, $a_sMessage)
+{
+  echo '<alert><color>' . $a_sColor . '</color><message>' . $a_sMessage . '</message></alert>';
+}

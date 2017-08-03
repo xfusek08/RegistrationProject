@@ -3,6 +3,7 @@ function ProcessGlobalAjaxRequest()
 {
   $type = $_POST['type'];
   echo '<respxml>';
+  
   switch ($type)
   {
     case 'GetCalendarData' : echo GetCalendarDataXML($_POST['fromdate'], $_POST['todate']); break;

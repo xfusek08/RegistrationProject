@@ -50,7 +50,7 @@
   vertical-align: central;
   line-height: 22px;
   display: table-cell;
-  width: 30px;
+  width: 39px;
   height: 30px;  
   background: white;
 }
@@ -72,7 +72,6 @@
 {
   color: rgb(150,150,150);
 }
-.dayview .conn .header,
 .ui-datepicker-header
 {  
   height: 30px;
@@ -134,67 +133,64 @@
 }
 .dayview
 {
-  background: #f0f0f0;
+  
   display: none;     
 }
 .dayview .conn
 {
-  display: table;
-  margin: 0;
-  padding: 0;    
+  width: 100%;
 }
 .dayview .conn .header
 {
-  margin: 0;
-  padding: 0;
-  padding-left: 8px;
-  padding-right: 8px;
-  line-height: 31px;  
-  border-left: 2px solid rgba(240,240,240,1);
-  min-width: 150px;
-  text-align: center;
+  font-size: 15px;
+  font-weight: bold;
+  margin-top: 8px;
+  padding: 5px;
 }
 .dayview .conn .content
 {
-  min-height: 100%;
-  max-height: 100%;
-  color: black;
   font-size: 16px;
   text-align: center;
-  padding-left: 3px;
-  padding-right: 3px;
-  padding-bottom: 2px;
-  /*border: 1px solid red;  */
-  overflow-y: auto;
+  padding: 3px;
+}
+.dayview .conn .content .lang
+{
+  font-weight: bold;
+  font-size: 12px;
+  text-align: left;
+  margin: 5px;
+  margin-left: 0;
+}
+.dayview .conn .content table
+{
+  color: black;
 }
 .dayview .conn .content .course
 {
+  color: black;
+  margin: 5px;
   border: 1px solid rgba(150,150,150,1);  
-  margin-top: 3px;
   background: white;
   cursor: pointer;
 }
-.dayview .conn .content .course table
+.dayview .conn .content .course:hover
 {
-  padding: 0;
-  margin: 0;
+  background: rgba(240,255,160,1);
 }
-.dayview .conn .content .course table td
+.dayview .conn .content .course > div
 {
-  font-weight: 400;  
-  color: black;  
-}
-.dayview .conn .content .course table td:first-child
-{
-  text-align: center;
-  padding: 3px;
-  font-weight: 600;  
-}
-.dayview .conn .content .course table td:last-child
-{
+  display: table-cell;
   text-align: left;
-  padding: 3px;
-  font-size: 13px;
+  vertical-align: middle;
+}
+.dayview .conn .content .course .time
+{
+  padding: 2px;
+}
+.dayview .conn .content .course .name
+{
+  font-size: 11px;
+  padding-left: 3px;
 }
 .dayview .conn .content-header
 {
@@ -207,17 +203,18 @@
 }
 .dayview .conn .content .course.selected
 {
-  /*border: solid 2px rgba(255,100,10, 1);*/
   
+  /*border: solid 2px rgba(255,100,10, 1);*/
+  /*
   outline-style: inset;
   outline-color: rgba(255,100,10, 1);
   outline-width: 2px;
-  
+  */
   
   font-weight: bold;
-  /*
-   -webkit-box-shadow:inset 0px 0px 0px 1px rgba(255,100,10, 1);
-      -moz-box-shadow:inset 0px 0px 0px 1px rgba(255,100,10, 1);
-           box-shadow:inset 0px 0px 0px 1px rgba(255,100,10, 1);
-  */  
+  
+   -webkit-box-shadow: 0px 0px 0px 2px rgba(255,100,10, 1);
+      -moz-box-shadow: 0px 0px 0px 2px rgba(255,100,10, 1);
+           box-shadow: 0px 0px 0px 2px rgba(255,100,10, 1);
+   
 }
