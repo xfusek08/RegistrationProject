@@ -1,3 +1,7 @@
+input[type=submit]
+{
+  float: right;
+}
 .ui-datepicker
 {
   width: 400px;
@@ -131,21 +135,9 @@
 {
   display: table-cell;
 }
-.dayview
-{
-  
-  display: none;     
-}
 .dayview .conn
 {
   width: 100%;
-}
-.dayview .conn .header
-{
-  font-size: 15px;
-  font-weight: bold;
-  margin-top: 8px;
-  padding: 5px;
 }
 .dayview .conn .content
 {
@@ -156,41 +148,71 @@
 .dayview .conn .content .lang
 {
   font-weight: bold;
-  font-size: 12px;
+  font-size: 14px;
   text-align: left;
   margin: 5px;
   margin-left: 0;
 }
-.dayview .conn .content table
+.dayview .conn .content table.daycourses
 {
-  color: black;
+  margin: 0;
+  margin-left: 4%;
+  font-size: 12px;
+  width: 96%;
+  table-layout: fixed;
+  border-collapse: collapse;
 }
-.dayview .conn .content .course
+.dayview .conn .content table.daycourses th
 {
-  color: black;
-  margin: 5px;
-  border: 1px solid rgba(150,150,150,1);  
-  background: white;
+  text-align: center;
+}
+.dayview .conn .content table.daycourses th:first-child,
+.dayview .conn .content table.daycourses td:first-child
+{
+  width: 50px;
+  font-size: 15px;
+}
+.dayview .conn .content table.daycourses th:last-child,
+.dayview .conn .content table.daycourses td:last-child
+{
+  width: 80px;
+}
+.dayview .conn .content table.daycourses td:not(:first-child)
+{
+  text-align: left;
+  padding-left: 10px;
+}
+.dayview .conn .content table.daycourses tbody tr td
+{
+  border: 1px dotted white; 
+  padding: 2px;
   cursor: pointer;
 }
-.dayview .conn .content .course:hover
+.dayview .conn .content table.daycourses tbody tr.disabled td
 {
-  background: rgba(240,255,160,1);
+  color: rgb(200,200,200);
+  border-color: rgb(200,200,200);
+  cursor: initial;
 }
-.dayview .conn .content .course > div
+.dayview .conn .content table.daycourses .course.selected
 {
-  display: table-cell;
-  text-align: left;
-  vertical-align: middle;
-}
-.dayview .conn .content .course .time
-{
-  padding: 2px;
-}
-.dayview .conn .content .course .name
-{
-  font-size: 11px;
-  padding-left: 3px;
+  
+  /*border: solid 2px rgba(255,100,10, 1);*/
+  /*
+  outline-style: inset;
+  outline-color: rgba(255,100,10, 1);
+  outline-width: 2px;
+  */
+  background: rgba(255,250,100, 0.4);
+  font-weight: bold;
+  
+  /*
+  
+   -webkit-box-shadow: 0px 0px 0px 2px rgba(255,100,10, 1);
+      -moz-box-shadow: 0px 0px 0px 2px rgba(255,100,10, 1);
+           box-shadow: 0px 0px 0px 2px rgba(255,100,10, 1);
+  */
+   
 }
 .dayview .conn .content-header
 {
@@ -201,20 +223,28 @@
   height: 21px;
   text-align: center;
 }
-.dayview .conn .content .course.selected
+
+.reg-form table td
 {
-  
-  /*border: solid 2px rgba(255,100,10, 1);*/
-  /*
-  outline-style: inset;
-  outline-color: rgba(255,100,10, 1);
-  outline-width: 2px;
-  */
-  
+  white-space: nowrap;
+  vertical-align: top;
+}
+.reg-form table td:last-child
+{
+  width: 100%;
+}
+.coursedetail
+{
+  margin: 8px;
+}
+.coursedetail .caption
+{
+  font-size: 15px;
   font-weight: bold;
-  
-   -webkit-box-shadow: 0px 0px 0px 2px rgba(255,100,10, 1);
-      -moz-box-shadow: 0px 0px 0px 2px rgba(255,100,10, 1);
-           box-shadow: 0px 0px 0px 2px rgba(255,100,10, 1);
-   
+}
+p.error
+{
+  font-size: 14px;
+  color: red;
+  font-weight: bold;
 }

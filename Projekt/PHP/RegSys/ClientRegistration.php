@@ -21,7 +21,7 @@ function ProcessGlobalAjaxRequest()
   echo '<respxml>';
   switch ($type)
   {
-    case 'GetCalendarData' : echo GetCalendarDataXML($_POST['fromdate'], $_POST['todate']); break;
+    case 'GetCalendarData' : echo GetCalendarDataXML($_POST['fromdate'], $_POST['todate'], $_POST['language']); break;
   }
   echo '</respxml>';
 }
@@ -48,10 +48,14 @@ function ProcessGlobalAjaxRequest()
  *  </calendardata>
  */
 
-function GetCalendarDataXML($fromString, $toString)
+function GetCalendarDataXML($fromString, $toString, $language)
 {
   $DateFrom = date('d.m.Y' , strtotime($fromString));  
   $DateTo = date('d.m.Y' , strtotime($toString));
+  $v_iLanguagePK = 0;
+  
+  if (intval($language)!== false)
+    $v_iLanguagePK = intval($language);
   
   $SQL = 
     'select'.
@@ -64,15 +68,26 @@ function GetCalendarDataXML($fromString, $toString)
     '    rg_course'.
     '    left join rg_language on rglng_pk = rgcour_flanguage'.
     '  where'.
+    '    rgcour_istate != 1 and'.
     '    rgcour_dtfrom >= ? and'.
-    '    rgcour_dtfrom <= ?'.
+    '    rgcour_dtfrom <= ?';
+  
+  if ($v_iLanguagePK > 0)
+    $SQL .= ' and rgcour_flanguage = ?'; 
+ 
+  $SQL .= 
     '  order by'.
     '    datefrom,'.
     '    rglng_text collate NC_UTF8_CZ,'.
     '    timefrom';
 
   $fields = null;
-  if (!MyDatabase::RunQuery($fields, $SQL, false, array($DateFrom, $DateTo)))
+  $params = array($DateFrom, $DateTo);
+  
+  if ($v_iLanguagePK > 0)
+    array_push($params, $v_iLanguagePK);
+  
+  if (!MyDatabase::RunQuery($fields, $SQL, false, $params))
   {
     echo 'fail';
     return;
@@ -113,7 +128,7 @@ function GetCalendarDataXML($fromString, $toString)
     {          
       $newDate = (date('d.m.Y', strtotime($fields[$i + 1]['DATEFROM']))) !== $actDate;
       $newMonth = (date('m', strtotime($fields[$i + 1]['DATEFROM']))) !== $actMonthNum;
-      $newLanguage = $fields[$i + 1]['RGLNG_TEXT'] !== $actLanguage;
+      $newLanguage = $fields[$i + 1]['RGLNG_TEXT'] !== $actLanguage || $newDate;
     }
     else 
     {
@@ -144,7 +159,7 @@ function GetChosenCourseHTML($a_oChosenCourse)
   if ($a_oChosenCourse->i_iPK != 0)
   {
     ?>
-    <div class="selectedcourse">
+    <div class="coursedetail" pk="<?php echo $a_oChosenCourse->i_iPK; ?>">
       <div class="caption">
         <div>
           <div><?php echo $a_oChosenCourse->GetColumnByName('rgcour_vname')->GetValueAsString(); ?></div> 

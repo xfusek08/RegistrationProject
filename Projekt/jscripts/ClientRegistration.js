@@ -2,7 +2,15 @@ $(document).ready(function ()
 { 
   drawmonth = (new Date()).getMonth();
   CalendarInit($('#datepicker'), DaySelect);
-  
+  HighlightAllInvalInputs($('body'));
+  $('body').on('change', 'select[name="languagesel"]', function(){
+    ChangeLanguage($('#datepicker'));
+  });
+  $('body').on('click', '.daycourses .course:not(.disabled)', function ()
+  {
+    SelectCourse($(this).attr('pk'));
+  });
+  SelectCourseCalendByPK($('.coursechoose').attr('pk'));
 });
 
 /**
@@ -18,11 +26,13 @@ $(document).ready(function ()
  * @param string v_sDateString  - datum na ktere se ma presunout v textove podobe
  * @param function v_fnCallBack - funkce, ktera se zavola po dokonceni vsech kroku
  */
-function DaySelect(datepicker, v_sDateString, v_fnCallBack)
+function DaySelect(datepicker, v_sDateString, CallBack)
 {
   console.log('DaySelect()');
   datepicker.datepicker('setDate', v_sDateString);
   LoadCoursesonDay(v_sDateString);
+  if (typeof(CallBack) == 'function')
+    CallBack();
 }
 
 
@@ -107,18 +117,17 @@ function LoadDayData(result, datepicker, date)
   }
 }
 
-function LoadCoursesonDay(a_sDateString)
+function LoadCoursesonDay(a_sDateString, force)
 {
+  $('.coursedetailview').remove();
+  console.log('LoadCoursesonDay(' + a_sDateString + ')');
   var DayView = $('.dayview');
   //DayView.css('display', 'block');
-  if (DayView.attr("date") != a_sDateString)
+  if (DayView.attr("date") != a_sDateString || force)
   {
-
-    $("input[name=c_selterm]").remove();
-
     DayView.attr("date", a_sDateString);
-    DayView.find('.conn .header').text(
-      'Lekce pro den: ' + a_sDateString + '(' + $.datepicker.formatDate('DD', StrToDate(a_sDateString)) + ')');
+    DayView.find('.conn .date').text(
+      a_sDateString + ' (' + $.datepicker.formatDate('DD', StrToDate(a_sDateString)) + ')');
 
     var DayViewContent = DayView.find('.conn .content');
     DayViewContent.empty();
@@ -127,23 +136,33 @@ function LoadCoursesonDay(a_sDateString)
     $(CalendarDataXML).find('day[date="' + a_sDateString + '"] language').each(function ()
     {
       html += '<p class="lang">' + $(this).attr('text') + ':</p>';
+      html += '<table class="daycourses">';
       $(this).find('course').each(function(){
         html += 
-          '<div class="course" pk="' + $(this).attr("pk") + '" title="Vybrat pro podrobnosti">' + 
-            '<div class="time">' + $(this).attr('time') + '</div>' + 
-            '<div class="name">' + $(this).attr('name') + '</div>' +
-          '</div>';
+          '<tr class="course' + (($(this).attr('state') == 'open') ? '' : ' disabled') + '"' +
+              ' pk="' + $(this).attr("pk") + '"' + 
+              ' title="' + (($(this).attr('state') == 'open') ? 'vybrat pro podrobnosti' : 'obsazeno - nelze vybrat') + '">' + 
+            '<td class="time">' + $(this).attr('time') + '</div>' + 
+            '<td class="name">' + $(this).attr('name') + '</div>' +
+            '<td class="capacity">' + $(this).attr('capacity') + '</div>' +
+          '</tr>';
       });
+      html += '</table>';      
     });
     DayViewContent.append(html);
     DayView.slideDown(200);
-    DayViewContent.on('click', '.course', function ()
-    {
-      $('.selected').removeClass('selected');
-      $(this).addClass('selected');
-      SelectCourse($(this).attr('pk'));
-    });
   }  
+}
+
+function ChangeLanguage(calendar)
+{
+  var v_dtActDate = calendar.datepicker('getDate');
+  var year = v_dtActDate.getFullYear();
+  var month = v_dtActDate.getMonth();
+  var selectedpk = $('.dayview .course.selected').attr('pk');
+  RequestCalendarhData(false, new Date(year, month - 2, 1), new Date(year, month + 1, 1), function(){
+    DaySelect(calendar, DateToStr(v_dtActDate), LoadCoursesonDay(DateToStr(v_dtActDate), true));    
+  });
 }
 
 function RequestCalendarhData(asynch, fromdate, todate, CallBack)
@@ -151,6 +170,7 @@ function RequestCalendarhData(asynch, fromdate, todate, CallBack)
   console.log('RequestCalendarhData(' + DateToStr(fromdate) + ', ' + DateToStr(todate) + ')');
   SendAjaxRequest(
     "type=GetCalendarData"+ 
+    "&language=" + $('select[name="languagesel"]').val() + 
     "&fromdate=" + DateToStr(fromdate) +  
     "&todate=" + DateToStr(todate),
     asynch, 
@@ -174,19 +194,29 @@ function SelectCourse(a_sPK, CallBack)
     true, 
     function(response)
     {
-      var v_bNoslide = $('.selectedcourse').length > 0;
-      $('.selectedcourse').remove();
-      var v_oObj = $(response).find('courhtml > div');
-      if (!v_bNoslide)
-        v_oObj
-          .css({display: "none"})
-          .appendTo('td.selcourse')
-          .slideDown(100);
-      else
-        v_oObj.appendTo('td.selcourse');
-        
+      $('.selected').removeClass('selected');
+      $('.daycourses .course[pk="' + a_sPK + '"]').addClass('selected');
+     
+      var v_oObj = $('<div class="coursedetailview">' + $(response).find('courhtml').html() + '</div>');
+      $('.coursedetailview').remove();
+      v_oObj.insertAfter('.dayview');
       if (typeof(CallBack) == 'function')
         CallBack(response);
     }
   );
+}
+
+function SelectCourseCalendByPK(courpk)
+{
+  if (parseInt(courpk))
+  {
+    console.log($(CalendarDataXML).find('course[pk=' + courpk + ']').closest('day').attr('date'));
+    var date = $(CalendarDataXML).find('course[pk=' + courpk + ']').closest('day').attr('date');
+    if (date.length > 0)
+    {
+      DaySelect($('#datepicker'), date, function(){
+        SelectCourse(courpk);
+      });
+    }
+  } 
 }

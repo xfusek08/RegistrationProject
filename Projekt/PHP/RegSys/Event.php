@@ -158,9 +158,6 @@ class Event extends ResponsiveObject
   
   public function GetState()
   {
-    
-    // TODO zkontrolovat pořet registraci + kapacitu a pokud je kapacina naplnena vratit full
-    
     $v_iCount = count($this->i_aRegistrations);
     $v_iCapacity = $this->GetColumnByName($this->i_sCapacityColName)->GetValue();
 

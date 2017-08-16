@@ -230,7 +230,12 @@ function StopLoading()
   }
   loadingcounter--;
 }
-
+function HighlightAllInvalInputs(searchin)
+{
+  searchin.find('input[valid=0]').each(function(){
+    HighlightInvalInput($(this).attr('name'), $(this).attr('message'), searchin);
+  });
+}
 function HighlightInvalInput(name, mgs, searchin)
 {
   if (searchin == null) searchin = $('body');

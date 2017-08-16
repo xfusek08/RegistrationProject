@@ -93,6 +93,7 @@ if (isset($_POST['logout']))
              <div class="adm-newresconn-conn"></div>
           </div>
         </div>
+        <!--
         <div class="adm-freeresconn">
           <div class="freeresconn-caption"> Volné registrace: <span class="rescount"></span>
             <div class="maxminbt">
@@ -101,6 +102,7 @@ if (isset($_POST['logout']))
           </div>
           <div class="freeresconn-conn"></div>
         </div>
+        -->
       </div>
     </div>
   </div>

@@ -20,6 +20,7 @@ class CourseRegistration extends Registration
     $this->AddColumn(DataType::String, 'rgreg_vclemail', true);
     $this->AddColumn(DataType::String, 'rgreg_vcltelnumber');
     $this->AddColumn(DataType::String, 'rgreg_vcladdress');
+    $this->AddColumn(DataType::Integer, 'rgreg_flanguage');
     $this->AddColumn(DataType::String, 'rgreg_vtext');
     $this->AddColumn(DataType::Date, 'rgreg_dtCreated', true);
   }  
