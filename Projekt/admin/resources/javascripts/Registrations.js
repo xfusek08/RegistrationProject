@@ -38,7 +38,11 @@ var Registration = function(v_oParentEvent, v_oObjectResponse)
       this.i_oObjResponse.find('> invaliddata > input').each(function(){
         HighlightInvalInput($(this).attr('name'), $(this).attr('message'), self.i_oHTMLObj);
       });
-      this.i_oHTMLObj.attr('pk', this.i_sPK);      
+      this.i_oHTMLObj.attr('pk', this.i_sPK);  
+      if (this.i_oHTMLObj.attr('isnew') == '1')
+      {
+        this.i_oHTMLObj.find('.header').append('<div class="newtag">nová</div>');
+      }
     }
     
     if (this.i_oHTMLObj.hasClass('noclose'))

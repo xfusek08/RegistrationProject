@@ -175,14 +175,14 @@ alert
   margin-right: 3px;
 }
 .registration:not(.noclose) .header:hover,
+.registration:not(.noclose) .header.selhover,
 .conndetail-actions .conndetail-actions-action:hover,
 .removetimebt:hover,
 .addtimebt:hover,
 .adm-leftpanel .adm-dayevents-frame .adm-dayevents-tools > div:hover,
 .adm-dayevents-view > .event:hover,
-.ui-datepicker table td:not(.ui-datepicker-unselectable):hover,
 .adm-dayevents-view > .event.selhover,
-.conndetail-inhtml .reservations .reservation:hover,
+.ui-datepicker table td:not(.ui-datepicker-unselectable):hover,
 .search-textbox img:hover
 {
   background: rgba(220,250,255,1);  
@@ -280,12 +280,14 @@ alert
 }
 .newtag
 {
-  position: absolute;
+  float: right;
+  position: relative;
   background: rgb(245,245,100);
   padding: 3px;
   border: 1px solid rgb(180,180,180);
+  border-radius: 5px;
 }
-.adm-newresconn-conn .reservation,
+.adm-newregconn-conn .new_registration,
 .adm-dayevents-view > .event:last-child
 {
   -webkit-box-shadow: 0 1px 2px 0px rgb(100,100,100);
@@ -380,7 +382,7 @@ alert
   resize: vertical;
 }
 .conndetail .caption,
-.adm-newresconn .adm-newresconn-caption
+.adm-newregconn .adm-newregconn-caption
 {
   white-space: nowrap;
   font-size: 18px;
@@ -388,7 +390,6 @@ alert
   padding-bottom: 4px;
   padding-left: 5px;
   padding-top: 5px;
-  font-weight: bold;
   background: transparent;
   color: black;
   /*
@@ -397,7 +398,7 @@ alert
   
   */
 }
-.adm-newresconn .adm-newresconn-caption
+.adm-newregconn .adm-newregconn-caption
 {
   background: rgb(70,160,255); 
   color: white;
@@ -618,21 +619,21 @@ input[type=text].nval.fadeoutcolor
   width: 100%;
   overflow-y: auto;    
 }
-.adm-newresconn,
+.adm-newregconn,
 .adm-freeresconn
 {
   vertical-align: top;
   background: white;
   border-top: 2px double rgb(130,130,130);
 }
-.adm-newresconn
+.adm-newregconn
 {
   border: none;
   border-left: 2px double rgb(130,130,130);
   width: 250px;
   min-width: 250px;
 }
-.adm-newresconn.floating
+.adm-newregconn.floating
 {
   position: absolute;
 }
@@ -717,51 +718,63 @@ input[type=text].nval.fadeoutcolor
   padding: 5px;
   text-align: center;
 }
-.adm-newresconn
+.adm-newregconn
 {
   background: rgb(240,240,240);
 }
-.adm-newresconn  .adm-newresconn-conn
+.adm-newregconn  .adm-newregconn-conn
 {
   overflow-y: auto;
   overflow-x: hidden;
 }
-.adm-newresconn .reservation
+.adm-newregconn .new_registration
 {
   border-bottom: 1px solid rgb(130,130,130);  
 }
-.reservation
+.adm-newregconn .new_registration
 {
   background: white;
   padding: 5px;
   cursor: pointer;
 }
-.reservation .term
+.adm-newregconn .new_registration .term
 {
   font-size: 15px;
   font-weight: bold;  
   padding: 2px;
 }
-.reservation table
+.adm-newregconn .new_registration table
 {
+  white-space: nowrap;
   width: 100%;
+  table-layout: fixed;
+  
   text-align: left;
-  font-size: 14px;
+  font-size: 12px;
   /*
   background: rgb(245,245,100);
   border-top: 2px solid rgb(245,245,100);
   width: 100%;
   */
 }
-.reservation table td:last-child
+.adm-newregconn .new_registration table td
 {
-  width: 100%;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
 }
-.reservation .created
+.adm-newregconn .new_registration table td:first-child
+{
+  width: 40px;
+}
+.adm-newregconn .new_registration table td:last-child
+{
+  max-width: calc(100% - 60px);
+}
+.adm-newregconn .new_registration .created
 {
   margin-top: 5px;
 }
-.reservation .created span:last-child
+.adm-newregconn .new_registration .created span:last-child
 {
   float: right;  
 }

@@ -305,7 +305,7 @@ class DBEntColumn
     $this->i_sInvalidDataMsg = '';
 
     if ($this->i_tDataType == DataType::Bool)
-      $this->i_xValue = BoolTo01($a_xValue);   
+      $this->i_xValue = BoolTo01(boolval($a_xValue));   
     else
       $this->i_xValue = $a_xValue; 
 
@@ -355,7 +355,7 @@ class DBEntColumn
   public function SetValueFromString($a_sValue)
   {
     if ($this->i_tDataType == DataType::Bool)
-      return $this->SetValue(BoolTo01(boolval($a_sValue)));
+      return $this->SetValue(Str01ToBoolInt(trim($a_sValue)));      
 
     // pokud neni string tak nic nemenime a zapiseme upozorneni
     if (!is_string($a_sValue) && $a_sValue !== null)
@@ -431,7 +431,7 @@ class DBEntColumn
       case DataType::Timestamp:
         return date(DATE_TIME_FORMAT, $this->GetValue());
       case DataType::Bool:
-        return BoolTo01Str($this->GetValue());
+        return BoolTo01Str($this->GetValue() == 1);
     }    
   }
   public function BuildHTMLInput()

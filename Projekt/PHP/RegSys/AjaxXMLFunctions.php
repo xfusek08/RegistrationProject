@@ -16,6 +16,7 @@ function ProcessGlobalAjaxRequest()
     case 'EventAjax' : echo EventAjax(); break;
     case 'openSettings' : echo OpenSettings(); break;
     case 'RespPageAjax' : echo RespPageAjax(); break;
+    case 'GetNewRegistrations' : echo GetNewRegistrationsXML(); break;
   }
   echo '</respxml>';
 }
@@ -351,4 +352,54 @@ function RespPageAjax()
   else
     WriteAlert('red', 'Stránka není vytvořena.');
   return $resp; 
+}
+
+function GetNewRegistrationsXML()
+{
+  $SQL = 
+    'select'.
+    '    rgreg_pk,'.
+    '    rgreg_dtcreated,'.
+    '    rgreg_vclfirstname,'.
+    '    rgreg_vcllastname,'.
+    '    rglng_text,'.
+    '    rgcour_pk,'.
+    '    rgcour_dtfrom,'.
+    '    rgcour_vname'.
+    '  from'.
+    '    rg_registration'.
+    '    left join rg_course on rgcour_pk = rgreg_fcourse'.
+    '    left join rg_language on rglng_pk = rgcour_flanguage'.
+    '  where'.
+    '    rgreg_isnew = 1'.
+    '  order by'.
+    '    rgreg_dtcreated';
+  
+  $fields = null;
+  if (!MyDatabase::RunQuery($fields, $SQL, false))
+  {
+    Logging::WriteLog(LogType::Error, 'GetNewRegistrationsXML() - DB error while selecting new registrations.');
+    return (new Alert('red', 'Nepodařilo se načíst nové registrace.'))->GetXML();    
+  }
+
+  $response .= '<registrations>';
+  for($i = 0; $i < count($fields); $i++)
+  {
+    $courtd = strtotime($fields[$i]['RGCOUR_DTFROM']);
+    $response .= 
+      '<registration'.
+        ' pk="' . $fields[$i]['RGREG_PK'] . '"'.
+        ' created="' . date('d.m.Y, H:i' , strtotime($fields[$i]['RGREG_DTCREATED'])) . '"'.
+        ' firstname="' . $fields[$i]['RGREG_VCLFIRSTNAME'] . '"'.
+        ' lastname="' . $fields[$i]['RGREG_VCLLASTNAME'] . '"'.
+        ' language="' . $fields[$i]['RGLNG_TEXT'] . '"'.
+        ' courpk="' . $fields[$i]['RGCOUR_PK'] . '"'.
+        ' courdate="' . date('d.m.Y', $courtd) . '"'.
+        ' courtime="' . date('H:i', $courtd) . '"'.
+        ' courdatetime="' . date('d.m.Y, H:i' , $courtd) . ' (' . GetCzechDayName(date('w', $courtd)) . ')"'.
+        ' courname="' . $fields[$i]['RGCOUR_VNAME'] . '"'.
+      '/>';
+  }
+  $response .= '</registrations>';
+  echo $response;  
 }

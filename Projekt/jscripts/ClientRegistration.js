@@ -132,7 +132,9 @@ function LoadCoursesonDay(a_sDateString, force)
     var DayViewContent = DayView.find('.conn .content');
     DayViewContent.empty();
     var html = '';
-
+    
+    /* verze podle jazyka */
+    /*
     $(CalendarDataXML).find('day[date="' + a_sDateString + '"] language').each(function ()
     {
       html += '<p class="lang">' + $(this).attr('text') + ':</p>';
@@ -142,13 +144,40 @@ function LoadCoursesonDay(a_sDateString, force)
           '<tr class="course' + (($(this).attr('state') == 'open') ? '' : ' disabled') + '"' +
               ' pk="' + $(this).attr("pk") + '"' + 
               ' title="' + (($(this).attr('state') == 'open') ? 'vybrat pro podrobnosti' : 'obsazeno - nelze vybrat') + '">' + 
-            '<td class="time">' + $(this).attr('time') + '</div>' + 
-            '<td class="name">' + $(this).attr('name') + '</div>' +
-            '<td class="capacity">' + $(this).attr('capacity') + '</div>' +
+            '<td class="time">' + $(this).attr('time') + '</td>' + 
+            '<td class="name">' + $(this).attr('name') + '</td> +
+            '<td class="capacity">' + $(this).attr('capacity') + '</td>' +
           '</tr>';
       });
       html += '</table>';      
     });
+    */
+    /* verze podle datumu */
+    $(CalendarDataXML).find('day[date="' + a_sDateString + '"]').each(function ()
+    {
+      html += 
+        '<table class="daycourses">' + 
+          '<thead>'+
+            '<th>zahájení</th>'+
+            '<th>jazyk</th>'+
+            '<th>název</th>'+
+            '<th>obsazenost</th>'+
+          '</thead><tbody>';
+        
+      $(this).find('course').each(function(){
+        html += 
+          '<tr class="course' + (($(this).attr('state') == 'open') ? '' : ' disabled') + '"' +
+              ' pk="' + $(this).attr("pk") + '"' + 
+              ' title="' + (($(this).attr('state') == 'open') ? 'vybrat pro podrobnosti' : 'obsazeno - nelze vybrat') + '">' + 
+            '<td class="time">' + $(this).attr('time') + '</td>' + 
+            '<td class="language">' + $(this).attr('language') + '</td>' +
+            '<td class="name">' + $(this).attr('name') + '</td>' +
+            '<td class="capacity">' + $(this).attr('capacity') + '</td>' +
+          '</tr>';
+      });
+      html += '</tbody></table>';      
+    });
+    
     DayViewContent.append(html);
     DayView.slideDown(200);
   }  

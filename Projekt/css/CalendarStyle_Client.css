@@ -156,28 +156,30 @@ input[type=submit]
 .dayview .conn .content table.daycourses
 {
   margin: 0;
-  margin-left: 4%;
   font-size: 12px;
-  width: 96%;
-  table-layout: fixed;
+  width: 100%;
   border-collapse: collapse;
 }
 .dayview .conn .content table.daycourses th
 {
   text-align: center;
 }
-.dayview .conn .content table.daycourses th:first-child,
-.dayview .conn .content table.daycourses td:first-child
+.dayview .conn .content table.daycourses td.time
 {
   width: 50px;
   font-size: 15px;
 }
-.dayview .conn .content table.daycourses th:last-child,
-.dayview .conn .content table.daycourses td:last-child
+.dayview .conn .content table.daycourses td.capacity
 {
   width: 80px;
+  text-align: left;
+  padding-left: 8px;
 }
-.dayview .conn .content table.daycourses td:not(:first-child)
+.dayview .conn .content table.daycourses td.language
+{
+  width: 70px; 
+}
+.dayview .conn .content table.daycourses td.name
 {
   text-align: left;
   padding-left: 10px;
@@ -188,10 +190,15 @@ input[type=submit]
   padding: 2px;
   cursor: pointer;
 }
+.dayview .conn .content table.daycourses tbody tr:not(.disabled):hover td
+{
+  background-color: rgba(255,255,100,0.2);
+}
 .dayview .conn .content table.daycourses tbody tr.disabled td
 {
   color: rgb(200,200,200);
   border-color: rgb(200,200,200);
+  background-color: rgba(100,100,100,0.6);
   cursor: initial;
 }
 .dayview .conn .content table.daycourses .course.selected
@@ -203,8 +210,7 @@ input[type=submit]
   outline-color: rgba(255,100,10, 1);
   outline-width: 2px;
   */
-  background: rgba(255,250,100, 0.4);
-  font-weight: bold;
+  background: rgba(255,250,100, 0.5);
   
   /*
   

@@ -42,7 +42,7 @@ function SetUpConnHeight()
     newheight = $('.adm-leftpanel-intable').outerHeight() - Freeresconnheight - 36;
   }
 
-  $('.adm-upconn > div .adm-newresconn-conn').css({height: newheight+ 'px'});
+  $('.adm-upconn > div .adm-newregconn-conn').css({height: newheight+ 'px'});
   $('.adm-upconn > div .adm-day-conn').css({height: newheight + 'px'});
   $('.adm-upconn').height(newheight);
 }
@@ -58,7 +58,7 @@ function ToggleUpDown()
     $('.adm-upconn > div .adm-day-conn').animate({
       height: '-=' + offsetanim + 'px'
     }, 250, "swing");
-    $('.adm-upconn > div .adm-newresconn-conn').animate({
+    $('.adm-upconn > div .adm-newregconn-conn').animate({
       height: '-=' + offsetanim + 'px'
     }, 250, "swing");
     $('.conndetail-inhtml .reservations').animate({
@@ -83,7 +83,7 @@ function ToggleUpDown()
     $('.adm-upconn > div .adm-day-conn').animate({
       height: '+=' + offsetanim + 'px'
     }, 250, "swing");
-    $('.adm-upconn > div .adm-newresconn-conn').animate({
+    $('.adm-upconn > div .adm-newregconn-conn').animate({
       height: '+=' + offsetanim + 'px'
     }, 250, "swing");
     $('.conndetail-inhtml .reservations').animate({

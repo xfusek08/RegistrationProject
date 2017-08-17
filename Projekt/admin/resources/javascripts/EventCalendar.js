@@ -97,6 +97,12 @@ function AfterLoadDays(calendar, calendarData)
     
     html = html + '</div>';    
     
+    if ($('.adm-newregconn .new_registration[date="' + DateToStr(date) + '"]').length > 0)
+    {
+      $(this).css({
+        backgroundColor: 'rgb(250,250,0)'
+      }).addClass('hasnew');
+    }
     $(html).appendTo($(this));    
   });
 }

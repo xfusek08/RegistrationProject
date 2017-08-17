@@ -25,6 +25,123 @@ function ProcessGlobalAjaxRequest()
   }
   echo '</respxml>';
 }
+
+/**
+ * Vrati strukturovane XML obsahujici strukturu udalosti ktere jsou ulozene v danem casovem rozmezi,
+ * Struktura je rozrazena do mesicu a dni, kde v kazdem dni je odpovidajici pocet udalosti.
+ * @param time $from  - datum od ktereho jsou data vygenerovany
+ * @param time $to    - datum do ktereho jsem data vygenerovany
+ * @return struktura:
+ *  <calendardata>
+ *    <moths>
+ *      <month monthnum="6">
+ *        <day date="20.06.2017">
+ *          <course pk="8" time="09:00" capacity="0/-" state="open" language="Němčina" name="NA CESTĚ – užitečné fráze pro cestování"/>
+ *          ...
+ *        </day>
+ *        ...
+ *      </month>
+ *      ...
+ *    <moths>
+ *  </calendardata>
+ */
+function GetCalendarDataXML($fromString, $toString, $language)
+{
+  $DateFrom = date('d.m.Y' , strtotime($fromString));  
+  $DateTo = date('d.m.Y' , strtotime($toString));
+  $v_iLanguagePK = 0;
+  
+  if (intval($language)!== false)
+    $v_iLanguagePK = intval($language);
+  
+  $SQL = 
+    'select'.
+    '    rgcour_pk,'.
+    '    cast(rgcour_dtfrom as date) as datefrom,'.
+    '    cast(rgcour_dtfrom as time) as timefrom,'.
+    '    rgcour_vname,'.
+    '    rglng_text'.
+    '  from'.
+    '    rg_course'.
+    '    left join rg_language on rglng_pk = rgcour_flanguage'.
+    '  where'.
+    '    rgcour_istate != 1 and'.
+    '    rgcour_dtfrom >= ? and'.
+    '    rgcour_dtfrom <= ?';
+  
+  if ($v_iLanguagePK > 0)
+    $SQL .= ' and rgcour_flanguage = ?'; 
+ 
+  $SQL .= 
+    '  order by'.
+    '    rgcour_dtfrom';
+
+  $fields = null;
+  $params = array($DateFrom, $DateTo);
+  
+  if ($v_iLanguagePK > 0)
+    array_push($params, $v_iLanguagePK);
+  
+  if (!MyDatabase::RunQuery($fields, $SQL, false, $params))
+  {
+    echo 'fail';
+    return;
+  }
+  
+  $response = '<calendardata>';
+  $response .= '<moths>';
+  
+  $newDate = true;
+  $newMonth = true;
+  for($i = 0; $i < count($fields); $i++)
+  {
+    $actEvent = new Course(intval($fields[$i]['RGCOUR_PK']));
+    $actEvTime = strtotime($fields[$i]['DATEFROM']);
+    $actDate = date('d.m.Y', $actEvTime);                
+    $actMonthNum = date('m', $actEvTime);
+    $actLanguage = $fields[$i]['RGLNG_TEXT'];
+        
+    if ($newMonth)
+      $response .= '<month monthnum="' . $actMonthNum . '">';
+
+    if ($newDate)
+      $response .= '<day date="' . $actDate . '">';
+
+    
+
+    $response .= 
+      '<course'.
+      ' pk="' . $fields[$i]['RGCOUR_PK'] . '"'.
+      ' time="' . date('H:i', strtotime($fields[$i]['TIMEFROM'])) . '"'.
+      ' capacity="' . $actEvent->GetCapacityStatus() . '"'.
+      ' state="' . $actEvent->GetState() . '"'.
+      ' language="' . $fields[$i]['RGLNG_TEXT'] . '"'.
+      ' name="' . $fields[$i]['RGCOUR_VNAME'] . '"/>';
+
+    if (($i + 1) < count($fields))
+    {          
+      $newDate = (date('d.m.Y', strtotime($fields[$i + 1]['DATEFROM']))) !== $actDate;
+      $newMonth = (date('m', strtotime($fields[$i + 1]['DATEFROM']))) !== $actMonthNum;
+    }
+    else 
+    {
+      $newDate = true;
+      $newMonth = true;
+    }
+    
+    if ($newDate)
+      $response .= '</day>';
+
+    if ($newMonth)
+      $response .= '</month>';
+  }
+  
+  $response .= '</moths>';
+  $response .= '</calendardata>';
+  
+  return $response;
+}
+
 /**
  * Vrati strukturovane XML obsahujici strukturu udalosti ktere jsou ulozene v danem casovem rozmezi,
  * Struktura je rozrazena do mesicu a dni, kde v kazdem dni je odpovidajici pocet udalosti.
@@ -47,8 +164,7 @@ function ProcessGlobalAjaxRequest()
  *    <moths>
  *  </calendardata>
  */
-
-function GetCalendarDataXML($fromString, $toString, $language)
+function GetCalendarDataByLngXML($fromString, $toString, $language)
 {
   $DateFrom = date('d.m.Y' , strtotime($fromString));  
   $DateTo = date('d.m.Y' , strtotime($toString));

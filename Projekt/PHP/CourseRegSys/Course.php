@@ -58,5 +58,21 @@ class Course extends Event
       $this->i_oAlertStack->Push($v_oLanguage->i_oAlertStack.Pop());
     return $html;
   }
+  protected function GetDayOwerwiewHTML_content()
+  {
+    $v_iCapacity = $this->GetColumnByName($this->i_sCapacityColName)->GetValue();
+    $v_oLanguage = new Language($this->GetColumnByName('rgcour_flanguage')->GetValue());
+    $v_sHtml = 
+      '<div>' . $this->GetColumnByName($this->i_sEventNameColName)->GetValueAsString() . '</div>'.
+      '<table>' .
+        '<tr>'.
+          '<td>jazyk:</td><td>'. $v_oLanguage->GetColumnByName('rglng_text')->GetValue() . '</td>'.
+        '</tr><tr>'.
+          '<td>obsazenost:</td><td>' . $this->GetCapacityStatus() . '</td>'.
+        '</tr>'.
+      '</table>';
+    
+    return $v_sHtml;
+  }
   
 }

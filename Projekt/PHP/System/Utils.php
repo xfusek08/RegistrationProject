@@ -6,25 +6,25 @@ function GetCzechDayName($day) {
 
 function BoolTo01Str($var)
 {
-  if ($var === true)
+  if ($var == true)
     return '1';
-  else if ($var === false)
+  else if ($var == false)
     return '0';
   return null;
 }
 
 function Str01ToBoolInt($var)
 {
-  if ($var === '1')
+  if ($var == '1')
     return 1;
-  else if ($var === '0')
+  else if ($var == '0')
     return 0;
   return null;
 }
 
 function BoolTo01($var)
 {
-  if (boolval($var))
+  if ($var === true)
     return 1;
   else
     return 0;

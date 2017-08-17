@@ -7,6 +7,9 @@
  *    - obecna obsluha vsech timepickeru
  *    - vybrani existujici udalosti
  */
+
+var v_oNewResConn = null;
+
 $(document).ready(function(){
   // inicializace kalendare
   CalendarInit($('#datepicker'), DaySelect);
@@ -45,6 +48,8 @@ $(document).ready(function(){
     ProcessGeneralAjaxSubmit($(this), e);
   });
   GetNavigation();
+  v_oNewResConn = new NewRegistrationConn();
+  v_oNewResConn.GetNewRegistrations();
 });
 
 /**
@@ -222,3 +227,4 @@ function ProcessGeneralAjaxSubmit(actionButton, event, CallBack)
       }
   );  
 }
+

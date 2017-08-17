@@ -22,6 +22,7 @@ if (isset($_POST['logout']))
 <script type="text/javascript" charset="UTF-8" src="resources/javascripts/RegistrationMover.js"></script>
 <script type="text/javascript" charset="UTF-8" src="resources/javascripts/AdminMainPage.js"></script>
 <script type="text/javascript" charset="UTF-8" src="resources/javascripts/ResponsivePage.js"></script>
+<script type="text/javascript" charset="UTF-8" src="resources/javascripts/NewRegistrations.js"></script>
     
 <div class="adm-body">  
   <form method="post">
@@ -88,9 +89,9 @@ if (isset($_POST['logout']))
             </div>
             <div class="adm-day-conn"></div>             
           </div>
-          <div class="adm-newresconn">
-             <div class="adm-newresconn-caption"> Nové registrace: <span class="newrescount">0</span></div>
-             <div class="adm-newresconn-conn"></div>
+          <div class="adm-newregconn">
+             <div class="adm-newregconn-caption"> Nové registrace: <span class="newregcount">0</span></div>
+             <div class="adm-newregconn-conn"></div>
           </div>
         </div>
         <!--

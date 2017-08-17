@@ -42,7 +42,7 @@ if (isset($_POST['ajax']))
       $v_oRegistration->GetColumnByName('rgreg_fcourse')->SetValue($v_oChosenCourse->i_iPK);
       $v_oRegistration->GetColumnByName('rgreg_flanguage')->SetValue(
         $v_oChosenCourse->GetColumnByName('rgcour_flanguage')->GetValue());
-      echo '<respxml><courhtml><h3>Detail:</h3>' . GetChosenCourseHTML($v_oChosenCourse) . '</courhtml></respxml>';
+      echo '<respxml><courhtml><h3>Detail vybrané lekce:</h3>' . GetChosenCourseHTML($v_oChosenCourse) . '</courhtml></respxml>';
     }
     else 
       echo '<respxml><courhtml>Chyba: nepodařilo se vyhledat kurz</courhtml></resxml>';
@@ -71,16 +71,24 @@ else if (isset($_POST['submit']))
       $v_oRegistration->LoadFromPostData();
       if ($v_oRegistration->IsDataValid())
       {
-        $v_oRegistration->GetColumnByName('rgreg_isnew')->SetValue(true);
+        $v_oRegistration->GetColumnByName($v_oRegistration->i_aDBAliases['isNew'])->SetValue(true);
         $v_sState = 'confirm';
       }  
       break;
     case 'confirm':
+      // kontrola jestli je jeste porad misto
+      $v_oChosenCourse = new Course($v_oChosenCourse->i_iPK);
+      if ($v_oChosenCourse->GetState() == 'full')
+      {
+        $v_sErrorMessage = 'Bohužel, vybraný kurz je již obsazený.';
+        break;
+      }
+      // ulozime registraci
       $v_oRegistration->GetColumnByName('rgreg_isnew')->SetValue(true);
       if ($v_oRegistration->SaveToDB(false))
         $v_sState = 'finished';
       else
-        $v_oErrorMessage = 'Registraci se nepodařilo uložit';
+        $v_sErrorMessage = 'Registraci se nepodařilo uložit';
       break;
   } 
 }
@@ -88,7 +96,10 @@ else if (isset($_POST['back']))
 {
   switch ($v_sState)
   {
-    case 'registration': $v_sState = 'courseSelect'; break;
+    case 'registration': 
+      $v_oRegistration->LoadFromPostData();
+      $v_sState = 'courseSelect'; 
+      break;
     case 'confirm': $v_sState = 'registration'; break;
   } 
 }
@@ -152,6 +163,7 @@ else
       if ($v_sErrorMessage != '')
         echo '<p class="error">' . $v_sErrorMessage . '</p><hr/>';
     ?>
+    Vyberte lekci kliknutím.<br/><br/>
     Obsazenost lekce: <b style="font-family: monospace; font-size: 14px">"x/y"</b> nebo <b style="font-family: monospace; font-size: 14px"">"x/-"</b><br/>
     <b style="font-family: monospace; font-size: 14px; margin-left: 8px;">x</b> = počet auktuálně zapsaných <br/>
     <b style="font-family: monospace; font-size: 14px; margin-left: 8px;">y</b> = maximální počet <br/>
@@ -292,12 +304,14 @@ else
     </div>
     <?php
     if ($v_sErrorMessage != '')
-      echo '<hr/><p class="error">' . $v_sErrorMessage . '</p>';
+      echo 
+        '<hr/><p class="error">' . $v_sErrorMessage . '</p>'.
+        '<p>Pomocí tlačítka zpět můžete vybrat jiný kurz bez zrtáty dat.</p>';
     ?>
     
     <?php } else if ($v_sState == 'finished') { ?>
     
-    <h2>Hotovo<h2>
+    <h2>Hotovo</h2>
     <p>Vaše registrace byla úspěšně odeslána.</p>
     <input type="submit" name="reload" value="pokračovat"/>
     

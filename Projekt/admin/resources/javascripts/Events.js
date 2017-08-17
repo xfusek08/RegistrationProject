@@ -60,7 +60,8 @@ function DeleteEvent()
     function(response){ 
       if ($(response).find('error').length > 0)
       {
-        ProcessEventState(response);
+        var v_oEvent = new Event($('.adm-day-conn'), $(response).find('> object_response'));
+        v_oEvent.ProcessState();
       }
       else
       {
@@ -209,7 +210,9 @@ var Event = function(v_oParent, v_oObjectResponse){
         var self = this;
         var v_oRes = this.i_aRegistrations[i];
         v_oRes.InitDeleteForm(function(){
-          self.SendAjax('deletegistration','RegistrationPK=' + v_oRes.i_sPK);
+          v_oRes.i_oHTMLObj.slideUp(200, function(){
+            self.SendAjax('deletegistration','RegistrationPK=' + v_oRes.i_sPK);
+          });
         });
         break;
       }

@@ -148,6 +148,8 @@ class Registration extends ResponsiveObject
 
     $html = str_replace('{CREATED_DATE}', date('d.m.Y', $this->GetColumnByName($this->i_aDBAliases['created'])->GetValue()), $html);
     $html = str_replace('{CREATED_TIME}', date('H:i', $this->GetColumnByName($this->i_aDBAliases['created'])->GetValue()), $html);
+
+    $html = str_replace('{ISNEW_COL}', $this->GetColumnByName($this->i_aDBAliases['isNew'])->GetValue(), $html);
     
     foreach ($this->i_aColumns as $column)
     {
