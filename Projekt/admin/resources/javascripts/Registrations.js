@@ -7,9 +7,10 @@ var Registration = function(v_oParentEvent, v_oObjectResponse)
   this.i_oHTMLObj = null;
   this.i_sPK = '';
   this.i_bClosed = true;
+  this.i_bIsNew = false;
   
   this.ProcessState = function(){
-    console.log('Registration.ProcessState()');
+    //console.log('Registration.ProcessState()');
     this.i_oHTMLObj = null;
     var self = this;
     
@@ -29,7 +30,7 @@ var Registration = function(v_oParentEvent, v_oObjectResponse)
   };
 
   this.ShowHTML = function(){
-    console.log('Registration.ShowHTML()');
+    //console.log('Registration.ShowHTML()');
     var self = this;
     if (this.i_oParentEvent.i_oHTMLObj)
     {
@@ -41,6 +42,7 @@ var Registration = function(v_oParentEvent, v_oObjectResponse)
       this.i_oHTMLObj.attr('pk', this.i_sPK);  
       if (this.i_oHTMLObj.attr('isnew') == '1')
       {
+        this.i_bIsNew = true;
         this.i_oHTMLObj.find('.header').append('<div class="newtag">nová</div>');
       }
     }
@@ -96,7 +98,7 @@ var Registration = function(v_oParentEvent, v_oObjectResponse)
   };
   
   this.SendAjax = function(a_sType, a_sData){
-    console.log("Registration.SendAjax("  + a_sType + ", "  + a_sData + "}");
+    //console.log("Registration.SendAjax("  + a_sType + ", "  + a_sData + "}");
     this.i_oParentEvent.SendAjax(
       "RegistrationAjax", 
       "RegistrationAxajType=" + a_sType + 
@@ -108,19 +110,51 @@ var Registration = function(v_oParentEvent, v_oObjectResponse)
     CreateDeleteConfirm(this.i_oHTMLObj.find('.header'), 'Opravdu si přejete vymazat registraci?', CallBack);
   };
   
-  this.OpenDetail = function(a_iSpeed = 250){
+  this.ReadNewRegistration = function(CallBack){
+    //console.log('ReadNewRegistration()');
+    var self = this;
+    setTimeout(function(){
+      self.i_oHTMLObj.find('.newtag').fadeOut(500, function(){
+      self.SendAjax('readnew');
+      });
+      var v_oNewReg = $('.adm-newregconn-conn .new_registration[pk=' + self.i_sPK + ']');
+      v_oNewReg.slideUp(500, function(){ 
+        v_oNewReg.remove();
+        $('.newregcount').text($('.adm-newregconn-conn .new_registration').size());
+        if ($('.adm-newregconn-conn .new_registration[date="' + v_oNewReg.attr('date') + '"]').size() == 0)
+        {
+          GetCalenDayTDByDate(StrToDate(v_oNewReg.attr('date')), '.hasnew').animate({
+            backgroundColor: 'rgb(255,255,255)'
+          }, 300, "swing", function(){
+            $(this).removeClass('hasnew');
+          });
+        }
+      });
+    }, 1000);
+    if (typeof(CallBack) == "function")
+      CallBack();
+  };
+  
+  this.OpenDetail = function(a_iSpeed = 250, CallBack){
     var self = this;
     this.i_oHTMLObj.find('.content').slideDown(a_iSpeed, function(){
       self.i_bClosed = false;
       v_aOpenRegStatus[self.i_sPK] = 'open';
+      if (self.i_bIsNew)
+        self.ReadNewRegistration(CallBack);
+      else
+        if (typeof(CallBack) == "function")
+          CallBack();
     });   
   };
   
-  this.CloseDetail = function(a_iSpeed = 250){
+  this.CloseDetail = function(a_iSpeed = 250, CallBack){
     var self = this;
     this.i_oHTMLObj.find('.content').slideUp(a_iSpeed, function(){
       self.i_bClosed = true;
       v_aOpenRegStatus[self.i_sPK] = 'closed';
+      if (typeof(CallBack) == "function")
+        CallBack();
     });   
   };
 };

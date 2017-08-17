@@ -175,16 +175,18 @@ abstract class ResponsiveObject extends DatabaseEntity
     return $v_sResponse;
   }
   
-  public function SaveToDB($ExternalTrans)
+  public function SaveToDB($ExternalTrans, $quiet = false)
   {
     if (parent::SaveToDB($ExternalTrans))
     {
-      $this->i_oAlertStack->Push('green', 'Uloženo.');
+      if (!$quiet)
+        $this->i_oAlertStack->Push('green', 'Uloženo.');
       return true;
     }
     else
     {
-      $this->i_oAlertStack->Push('red', 'Běhěm ukládání nastala chyba.');
+      if (!$quiet)
+        $this->i_oAlertStack->Push('red', 'Běhěm ukládání nastala chyba.');
       return false;
     }
   }

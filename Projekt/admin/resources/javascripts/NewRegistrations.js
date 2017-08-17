@@ -1,9 +1,13 @@
 
 $(document).ready(function(){
-  $('body').on('click', '.adm-adm-newregconn-conn .new_registration', function(){
-    // TODO: navigovat na konkretni registraci
+  $('body').on('click', '.adm-newregconn-conn .new_registration', function(){
+    var self = $(this);
+    OpenRegistration($(this).attr('pk'), $(this).attr('courpk'), $(this).attr('date'), function(){
+     self.mouseover(); 
+    });
   });
-  $('body').on('mouseenter', '.adm-newregconn-conn .new_registration', function(){
+  
+  $('body').on('mouseover', '.adm-newregconn-conn .new_registration', function(){
     $(this).css({background: 'rgba(220,250,255,1)'});
     $('.adm-dayevents-view .event[pk="' + $(this).attr('courpk') + '"]').addClass('selhover');
     $('.registrationconn .registration[pk="' + $(this).attr('pk') + '"] .header').addClass('selhover');
@@ -33,48 +37,41 @@ $(document).ready(function(){
   });
 });
 
-var NewRegistrationConn = function()
+function GetNewRegistrations()
 {
-  /* Inicializace */
-  this.i_oConnObj = $('.adm-newregconn')
-  
-  /* Funkce */  
-  this.GetNewRegistrations = function()
-  {
-    var self = this;
-    SendAjaxRequest(
-      "type=GetNewRegistrations",  
-      true,
-      function(response){
-        // naplnime pole novimy rezervacemi
-        var v_iRegCount = 0;
-        $(response).find('registration').each(function(i){
-          var v_oReg = BuildRegistrationObj($(this));
-          if (self.i_oConnObj.find('.new_registration[pk="' + v_oReg.attr('pk') + '"]'))
+  var v_oNewRegConn = $('.adm-newregconn')
+  SendAjaxRequest(
+    "type=GetNewRegistrations",  
+    true,
+    function(response){
+      // naplnime pole novimy rezervacemi
+      var v_iRegCount = 0;
+      $(response).find('registration').each(function(i){
+        var v_oReg = BuildRegistrationObj($(this));
+        if (v_oNewRegConn.find('.new_registration[pk="' + v_oReg.attr('pk') + '"]'))
+        {
+          v_iRegCount++;
+          v_oReg.css({background: 'rgb(245,245,100)'}).hide();
+          v_oReg.appendTo(v_oNewRegConn.find('.adm-newregconn-conn'));
+          setTimeout(function(){
+            v_oReg.toggle( "slide", {direction: 'right'});
+          }, 150 + i * 70);           
+          var td = GetCalenDayTDByDate(StrToDate($(this).attr('courdate')), ':not(hasnew)');
+          if (td != null)
           {
-            v_iRegCount++;
-            v_oReg.css({background: 'rgb(245,245,100)'}).hide();
-            v_oReg.appendTo(self.i_oConnObj.find('.adm-newregconn-conn'));
-            setTimeout(function(){
-              v_oReg.toggle( "slide", {direction: 'right'});
-            }, 150 + i * 70);           
-            var td = GetCalenDayTDByDate(StrToDate($(this).attr('courdate')), ':not(hasnew)');
-            if (td != null)
-            {
-              td.animate({
-                backgroundColor: 'rgb(250,250,0)'
-              }, 300, "swing", function(){
-                $(this).addClass('hasnew');
-              });
-            }
-            
+            td.animate({
+              backgroundColor: 'rgb(250,250,0)'
+            }, 300, "swing", function(){
+              $(this).addClass('hasnew');
+            });
           }
-        });
-        // aktualizujeme pocet
-        $('.newregcount').text(v_iRegCount);
-      }
-    );  
-  };
+
+        }
+      });
+      // aktualizujeme pocet
+      $('.newregcount').text(v_iRegCount);
+    }
+  ); 
       
 }
 function BuildRegistrationObj(v_oReservationElem)
@@ -109,4 +106,19 @@ function GetCalenDayTDByDate(date, selector)
     }    
   });
   return td;  
+}
+
+function OpenRegistration(RegPK, CourPK, Datestring, CallBack)
+{
+  var OpenCourse = function(){
+    OpenEvent(CourPK, function(v_oEvent){
+      v_oEvent.GetRegistrationByPK(RegPK).OpenDetail(250, CallBack);
+    });
+  };
+  
+  var calendar = $('#datepicker');
+  if (calendar.datepicker('getDate') != StrToDate(Datestring))
+    DaySelect(calendar, Datestring, OpenCourse);
+  else
+    OpenCourse();
 }

@@ -198,7 +198,7 @@ function Announcement(a_sColor, a_sText, a_iIndex)
       break;
     case "white": break; // nic 
     default:             // chyba
-      console.log("wrong paramter AnnouncementColor");
+      //console.log("wrong paramter AnnouncementColor");
       break;
   }
   this.element = $('<div class="announcement">' + a_sText + '</div>');

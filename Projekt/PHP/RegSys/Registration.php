@@ -83,7 +83,27 @@ class Registration extends ResponsiveObject
   }
   
   // ---------------------------- PROTECTED ------------------------------------
-    
+  public function ProcessAjax($a_sType)
+  {
+    if ($this->i_tState !== ObjectState::osClose)
+    {
+      switch ($a_sType)
+      {
+        case 'readnew':
+          if ($this->GetColumnByName($this->i_aDBAliases['isNew'])->GetValue() == 1)
+          {
+            $this->GetColumnByName($this->i_aDBAliases['isNew'])->SetValue(0);
+            if (!$this->SaveToDB(false, true))
+              $this->i_oAlertStack->Push('red', 'Chyba při ověřování přečtené nové registrace.');
+          }
+          break;
+        default:
+          parent::ProcessAjax($a_sType);    
+      }
+    }
+    else
+      parent::ProcessAjax($a_sType);    
+  }
   protected function BuildNewHTML()
   {
     return $this->LoadHTMLTemplate(NEW_REGISTRATION_HTML);

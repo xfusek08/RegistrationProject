@@ -8,7 +8,7 @@
  */
 function CreateEvent(v_sDate, v_oObjConn)
 {
-  console.log("CreateEvent(" + DateToStr(v_sDate) + ")");
+  //console.log("CreateEvent(" + DateToStr(v_sDate) + ")");
   SendAjaxRequest(
     "type=CreateEvent"+ 
     "&date=" + DateToStr(v_sDate),  
@@ -29,9 +29,9 @@ function CreateEvent(v_sDate, v_oObjConn)
  * 
  * @param string a_sPK - textova podoba primarniho klice otevirane udalosti
  */
-function OpenEvent(a_sPK)
+function OpenEvent(a_sPK, CallBack)
 {
-  console.log('OpenEvent(' + a_sPK + ')');
+  //console.log('OpenEvent(' + a_sPK + ')');
   SendAjaxRequest(
     "type=OpenEvent"+ 
     "&pk=" + a_sPK,  
@@ -41,6 +41,8 @@ function OpenEvent(a_sPK)
       {
         var v_oEvent = new Event($('.adm-day-conn'), $(response).find('> object_response'));
         v_oEvent.ProcessState();
+        if (typeof(CallBack) == "function")
+          CallBack(v_oEvent);
       }
     }
   );
@@ -53,7 +55,7 @@ function OpenEvent(a_sPK)
  */
 function DeleteEvent()
 {
-  console.log("DeleteEvent()");
+  //console.log("DeleteEvent()");
   SendAjaxRequest(
     "type=DeleteEvent",  
     true,
@@ -77,7 +79,7 @@ function DeleteEvent()
  */
 function CloseEvent()
 {
-  console.log("CloseEvent()");
+  //console.log("CloseEvent()");
   if (ClearContent())
   {
     SendAjaxRequest(
@@ -112,7 +114,7 @@ var Event = function(v_oParent, v_oObjectResponse){
   this.i_aRegistrations = [];
   
   this.ProcessState = function(){
-    console.log("Event.ProcessState()");
+    //console.log("Event.ProcessState()");
     var self = this;
     this.i_aRegistrations = [];
     this.i_sPK = this.i_oObjResponse.find('> primary_key').text();
@@ -164,7 +166,7 @@ var Event = function(v_oParent, v_oObjectResponse){
   };
   
   this.SendAjax = function(a_sType, a_sData){
-    console.log("Event.SendAjax("  + a_sType + ", "  + a_sData + "}");
+    //console.log("Event.SendAjax("  + a_sType + ", "  + a_sData + "}");
     var self = this;
     SendAjaxRequest(
       "type=EventAjax"+ 
@@ -227,8 +229,13 @@ var Event = function(v_oParent, v_oObjectResponse){
   this.ProcessRegistrations = function(){
     for (var i = 0; i < this.i_aRegistrations.length; i++)
     {
-      var v_oReg = this.i_aRegistrations[i];
-      v_oReg.ProcessState();
+      this.i_aRegistrations[i].ProcessState();
     }    
+  };
+  this.GetRegistrationByPK = function(a_sRegPK){
+    for (var i = 0; i < this.i_aRegistrations.length; i++)
+      if (this.i_aRegistrations[i].i_sPK == a_sRegPK)
+        return this.i_aRegistrations[i];
+    return null;
   };
 };

@@ -28,7 +28,7 @@ $(document).ready(function ()
  */
 function DaySelect(datepicker, v_sDateString, CallBack)
 {
-  console.log('DaySelect()');
+  //console.log('DaySelect()');
   datepicker.datepicker('setDate', v_sDateString);
   LoadCoursesonDay(v_sDateString);
   if (typeof(CallBack) == 'function')
@@ -120,7 +120,7 @@ function LoadDayData(result, datepicker, date)
 function LoadCoursesonDay(a_sDateString, force)
 {
   $('.coursedetailview').remove();
-  console.log('LoadCoursesonDay(' + a_sDateString + ')');
+  //console.log('LoadCoursesonDay(' + a_sDateString + ')');
   var DayView = $('.dayview');
   //DayView.css('display', 'block');
   if (DayView.attr("date") != a_sDateString || force)
@@ -196,7 +196,7 @@ function ChangeLanguage(calendar)
 
 function RequestCalendarhData(asynch, fromdate, todate, CallBack)
 {
-  console.log('RequestCalendarhData(' + DateToStr(fromdate) + ', ' + DateToStr(todate) + ')');
+  //console.log('RequestCalendarhData(' + DateToStr(fromdate) + ', ' + DateToStr(todate) + ')');
   SendAjaxRequest(
     "type=GetCalendarData"+ 
     "&language=" + $('select[name="languagesel"]').val() + 
@@ -216,7 +216,7 @@ function RequestCalendarhData(asynch, fromdate, todate, CallBack)
 
 function SelectCourse(a_sPK, CallBack)
 {
-  console.log('SelectCourse(' + a_sPK + ')');
+  //console.log('SelectCourse(' + a_sPK + ')');
   SendAjaxRequest(
     "type=SelectCourse"+ 
     "&pk=" + a_sPK,
@@ -239,7 +239,7 @@ function SelectCourseCalendByPK(courpk)
 {
   if (parseInt(courpk))
   {
-    console.log($(CalendarDataXML).find('course[pk=' + courpk + ']').closest('day').attr('date'));
+    //console.log($(CalendarDataXML).find('course[pk=' + courpk + ']').closest('day').attr('date'));
     var date = $(CalendarDataXML).find('course[pk=' + courpk + ']').closest('day').attr('date');
     if (date.length > 0)
     {

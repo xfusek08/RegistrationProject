@@ -49,7 +49,7 @@ var ResponsivePage = function(a_oParent, a_sPageResponse)
   
   this.SendAjax = function(a_sType, a_sData, CallBack)
   {
-    console.log("ResponsivePage.SendAjax("  + a_sType + ", "  + a_sData + "}");
+    //console.log("ResponsivePage.SendAjax("  + a_sType + ", "  + a_sData + "}");
     var self = this;
     SendAjaxRequest(
       "type=RespPageAjax"+ 

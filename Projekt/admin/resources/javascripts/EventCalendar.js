@@ -67,7 +67,7 @@ function CalendarInit(calendar, DateSelectFunc, MonthSelectFunc)
  */
 function AfterLoadDays(calendar, calendarData)
 {
-  console.log('AfterLoadDays()');
+  //console.log('AfterLoadDays()');
   calendar.find("table td").each(function(){
     var day = parseInt($(this).find("*").text());
     var month = parseInt($(this).attr('data-month'));
@@ -117,7 +117,7 @@ function AfterLoadDays(calendar, calendarData)
  */
 function RequestCalendarhData(asynch, fromdate, todate, CallBack)
 {
-  console.log('RequestCalendarhData(' + DateToStr(fromdate) + ', ' + DateToStr(todate) + ')');
+  //console.log('RequestCalendarhData(' + DateToStr(fromdate) + ', ' + DateToStr(todate) + ')');
   SendAjaxRequest(
     "type=GetCalendarData"+ 
     "&fromdate=" + DateToStr(fromdate) +  

@@ -48,8 +48,7 @@ $(document).ready(function(){
     ProcessGeneralAjaxSubmit($(this), e);
   });
   GetNavigation();
-  v_oNewResConn = new NewRegistrationConn();
-  v_oNewResConn.GetNewRegistrations();
+  GetNewRegistrations();
 });
 
 /**
@@ -67,7 +66,7 @@ $(document).ready(function(){
  */
 function DaySelect(datepicker, v_sDateString, v_fnCallBack)
 {
-  console.log('DaySelect()');
+  //console.log('DaySelect()');
   ClearContent();
   datepicker.datepicker('setDate', v_sDateString);
   $('.daydate').text(v_sDateString);
@@ -81,7 +80,7 @@ function DaySelect(datepicker, v_sDateString, v_fnCallBack)
  */
 function LoadEventsOnDay(datestring, CallBack)
 {
-  console.log('LoadEventsOnDay()');
+  //console.log('LoadEventsOnDay()');
   SendAjaxRequest(
     "type=SelectDay"+ 
     "&date=" + datestring,
@@ -108,10 +107,8 @@ function LoadEventsOnDay(datestring, CallBack)
       } 
       
       //CreateDroppables();
-      if (CallBack && typeof(CallBack) == "function")
-      {
+      if (typeof(CallBack) == "function")
         CallBack();
-      }
     }
   );          
 }
@@ -125,7 +122,7 @@ function LoadEventsOnDay(datestring, CallBack)
  */
 function ClearContent(event)
 {
-  console.log("ClearContent()");
+  //console.log("ClearContent()");
   var success = true; 
   if ($(".adm-day-conn .checkbeforeclose").length > 0)
   {
@@ -157,7 +154,7 @@ function ClearContent(event)
  */
 function GetNavigation()
 {
-  console.log("GetNavigation()");
+  //console.log("GetNavigation()");
   SendAjaxRequest(
     "type=GetNavigation",  
     true,
@@ -184,7 +181,7 @@ function GetNavigation()
  */
 function ReloadData(CallBack)
 {
-  console.log('RealoadData()');
+  //console.log('RealoadData()');
   var nowdate = $('#datepicker').datepicker('getDate');
   var year = nowdate.getFullYear();
   var month = nowdate.getMonth();
@@ -195,7 +192,7 @@ function ReloadData(CallBack)
 
 function ProcessGeneralAjaxSubmit(actionButton, event, CallBack)
 {
-  console.log('ProcessGeneralAjaxSubmit()');
+  //console.log('ProcessGeneralAjaxSubmit()');
   event.stopPropagation();
   event.preventDefault();
 
