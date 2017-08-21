@@ -120,13 +120,12 @@ else
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   <meta http-equiv="Content-Language" content="cs"/>
-  <link rel="stylesheet" href="css/cm_css_lekol.css" type="text/css" media="screen"/>
-  <link rel="stylesheet" href="css/CalendarStyle_Client.css" type="text/css" media="screen"/>
-  
+  <link rel="stylesheet" href="css/cm_css_lekol.min.css" type="text/css" media="screen"/>
+  <link rel="stylesheet" href="css/CalendarStyle_Client.min.css" type="text/css" media="screen"/>
   <script type="text/javascript" src="jscripts/jQuery-1.12.4.min.js"></script>
   <script type="text/javascript" src="jscripts/jQuerry-ui_1.11.4.min.js"></script>
   <script type="text/javascript" charset="UTF-8" src="jscripts/utils.js"></script>
-  <script type="text/javascript" charset="UTF-8" src="jscripts/ClientRegistration.js"></script> 
+  <script type="text/javascript" charset="UTF-8" src="jscripts/ClientRegistration.min.js"></script> 
   <title>E-Registrace</title>
 </head>
 <body>
