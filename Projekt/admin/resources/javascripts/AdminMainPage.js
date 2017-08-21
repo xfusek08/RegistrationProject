@@ -8,7 +8,7 @@
  *    - vybrani existujici udalosti
  */
 
-var v_oNewResConn = null;
+var v_oActEvent = null;
 
 $(document).ready(function(){
   // inicializace kalendare
@@ -16,7 +16,11 @@ $(document).ready(function(){
   
   $("body").on("click", ".adm-dayevents-tools-newbt", function(e){
     if (ClearContent(e))
-      CreateEvent($("#datepicker").datepicker('getDate'));      
+    {
+      CreateEvent($("#datepicker").datepicker('getDate'), $('.adm-day-conn'), function(a_oEvent){
+        v_oActEvent = a_oEvent;
+      });
+    }
   });
   $("body").on("click", ".seltimebt", function(e){
     var timeinput = $(this).parent(".timeinput");
@@ -42,13 +46,16 @@ $(document).ready(function(){
   });
   $("body").on("click", ".adm-dayevents-view .event:not(.selected)", function(e){
     if (ClearContent(e))
-      OpenEvent($(this).attr('pk'));
+      OpenEvent($(this).attr('pk'), function(a_oEvent){
+        v_oActEvent = a_oEvent;
+      });
   });
   $("body").on("click", ".ajaxsubmit", function(e){
     ProcessGeneralAjaxSubmit($(this), e);
   });
   GetNavigation();
   GetNewRegistrations();
+  setInterval(UpdateActStatus, 10000);
 });
 
 /**
@@ -133,6 +140,7 @@ function ClearContent(event)
   if (success)
   {
     $(".adm-day-conn").empty();   
+    v_oActEvent = null;
     SelectFromOverview('0');
   }
   else
@@ -161,12 +169,12 @@ function GetNavigation()
     function(response){
       var v_sActDate = $(response).find('actday').text();
       DaySelect($('#datepicker'), v_sActDate, function(){   
-        var v_oEvent = $(response).find('openevent > object_response');
+        var v_sEventStatus = $(response).find('openevent > object_response');
         var v_oPage = $(response).find('openpage');
-        if (v_oEvent.length > 0)
+        if (v_sEventStatus.length > 0)
         {
-          v_oEvent = new Event($('.adm-day-conn'), $(response).find('openevent > object_response'));
-          v_oEvent.ProcessState();
+          v_oActEvent = new Event($('.adm-day-conn'), $(response).find('openevent > object_response'));
+          v_oActEvent.ProcessState();          
         }
         else if (v_oPage.length > 0)
           v_oPage = new ResponsivePage($('.adm-day-conn'), v_oPage.html());        
@@ -225,3 +233,42 @@ function ProcessGeneralAjaxSubmit(actionButton, event, CallBack)
   );  
 }
 
+/*
+ * Funkce si postupne zazada o oktualni data ze serveru a aplikuje zmeny do pracovniho okna
+ * Vse probiha asynchronne
+ */
+function UpdateActStatus()
+{
+  console.log('UpdateActStatus()');
+  
+  // Callback zavola pouze pokud se vyskytne nova registrace
+  GetNewRegistrations(function(){
+    // CALENDAR DATA - muze se stat, ze se zaplni nejaky kurz, nebo popripade jiny uzivatel vytvori dalsi kurzy
+    UpdateCalendatData(function(){
+      // Aktualizovat udalost
+      if (v_oActEvent != null)
+        v_oActEvent.Update();
+    });
+  });
+}
+
+/*
+ * Asynchronni obnoveni dat v kalendari a v prehledu vybraneho dnu
+ */
+function UpdateCalendatData(CallBack)
+{
+  var 
+    v_oDatepicker = $('#datepicker'),
+    v_dtDate = v_oDatepicker.datepicker('getDate'),
+    v_sDateString = DateToStr(v_dtDate),
+    v_iYear = v_dtDate.getFullYear(),
+    v_iMonth = v_dtDate.getMonth();
+  
+  RequestCalendarhData(true, new Date(v_iYear, v_iMonth - 2, 1), new Date(v_iYear, v_iMonth + 1, 1), function(){
+    v_oDatepicker.datepicker('setDate', v_sDateString);  // znovu - vykreslime den
+    LoadEventsOnDay(v_sDateString, function(){            
+      if (typeof(CallBack) == "function")
+        CallBack();
+    });
+  });
+}

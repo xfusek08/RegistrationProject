@@ -54,8 +54,12 @@ class Course extends Event
         $html
       );
     $html = str_replace('{LANGUAGE_TEXT}', $v_oLanguage->GetColumnByName('rglng_text')->GetValue(), $html);
-    while (count($v_oLanguage->i_oAlertStack))
-      $this->i_oAlertStack->Push($v_oLanguage->i_oAlertStack.Pop());
+    
+    while ($v_oLanguage->i_oAlertStack->Count() > 0)
+    {
+      $alert = $v_oLanguage->i_oAlertStack->Pop();
+      $this->i_oAlertStack->Push($alert->i_sColor, $alert->i_sMessage);
+    }
     return $html;
   }
   protected function GetDayOwerwiewHTML_content()

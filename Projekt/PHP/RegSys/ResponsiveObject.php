@@ -201,9 +201,9 @@ abstract class ResponsiveObject extends DatabaseEntity
     return $this->SaveToDB(false);
   }
   
-  public function AddAction($a_sActionStr)
+  public function AddAction($a_sActionStr, $a_bBeforeShow = false)
   {
-    array_push($this->i_aActions, $a_sActionStr);
+    array_push($this->i_aActions, array('text' => $a_sActionStr, 'beforeShow' => (($a_bBeforeShow) ? true : false)));
   }
   
   public function GetAxtionsXML()
@@ -211,7 +211,7 @@ abstract class ResponsiveObject extends DatabaseEntity
     
     $res = '<actions>';    
     while (count($this->i_aActions) > 0)
-       $res .= '<action>' . array_shift($this->i_aActions) . '</action>';
+       $res .= '<action>' . array_shift($this->i_aActions)['text'] . '</action>';
     $res .= '</actions>';
     return $res;
   }
@@ -224,8 +224,19 @@ abstract class ResponsiveObject extends DatabaseEntity
       $this->AddAction('Close');      
       return;
     }
+    $beforearray = array();
+    $afterarray = array();
+    
+    for ($i = 0; $i < count($this->i_aActions); $i++)
+    {
+      if ($this->i_aActions[$i]['beforeShow'])
+        $beforearray[] = $this->i_aActions[$i];
+      else
+        $afterarray[] = $this->i_aActions[$i];      
+    }
     // ShowHtml jde jako prni
-    array_unshift($this->i_aActions, 'ShowHtml');
+    array_unshift($afterarray, array('text' => 'ShowHtml', 'beforeShow' => false));
+    $this->i_aActions = array_merge($beforearray, $afterarray);
     switch ($this->i_tState)
     {
       case ObjectState::osNew: 

@@ -1,10 +1,12 @@
 <?php
 class Language extends DatabaseEntity
 {
+  public $i_oAlertStack;
   public function __construct($a_iPK = 0, $ExternTransaction = false)
   {
     $this->i_sTableName = 'RG_LANGUAGE';
     $this->i_sPKColName = 'RGLNG_PK';
+    $this->i_oAlertStack = new AlertStack();
     parent::__construct($a_iPK, $ExternTransaction);
   }
   protected function DefColumns()

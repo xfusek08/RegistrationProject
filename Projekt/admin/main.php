@@ -15,8 +15,6 @@ if (isset($_POST['logout']))
 ?>
 <link rel="stylesheet" href="resources/styles/events.css" type="text/css" media="screen" />  
 
-<script type="text/javascript" charset="UTF-8" src="resources/javascripts/AdminJScripts.min.js"></script>
-<!--   
 <script type="text/javascript" charset="UTF-8" src="resources/javascripts/jquery.timepicker.min.js"></script>
 <script type="text/javascript" charset="UTF-8" src="resources/javascripts/EventCalendar.js"></script>
 <script type="text/javascript" charset="UTF-8" src="resources/javascripts/Registrations.js"></script>
@@ -25,6 +23,8 @@ if (isset($_POST['logout']))
 <script type="text/javascript" charset="UTF-8" src="resources/javascripts/AdminMainPage.js"></script>
 <script type="text/javascript" charset="UTF-8" src="resources/javascripts/ResponsivePage.js"></script>
 <script type="text/javascript" charset="UTF-8" src="resources/javascripts/NewRegistrations.js"></script>
+<!--   
+<script type="text/javascript" charset="UTF-8" src="resources/javascripts/AdminJScripts.min.js"></script>
 -->
     
 <div class="adm-body">  

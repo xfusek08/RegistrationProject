@@ -104,6 +104,25 @@ class Event extends ResponsiveObject
     {
       switch ($a_sType)
       {
+        case 'Update':
+          $v_bUpdate = $this->i_tState === ObjectState::osOverview;
+          if ($v_bUpdate)
+            foreach ($this->i_aRegistrations as $registration)
+              if ($registration->i_tState !== ObjectState::osOverview)
+              {
+                $v_bUpdate = false;
+                break;
+              }            
+          
+          if ($v_bUpdate)
+          {
+            $this->InitFromDB(false);
+            $this->LoadRegistrations(false);
+          }
+          else
+            $this->AddAction ('DoNothing', true);
+            
+          break;
         case 'newregistration': $this->AddRegistration(0); break;
         case 'deletegistration':
         case 'RegistrationAjax':
@@ -149,6 +168,8 @@ class Event extends ResponsiveObject
           }
           break;
         default:
+          if ($this->i_tState !== ObjectState::osOverview)
+            $this->LoadRegistrations($ExternTransaction);
           parent::ProcessAjax($a_sType);    
       }
     }
@@ -413,6 +434,7 @@ class Event extends ResponsiveObject
       return false;
     }
     
+    $this->i_aRegistrations = array();
     // 2. naplnime registracemi pole
     for ($i = 0; $i < count($fields); $i++)
     {

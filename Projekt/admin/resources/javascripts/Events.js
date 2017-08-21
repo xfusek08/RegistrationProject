@@ -6,7 +6,7 @@
  * @param string v_sDate - datum na kterem se ma udalost vytvorit
  * @param jQobj v_oObjConn - objekt do ktereho vlozit Udalost
  */
-function CreateEvent(v_sDate, v_oObjConn)
+function CreateEvent(v_sDate, v_oObjConn, CallBack)
 {
   //console.log("CreateEvent(" + DateToStr(v_sDate) + ")");
   SendAjaxRequest(
@@ -18,6 +18,8 @@ function CreateEvent(v_sDate, v_oObjConn)
       {
         var v_oEvent = new Event($('.adm-day-conn'), $(response).find('> object_response'));
         v_oEvent.ProcessState();
+        if (typeof(CallBack) == "function")
+          CallBack(v_oEvent);
       }
     }
   );    
@@ -77,7 +79,7 @@ function DeleteEvent()
 /**
  * @brief Zazada server o zavreni udalosti a vycisti obsah
  */
-function CloseEvent()
+function CloseEvent(CallBack)
 {
   //console.log("CloseEvent()");
   if (ClearContent())
@@ -85,7 +87,10 @@ function CloseEvent()
     SendAjaxRequest(
       "type=CloseEvent",  
       true,
-      function(response){}
+      function(response){
+        if (typeof(CallBack) == "function")
+          CallBack(response);
+      }
     );
   }
 }
@@ -127,10 +132,15 @@ var Event = function(v_oParent, v_oObjectResponse){
       }); 
       return;
     }
-
+    
+    SelectFromOverview(this.i_sPK);
+    var v_bReturn = false;
     this.i_oObjResponse.find('> actions action').each(function(){
       switch ($(this).text())
       {
+        case 'DoNothing': 
+          v_bReturn = true; 
+          return false;
         case 'Close': self.Close(); break;
         case 'ShowHtml': self.ShowHTML(); break;
         case 'CantAddNew':  
@@ -147,6 +157,9 @@ var Event = function(v_oParent, v_oObjectResponse){
       }
     });
     
+    if (v_bReturn)
+      return;
+    
     self.i_oObjResponse.find('> registrations > registration').each(function(){
       self.AddRegistration($(this).find('> object_response'));
     });
@@ -162,7 +175,6 @@ var Event = function(v_oParent, v_oObjectResponse){
     this.i_oObjResponse.find('> invaliddata > input').each(function(){
       HighlightInvalInput($(this).attr('name'), $(this).attr('message'), self.i_oHTMLObj);
     });
-    SelectFromOverview(this.i_sPK);
   };
   
   this.SendAjax = function(a_sType, a_sData){
@@ -182,6 +194,10 @@ var Event = function(v_oParent, v_oObjectResponse){
   
   this.Close = function(){
     CloseEvent();
+  };
+  
+  this.Update = function(){
+    this.SendAjax('Update');
   };
   
   this.InitBaseAjaxSubmit = function(){

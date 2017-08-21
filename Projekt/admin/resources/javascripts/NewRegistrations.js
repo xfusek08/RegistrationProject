@@ -37,7 +37,7 @@ $(document).ready(function(){
   });
 });
 
-function GetNewRegistrations()
+function GetNewRegistrations(DoIfIsNew)
 {
   var v_oNewRegConn = $('.adm-newregconn')
   SendAjaxRequest(
@@ -45,12 +45,12 @@ function GetNewRegistrations()
     true,
     function(response){
       // naplnime pole novimy rezervacemi
-      var v_iRegCount = 0;
+      var v_bIsNew = false;
       $(response).find('registration').each(function(i){
         var v_oReg = BuildRegistrationObj($(this));
-        if (v_oNewRegConn.find('.new_registration[pk="' + v_oReg.attr('pk') + '"]'))
+        if (v_oNewRegConn.find('.new_registration[pk="' + v_oReg.attr('pk') + '"]').size() == 0)
         {
-          v_iRegCount++;
+          v_bIsNew = true;
           v_oReg.css({background: 'rgb(245,245,100)'}).hide();
           v_oReg.appendTo(v_oNewRegConn.find('.adm-newregconn-conn'));
           setTimeout(function(){
@@ -65,11 +65,13 @@ function GetNewRegistrations()
               $(this).addClass('hasnew');
             });
           }
-
         }
       });
       // aktualizujeme pocet
-      $('.newregcount').text(v_iRegCount);
+      $('.newregcount').text($('.adm-newregconn-conn .new_registration').size());
+      
+      if (v_bIsNew && typeof(DoIfIsNew) == "function")
+        DoIfIsNew();
     }
   ); 
       
@@ -101,9 +103,7 @@ function GetCalenDayTDByDate(date, selector)
       '[data-month="' + date.getMonth() + '"]' +
       '[data-year="' + date.getFullYear() + '"]' + selector).each(function(){
     if ($(this).find('a').text() == date.getDate())
-    {
       td = $(this);
-    }    
   });
   return td;  
 }

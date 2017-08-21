@@ -141,6 +141,9 @@ function SelectDay($a_sDateTimeString)
     return (new Alert('red', 'Invalid time value'))->GetXML();
   }
   
+  if ($_SESSION['actday'] !== date('d.m.Y', $v_iTime))
+    unset($_SESSION['opencontent']);
+
   $_SESSION['actday'] = date('d.m.Y', $v_iTime);
 
   $eventPrototype = EVENT_TYPE;
@@ -382,7 +385,7 @@ function GetNewRegistrationsXML()
     return (new Alert('red', 'Nepodařilo se načíst nové registrace.'))->GetXML();    
   }
 
-  $response .= '<registrations>';
+  $response = '<registrations>';
   for($i = 0; $i < count($fields); $i++)
   {
     $courtd = strtotime($fields[$i]['RGCOUR_DTFROM']);
