@@ -11,6 +11,7 @@ $(document).ready(function ()
     SelectCourse($(this).attr('pk'));
   });
   SelectCourseCalendByPK($('.coursechoose').attr('pk'));
+  setInterval(UpdateActStatus, 5000);
 });
 
 /**
@@ -119,7 +120,7 @@ function LoadDayData(result, datepicker, date)
 
 function LoadCoursesonDay(a_sDateString, force)
 {
-  $('.coursedetailview').remove();
+  $('.daycourses').remove();
   //console.log('LoadCoursesonDay(' + a_sDateString + ')');
   var DayView = $('.dayview');
   //DayView.css('display', 'block');
@@ -248,4 +249,33 @@ function SelectCourseCalendByPK(courpk)
       });
     }
   } 
+}
+
+/*
+ * Funkce si postupne zazada o oktualni data ze serveru a aplikuje zmeny
+ * Vse probiha asynchronne
+ */
+function UpdateActStatus()
+{
+  if ($('#datepicker').length > 0)
+  {
+    var 
+      v_oDatepicker = $('#datepicker'),
+      v_dtDate = v_oDatepicker.datepicker('getDate'),
+      v_sDateString = DateToStr(v_dtDate),
+      v_iYear = v_dtDate.getFullYear(),
+      v_iMonth = v_dtDate.getMonth(),
+      v_sSelectedPK = '0';
+
+    if ($('.daycourses .course.selected').length > 0)
+      v_sSelectedPK = $('.daycourses .course.selected').attr('pk');
+
+    RequestCalendarhData(true, new Date(v_iYear, v_iMonth - 2, 1), new Date(v_iYear, v_iMonth + 1, 1), function(){
+      DaySelect(v_oDatepicker, v_sDateString, function(){
+        LoadCoursesonDay(v_sDateString, true);
+        if ($('.daycourses .course[pk="' + v_sSelectedPK + '"]').length > 0)
+          $('.daycourses .course[pk="' + v_sSelectedPK + '"]').addClass('selected');
+      });
+    });
+  }
 }
