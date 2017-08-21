@@ -27,6 +27,9 @@ if (isset($_SESSION['registration']))
 if (!($v_oRegistration instanceof CourseRegistration))
   $v_oRegistration = new CourseRegistration(0);
 
+if (isset($_SESSION['langpk']))
+  $v_iSelectedLangPK = intval($_SESSION['langpk']);
+
 if (isset($_POST['ajax']))
 {
   if ($_POST['type'] == 'SelectCourse')
@@ -105,8 +108,10 @@ else if (isset($_POST['back']))
 }
 else
 {
+  unset($_SESSION['langpk']);
   unset($_SESSION['chosencourse']);
-  unset($_SESSION['registration']);$v_sState = 'courseSelect';
+  unset($_SESSION['registration']);
+  $v_sState = 'courseSelect';
   $v_iSelectedLangPK = 0;
   $v_oChosenCourse = new Course(0);
   $v_oRegistration = new CourseRegistration(0);
@@ -328,10 +333,12 @@ function SaveAndDie()
   global 
     $v_oChosenCourse,
     $v_oRegistration,
+    $v_iSelectedLangPK,
     $v_sState;
   
   $_SESSION['chosencourse'] = serialize($v_oChosenCourse);
   $_SESSION['registration'] = serialize($v_oRegistration);
+  $_SESSION['langpk'] = $v_iSelectedLangPK;
   $_SESSION['state'] = $v_sState;
   die;
 }

@@ -217,7 +217,7 @@ function StartLoading()
 {
   if (loadingcounter == 0)
   {
-    $('<div class="loading"><img src="../img/ajax-loader.gif " /></div>').appendTo('.adm-topheader');            
+    $('<div class="loading"><img src="img/ajax-loader.gif " /></div>').appendTo('.adm-topheader');            
   }
   loadingcounter++;
 }

@@ -30,6 +30,7 @@ $(document).ready(function ()
 function DaySelect(datepicker, v_sDateString, CallBack)
 {
   //console.log('DaySelect()');
+  var v_dtPreDate = datepicker.datepicker('getDate');
   datepicker.datepicker('setDate', v_sDateString);
   LoadCoursesonDay(v_sDateString);
   if (typeof(CallBack) == 'function')
@@ -120,12 +121,12 @@ function LoadDayData(result, datepicker, date)
 
 function LoadCoursesonDay(a_sDateString, force)
 {
-  $('.daycourses').remove();
   //console.log('LoadCoursesonDay(' + a_sDateString + ')');
   var DayView = $('.dayview');
   //DayView.css('display', 'block');
   if (DayView.attr("date") != a_sDateString || force)
   {
+    $('.daycourses').remove();
     DayView.attr("date", a_sDateString);
     DayView.find('.conn .date').text(
       a_sDateString + ' (' + $.datepicker.formatDate('DD', StrToDate(a_sDateString)) + ')');
@@ -191,7 +192,9 @@ function ChangeLanguage(calendar)
   var month = v_dtActDate.getMonth();
   var selectedpk = $('.dayview .course.selected').attr('pk');
   RequestCalendarhData(false, new Date(year, month - 2, 1), new Date(year, month + 1, 1), function(){
-    DaySelect(calendar, DateToStr(v_dtActDate), LoadCoursesonDay(DateToStr(v_dtActDate), true));    
+    DaySelect(calendar, DateToStr(v_dtActDate), function(){
+      LoadCoursesonDay(DateToStr(v_dtActDate), true);
+    });    
   });
 }
 
