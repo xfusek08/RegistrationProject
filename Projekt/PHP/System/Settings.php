@@ -45,30 +45,39 @@ define("P_EVENT_2P", "kurzů");
 define("NEW_EVENT", "nový kurz");
 
 // soubory se sablonami
-define("NEW_EVENT_HTML", ".\\resources\\templates\\Courses\\newCourse.html");
-define("EDIT_EVENT_HTML", ".\\resources\\templates\\Courses\\editCourse.html");
-define("OVERVIEW_EVENT_HTML", ".\\resources\\templates\\Courses\\overviewCourse.html");
-define("SETTING_HTML", ".\\resources\\templates\\Courses\\CourseSettings.html");
+define("NEW_EVENT_HTML", "resources\\templates\\Courses\\newCourse.html");
+define("EDIT_EVENT_HTML", "resources\\templates\\Courses\\editCourse.html");
+define("OVERVIEW_EVENT_HTML", "resources\\templates\\Courses\\overviewCourse.html");
+define("SETTING_HTML", "resources\\templates\\Courses\\CourseSettings.html");
 
 // soubory se sablonami
-define("NEW_REGISTRATION_HTML", ".\\resources\\templates\\Registrations\\newReg.html");
-define("EDIT_REGISTRATION_HTML", ".\\resources\\templates\\Registrations\\editReg.html");
-define("OVERVIEW_REGISTRATION_HTML", ".\\resources\\templates\\Registrations\\overviewReg.html");
+define("NEW_REGISTRATION_HTML", "resources\\templates\\Registrations\\newReg.html");
+define("EDIT_REGISTRATION_HTML", "resources\\templates\\Registrations\\editReg.html");
+define("OVERVIEW_REGISTRATION_HTML", "resources\\templates\\Registrations\\overviewReg.html");
 
  
-/*
- * mozne konstanty, ktere budou substituovany
- * s
- * ---- nadefinovate v Event.php
- * {FROM_DATE} - datum ve formatu d.m.y brane z polozky Event::i_sFromColName
- * {FROM_TIME} - cas ve formatu H:i brane z polozky Event::i_sFromColName
- * {FROM_DAY} - nazev dnu vis 'GetCzechDayName(date('w', Event::i_sFromColName))
- * 
- */
+// *********************** E-MAILS *****************************************************
 
-/*
- * nepouzivane classes:
- * 
- *  .conndetail-inhtml
- *  .reservations
- */
+// E-mail ze kterého bude odeslána zpráva pro klienta
+define('FROM_EMAIL', 'Alasko-Rezervace@alasko.cz');
+
+// na který se pošle oznámení o vytvořené rezervaci, může být stejný jako FROM_EMAIL
+define('ADMIN_ANNOUNCEMENT_EMAIL', 'petr.fusek97@gmail.com');
+
+// Předmět e-mailu pro klienta
+define('TO_CLIENT_EMAIL_SUBJECT', 'Vytvoření rezervace');
+
+// Cesta k HTML Šabloně e-mailu pro klienta
+if ($_SESSION['accestype'] === 'client')
+  define('TO_CLIENT_EMAIL_TEMPLATE_PATH', 'admin\\resources\\templates\\Registrations\\ToClientEmailTemplate.html');
+else if ($_SESSION['accestype'] === 'admin')
+  define('TO_CLIENT_EMAIL_TEMPLATE_PATH', 'resources\\templates\\Registrations\\ToClientEmailTemplate.html');
+
+// Předmět e-mailu pro správce
+define('TO_ADMIN_EMAIL_DEF_SUBJECT', 'Nová rezervace.');
+
+// HTML Šablona e-mailu pro správce
+if ($_SESSION['accestype'] === 'client')
+  define('TO_ADMIN_EMAIL_TEMPLATE_PATH', 'admin\\resources\\templates\\Registrations\\ToAdminEmailTemplate.html');
+else if ($_SESSION['accestype'] === 'admin')
+  define('TO_ADMIN_EMAIL_TEMPLATE_PATH', 'resources\\templates\\Registrations\\ToAdminEmailTemplate.html');

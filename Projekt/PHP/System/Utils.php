@@ -37,6 +37,11 @@ function IsTimestamp($var)
   return true;
 }
 
+function IsEmail($var)
+{
+  return filter_var($var, FILTER_VALIDATE_EMAIL);
+}
+
 function validateDate($date, $format = DATE_FORMAT)
 {
     $d = DateTime::createFromFormat($format, $date);

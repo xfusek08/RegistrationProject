@@ -54,7 +54,8 @@ abstract class DatabaseEntity
     
     for ($i = 0; $i < $this->i_iColCount; $i++)
     {
-      if (!$this->i_aColumns[$i]->SetValueFromString(strval($fields[0][$this->i_aColumns[$i]->i_sName])))
+      // hodnoty se musí načíst i když nejsou validného formátu
+      if (!$this->i_aColumns[$i]->SetValueFromString(strval($fields[0][$this->i_aColumns[$i]->i_sName]), true))
       {
         Logging::WriteLog(LogType::Error, 
             'Database entity initialization error on index: ' . $i .' entity name: ' . $this->i_aColumns[$i]->i_sName);
@@ -324,6 +325,7 @@ class DBEntColumn
     switch ($this->i_tDataType)
     {
       case DataType::String:    
+      case DataType::Email:    
         $this->i_bValid = is_string($this->i_xValue); 
         break;
       case DataType::Integer:   
@@ -352,7 +354,7 @@ class DBEntColumn
 
     return $this->i_bValid;
   }
-  public function SetValueFromString($a_sValue)
+  public function SetValueFromString($a_sValue, $a_bForce = false)
   {
     if ($this->i_tDataType == DataType::Bool)
       return $this->SetValue(Str01ToBoolInt(trim($a_sValue)));      
@@ -373,6 +375,14 @@ class DBEntColumn
     switch ($this->i_tDataType)
     {
       case DataType::String: $this->SetValue($a_sValue); break;
+      case DataType::Email:  
+        $this->SetValue($a_sValue);
+        if (!IsEmail($a_sValue) && !$a_bForce)
+        {
+          $this->i_bValid = false;
+          $this->i_sInvalidDataMsg = 'Položka nemá formát platné e-mailové adresy.';
+        }
+        break;
       case DataType::Integer:
         $val = str_replace(' ', '', $a_sValue);
         if (is_numeric ($val))
@@ -416,6 +426,7 @@ class DBEntColumn
     switch ($this->i_tDataType)
     {
       case DataType::String:
+      case DataType::Email:
         return $this->GetValue();
       case DataType::Integer:
         if (!$a_bformated || $this->i_bUnformated) return strval($this->GetValue());

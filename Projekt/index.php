@@ -1,7 +1,10 @@
 <?php
 session_start();
+$_SESSION['accestype'] = 'client';
+
 require_once 'php/RegSys/ClientRegistration.php';
 require_once 'php/CourseRegSys/Language.php';
+
 
 // vychozi promenne
 $v_sState = 'courseSelect';
@@ -88,8 +91,15 @@ else if (isset($_POST['submit']))
       }
       // ulozime registraci
       $v_oRegistration->GetColumnByName('rgreg_isnew')->SetValue(true);
-      if ($v_oRegistration->SaveToDB(false))
+      $v_oRegistration->i_bSendEmailToAdmin = true;
+      $v_oRegistration->i_bSendEmailToClient = true;
+      if ($v_oRegistration->SaveNew(false))
         $v_sState = 'finished';
+      else if (!$v_oRegistration->IsDataValid())
+      {
+        $v_bSubmit = true;
+        $v_sState = 'registration';
+      }
       else
         $v_sErrorMessage = 'Registraci se nepodařilo uložit';
       break;

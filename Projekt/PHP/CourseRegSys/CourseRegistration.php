@@ -17,11 +17,31 @@ class CourseRegistration extends Registration
   {
     $this->AddColumn(DataType::String, 'rgreg_vclfirstname', true);
     $this->AddColumn(DataType::String, 'rgreg_vcllastname', true);
-    $this->AddColumn(DataType::String, 'rgreg_vclemail', true);
+    $this->AddColumn(DataType::Email, 'rgreg_vclemail', true);
     $this->AddColumn(DataType::String, 'rgreg_vcltelnumber');
     $this->AddColumn(DataType::String, 'rgreg_vcladdress');
     $this->AddColumn(DataType::Integer, 'rgreg_flanguage');
     $this->AddColumn(DataType::String, 'rgreg_vtext');
     $this->AddColumn(DataType::Date, 'rgreg_dtCreated', true);
   }  
+  
+  /*
+   * Upresneni pro jazyk kurzu
+   * 
+   * {laguage_text} - jazyk kurzu
+   */
+  protected function LoadHTMLTemplate($a_sTemplatePath)
+  {
+    $html = parent::LoadHTMLTemplate($a_sTemplatePath);
+    
+    if ($html === false) 
+      return false;
+    
+    $v_oEvent = EVENT_TYPE;
+    $v_oEvent = new $v_oEvent($this->GetColumnByName($this->i_aDBAliases['eventPK'])->GetValue());
+    $v_oLanguage = new Language($v_oEvent->GetColumnByName('rgcour_flanguage')->GetValue());
+    $html = str_replace('{laguage_text}', $v_oLanguage->GetColumnByName('rglng_text')->GetValue(), $html);
+    
+    return $html;
+  }
 }

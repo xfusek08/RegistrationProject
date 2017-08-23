@@ -9,6 +9,7 @@ class DataType
   const DateTrnc = 5;
   const Timestamp = 6;
   const Bool = 7;
+  const Email = 8;
 }
 class Operator
 {

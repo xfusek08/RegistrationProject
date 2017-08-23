@@ -1,5 +1,7 @@
 <?php
 session_start();
+$_SESSION['accestype'] = 'admin';
+
 // system
 require_once '../PHP/System/Enums.php';
 require_once '../PHP/System/Utils.php';
@@ -8,6 +10,8 @@ require_once '../PHP/System/Logs.php';
 require_once '../PHP/System/Database.php';
 require_once '../PHP/System/DatabaseEntity.php';
 require_once '../PHP/System/Alerts.php';
+require_once '../PHP/System/MyMails.php';
+
 
 // registracni system
 require_once '../PHP/RegSys/ResponsiveObject.php';

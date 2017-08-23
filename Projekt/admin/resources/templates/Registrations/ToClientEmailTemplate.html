@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      .reg-form table td
+      {
+        white-space: nowrap;
+        vertical-align: top;
+      }
+      .reg-form table td:last-child
+      {
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <p>Vaše registrace byla vytvořena:</p>
+    <div class="reg-form">
+    <table style="width: 100%;">
+      <tr>
+        <td>Vybraná lekce:</td>
+        <td class="selcourse">
+          <div class="coursedetail">
+            <div class="caption">
+              <div>
+                <div>{event_name}</div>
+                <div>zahájení: {event_time}</div>
+              </div>
+            </div>
+            <div class="content overview">
+              <div>
+                <b>Jazyk:</b>{laguage_text}</div>
+              <div class="desctiption">
+                <div class="cap">Popis:</div>
+              </div>
+              <div>{event_desc}</div>
+            </div>
+          </div>
+        </td>
+      </tr>
+      <tr></tr>
+      <tr>
+        <td>Vytvořeno:</td>
+        <td>{CREATED_DATE}, {CREATED_TIME}</td>
+      </tr>
+     <tr>
+        <td>Jméno a příjmení:</td>
+        <td>{rgreg_vclfirstname_val} {rgreg_vcllastname_val}</td>
+      </tr>
+      <tr>
+        <td>E-mail:</td>
+        <td>{rgreg_vclemail_val}</td>
+      </tr>
+      <tr>
+        <td>Telefonní číslo:</td>
+        <td>{rgreg_vcltelnumber_val}</td>
+      </tr>        
+      <tr>
+        <td>Poznámka:</td>
+        <td></td>
+      </tr> 
+      <tr>
+        <td colspan="2"><textarea readonly maxlength="4000">{rgreg_vtext_val}</textarea></td>
+      </tr>
+    </table>
+  </body>
+</html>

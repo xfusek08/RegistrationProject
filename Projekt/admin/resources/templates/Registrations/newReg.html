@@ -14,6 +14,17 @@
               <td>Vytvořeno:</td>
               <td>{CREATED_DATE}, {CREATED_TIME}</td>
             </tr>
+            <tr 
+              title="
+                Při úspěšném vytvořením zašle klentovi e-mail s potvrzením o vytvořené registraci.
+                Pokud se e-mail nepodaří doručit, registrace nebude vytvořena.
+              "
+            >
+              <td>Zaslat e-mail klientovy:</td>
+              <td colspan="2">
+                <input name="sendEmailToClient" type="checkbox" {sendEmailToClient}/>            
+              </td>
+            </tr>
             <tr>
               <td>Jméno a příjmení:</td>
               <td>
