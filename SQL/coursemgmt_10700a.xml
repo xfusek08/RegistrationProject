@@ -1,0 +1,84 @@
+<?xml version="1.0" standalone="yes" ?>
+<dbstr>
+  <current>
+    <insttype>coursemgmt</insttype>
+    <version modif="a" >1.07.00</version>
+    <components>
+      <component id="InstSupport">
+        <version>1.02.00.00</version>
+      </component>
+      <component id="Sys">
+        <version>1.02.00.00</version>
+      </component>
+      <component id="CourseMgmt">
+        <version>1.06.00.03</version>
+      </component>
+      <component id="Registrations">
+        <version>1.00.00.02</version>
+      </component>
+    </components>
+  </current>
+
+  <supported>
+  </supported>
+
+  <upgrades>
+
+    <upg prevtype=""   prevversion=""
+       targettype="coursemgmt" targetversion="1.07.00" >
+
+      <doinst>instsupport/db/v1_02/Full</doinst>
+
+      <doinst>sys/db/v1_00/Build/V1_00_00_00</doinst>
+      <doinst>sys/db/v1_00/Build/V1_00_00_01</doinst>
+      <doinst>sys/db/v1_00/Build/V1_00_00_02</doinst>
+      <doinst>sys/db/v1_00/Build/V1_00_00_03</doinst>
+      <doinst>sys/db/v1_00/Build/V1_00_00_04</doinst>
+      <doinst>sys/db/v1_00/Build/V1_00_00_05</doinst>
+      <doinst>sys/db/v1_00/Build/V1_00_00_06</doinst>
+      <doinst>sys/db/v1_00/Build/V1_00_00_07</doinst>
+      <doinst>sys/db/v1_00/Build/V1_00_01_00</doinst>
+      <doinst>sys/db/v1_00/Build/V1_00_02_00</doinst>
+      <doinst>sys/db/v1_01/Build/V1_01_00_00</doinst>
+      <doinst>sys/db/v1_02/Build/V1_02_00_00</doinst>
+
+      <doinst>coursemgmt/db/v1_00/Build/V1_00_00_00</doinst>
+      <doinst>coursemgmt/db/v1_00/Build/V1_00_00_01</doinst>
+      <doinst>coursemgmt/db/v1_00/Build/V1_00_00_02</doinst>
+      <doinst>coursemgmt/db/v1_00/Build/V1_00_00_03</doinst>
+      <doinst>coursemgmt/db/v1_00/Build/V1_00_00_04</doinst>          
+      <doinst>coursemgmt/db/v1_01/Build/V1_01_00_00</doinst>
+      <doinst>coursemgmt/db/v1_01/Build/V1_01_00_01</doinst>
+      <doinst>coursemgmt/db/v1_01/Build/V1_01_00_02</doinst>
+      <doinst>coursemgmt/db/v1_01/Build/V1_01_00_03</doinst>
+      <doinst>coursemgmt/db/v1_01/Build/V1_01_00_04</doinst>
+      <doinst>coursemgmt/db/v1_01/Build/V1_01_00_05</doinst>
+      <doinst>coursemgmt/db/v1_02/Build/V1_02_00_00</doinst>
+      <doinst>coursemgmt/db/v1_03/Build/V1_03_00_00</doinst>
+      <doinst>coursemgmt/db/v1_04/Build/V1_04_00_00</doinst>
+      <doinst>coursemgmt/db/v1_05/Build/V1_05_00_00</doinst>
+      <doinst>coursemgmt/db/v1_05/Build/V1_05_00_01</doinst>
+      <doinst>coursemgmt/db/v1_05/Build/V1_05_00_02</doinst>
+      <doinst>coursemgmt/db/v1_05/Build/V1_05_00_03</doinst>
+      <doinst>coursemgmt/db/v1_06/Build/V1_06_00_00</doinst>
+      <doinst>coursemgmt/db/v1_06/Build/V1_06_00_01</doinst>
+      <doinst>coursemgmt/db/v1_06/Build/V1_06_00_02</doinst>
+      <doinst>coursemgmt/db/v1_06/Build/V1_06_00_03</doinst>
+
+      <doinst>Registrations/db/v1_00/Build/V1_00_00_00</doinst>
+      <doinst>Registrations/db/v1_00/Build/V1_00_00_01</doinst>
+      <doinst>Registrations/db/v1_00/Build/V1_00_00_02</doinst>
+
+    </upg>
+
+    <upg prevtype="coursemgmt"   prevversion="1.06.00"
+       targettype="coursemgmt" targetversion="1.07.00" >
+
+      <doinst>Registrations/db/v1_00/Build/V1_00_00_00</doinst>
+      <doinst>Registrations/db/v1_00/Build/V1_00_00_01</doinst>
+      <doinst>Registrations/db/v1_00/Build/V1_00_00_02</doinst>
+
+    </upg>
+  </upgrades>
+
+</dbstr>

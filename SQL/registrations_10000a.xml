@@ -11,7 +11,7 @@
         <version>1.02.00.00</version>
       </component>
       <component id="Registrations">
-        <version>1.00.00.00</version>
+        <version>1.00.00.02</version>
       </component>
     </components>
   </current>
@@ -40,6 +40,8 @@
       <doinst>sys/db/v1_02/Build/V1_02_00_00</doinst>
 
       <doinst>Registrations/db/v1_00/Build/V1_00_00_00</doinst>
+      <doinst>Registrations/db/v1_00/Build/V1_00_00_01</doinst>
+      <doinst>Registrations/db/v1_00/Build/V1_00_00_02</doinst>
     </upg>
   </upgrades>
 
